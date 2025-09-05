@@ -589,8 +589,8 @@
       ];
       rows.push(r.join(','));
     }
-    const blob = new Blob([rows.join('
-')],{type:'text/csv;charset=utf-8;'});
+   const blob = new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'shorts_radar.csv';
@@ -639,8 +639,8 @@
       '- 시간대 지도 상위 슬롯에 예약 업로드',
       '- 매주 자주 쓰는 설정에 새 조합 1~2개 추가',
       ''
-    ].join('
-');
+    ].join('\n');
+
 
     const blob = new Blob([md], {type:'text/markdown;charset=utf-8;'});
     const a = document.createElement('a');
