@@ -564,90 +564,97 @@
     out.append(left,right);
   }
 
-  // CSV Export
-  function exportCsv(){
-    if(!STATE.videos.length) return alert('데이터가 없습니다.');
-    const cols = ['id','title','channel','publishedAt','durationSec','views','likes','comments','vel','eng','fresh','fit','pick','clusterId'];
-    const rows = [cols.join(',')];
-    for(const v of STATE.videos){
-      const sec = isoToSeconds(v.contentDetails.duration);
-      const r = [
-        v.id,
-        '"'+(v.snippet.title||'').replace(/"/g,'""')+'"',
-        '"'+(v.snippet.channelTitle||'').replace(/"/g,'""')+'"',
-        v.snippet.publishedAt,
-        sec,
-        v.statistics.viewCount||0,
-        v.statistics.likeCount||0,
-        v.statistics.commentCount||0,
-        v.metrics.vel.toFixed(3),
-        v.metrics.eng.toFixed(3),
-        v.metrics.fresh.toFixed(5),
-        v.metrics.fit.toFixed(5),
-        v.metrics.pick.toFixed(5),
-        v.clusterId??''
-      ];
-      rows.push(r.join(','));
-    }
-    const blob = new Blob([rows.join('
-')],{type:'text/csv;charset=utf-8;'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'shorts_radar.csv';
-    document.body.appendChild(a); a.click(); a.remove();
+  
+  <script>
+// CSV Export (fixed)
+function exportCsv(){
+  if(!STATE.videos.length) return alert('데이터가 없습니다.');
+  const cols = ['id','title','channel','publishedAt','durationSec','views','likes','comments','vel','eng','fresh','fit','pick','clusterId'];
+  const rows = [cols.join(',')];
+  for(const v of STATE.videos){
+    const sec = isoToSeconds(v.contentDetails.duration || 'PT0S');
+    // 큰따옴표는 CSV 규격대로 두 번 반복해 이스케이프
+    const title   = '"' + String(v.snippet.title||'').replace(/"/g,'""') + '"';
+    const channel = '"' + String(v.snippet.channelTitle||'').replace(/"/g,'""') + '"';
+    const r = [
+      v.id,
+      title,
+      channel,
+      v.snippet.publishedAt,
+      sec,
+      v.statistics.viewCount||0,
+      v.statistics.likeCount||0,
+      v.statistics.commentCount||0,
+      (v.metrics?.vel||0).toFixed(3),
+      (v.metrics?.eng||0).toFixed(3),
+      (v.metrics?.fresh||0).toFixed(5),
+      (v.metrics?.fit||0).toFixed(5),
+      (v.metrics?.pick||0).toFixed(5),
+      (v.clusterId ?? '')
+    ];
+    rows.push(r.join(','));
   }
+  const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'shorts_radar.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+</script>
 
-  // Manual Export (Markdown)
-  function exportManual(){
-    const date = new Date().toLocaleDateString('ko-KR');
-    const md = [
-      '# Shorts Radar 사용 매뉴얼 (한 장 요약)',
-      '생성일: '+date, '',
-      '## 1) 내가 할 일 (처음 1회 설정)',
-      '- API 키 발급: Google Cloud → YouTube Data API v3 활성화 → API Key 생성',
-      "- 키 보호: Application restrictions = HTTP referrers(웹사이트) → 'https://USERNAME.github.io/*' 추가",
-      '- 배포: GitHub Pages (리포에 index.html 업로드 → Settings → Pages → main/root 저장)',
-      '- 첫 실행: 페이지 접속 → 1) 연결 설정에서 API 키 저장 → 2) 찾을 조건 입력 → 찾기 시작', '',
-      '## 2) 매일 할 일 (5~10분 루틴)',
-      '- 자주 쓰는 설정 불러오기 → 찾기 시작',
-      '- 비슷한 주제 묶음에서 평균 종합점수 높은 1~2개 선택',
-      '- 비슷하게 만들기 도우미에서 묶음 번호 입력 → 생성 (훅 3안 + 샷리스트 + 해시태그)',
-      '- 올리기 좋은 시간대(시간대 지도) 확인 → 업로드/예약',
-      '- 필요 시 CSV 내보내기로 기록/공유', '',
-      '## 3) 화면별 사용법',
-      '- 연결 설정: API 키 저장(로컬 보관)',
-      '- 찾을 조건: 찾을 주제, 경쟁 채널 ID(쉼표로 여러 개), 기간/지역/언어/최대 결과, 자주 쓰는 설정(불러오기/저장/삭제)',
-      '- 요약: 총 수집, 평균 속도/반응, 종합점수 1위 제목',
-      '- 비슷한 주제 묶음: 묶음 N, 평균 종합점수, 핵심 키워드. 최소 종합점수·묶음 개수(k) 조정 후 다시 묶기',
-      '- 올리기 좋은 시간대: 7×24 히트맵 + 추천 Top 시간대 목록',
-      '- 영상 리스트: 열 숨김/정렬 컨트롤(보기 프리셋, 정렬 기준/방향, 개별 열 토글) — 설정은 브라우저에 저장',
-      '- 비슷하게 만들기 도우미: 묶음 번호 → 훅 3안/샷리스트/해시태그 생성',
-      '- CSV 내보내기: 결과를 파일로 저장', '',
-      '## 4) 추천 설정값 & 치트시트',
-      '- 시작값: 기간 7일, 최대 결과 80, 묶음 개수 0(자동)',
-      '- 노이즈 많음: 최소 종합점수 0.1→0.2→0.3',
-      '- 묶음이 너무 큼: k를 8~12로 지정 후 다시 묶기',
-      '- 트렌드 빠름: 기간 3일로 축소', '',
-      '## 5) 문제 해결',
-      "- 403(referrer): 키 제한에 정확한 도메인 'https://USERNAME.github.io/*' 포함 여부 확인",
-      '- 결과 적음: 기간 7→14일, 키워드 2~3개로 확장, 지역/언어 조정',
-      '- 쿼터 부족: 최대 결과 80→40으로 낮춰 나눠 조회',
-      '- 쇼츠 아님 섞임: 길이(60~62초) 확인 후 제외', '',
-      '## 6) 운영 팁',
-      '- 상위 묶음 1~2개만 집중 제작(분산 줄이기)',
-      '- 오프닝 2초/자막 크기/썸네일 텍스트 A/B 변주',
-      '- 시간대 지도 상위 슬롯에 예약 업로드',
-      '- 매주 자주 쓰는 설정에 새 조합 1~2개 추가',
-      ''
-    ].join('
-');
+ <script>
+// Manual Export (fixed)
+function exportManual(){
+  const date = new Date().toLocaleDateString('ko-KR');
+  const md = [
+    '# Shorts Radar 사용 매뉴얼 (한 장 요약)',
+    '생성일: ' + date, '',
+    '## 1) 내가 할 일 (처음 1회 설정)',
+    '- API 키 발급: Google Cloud → YouTube Data API v3 활성화 → API Key 생성',
+    "- 키 보호: Application restrictions = HTTP referrers(웹사이트) → 'https://USERNAME.github.io/*' 추가",
+    '- 배포: GitHub Pages (리포에 index.html 업로드 → Settings → Pages → main/root 저장)',
+    '- 첫 실행: 페이지 접속 → 1) 연결 설정에서 API 키 저장 → 2) 찾을 조건 입력 → 찾기 시작', '',
+    '## 2) 매일 할 일 (5~10분 루틴)',
+    '- 자주 쓰는 설정 불러오기 → 찾기 시작',
+    '- 비슷한 주제 묶음에서 평균 종합점수 높은 1~2개 선택',
+    '- 비슷하게 만들기 도우미에서 묶음 번호 입력 → 생성 (훅 3안 + 샷리스트 + 해시태그)',
+    '- 올리기 좋은 시간대(시간대 지도) 확인 → 업로드/예약',
+    '- 필요 시 CSV 내보내기로 기록/공유', '',
+    '## 3) 화면별 사용법',
+    '- 연결 설정: API 키 저장(로컬 보관)',
+    '- 찾을 조건: 찾을 주제, 경쟁 채널 ID(쉼표로 여러 개), 기간/지역/언어/최대 결과, 자주 쓰는 설정(불러오기/저장/삭제)',
+    '- 요약: 총 수집, 평균 속도/반응, 종합점수 1위 제목',
+    '- 비슷한 주제 묶음: 묶음 N, 평균 종합점수, 핵심 키워드. 최소 종합점수·묶음 개수(k) 조정 후 다시 묶기',
+    '- 올리기 좋은 시간대: 7×24 히트맵 + 추천 Top 시간대 목록',
+    '- 영상 리스트: 열 숨김/정렬 컨트롤(보기 프리셋, 정렬 기준/방향, 개별 열 토글) — 설정은 브라우저에 저장',
+    '- 비슷하게 만들기 도우미: 묶음 번호 → 훅 3안/샷리스트/해시태그 생성',
+    '- CSV 내보내기: 결과를 파일로 저장', '',
+    '## 4) 추천 설정값 & 치트시트',
+    '- 시작값: 기간 7일, 최대 결과 80, 묶음 개수 0(자동)',
+    '- 노이즈 많음: 최소 종합점수 0.1→0.2→0.3',
+    '- 묶음이 너무 큼: k를 8~12로 지정 후 다시 묶기',
+    '- 트렌드 빠름: 기간 3일로 축소', '',
+    '## 5) 문제 해결',
+    "- 403(referrer): 키 제한에 정확한 도메인 'https://USERNAME.github.io/*' 포함 여부 확인",
+    '- 결과 적음: 기간 7→14일, 키워드 2~3개로 확장, 지역/언어 조정',
+    '- 쿼터 부족: 최대 결과 80→40으로 낮춰 나눠 조회',
+    '- 쇼츠 아님 섞임: 길이(60~62초) 확인 후 제외', '',
+    '## 6) 운영 팁',
+    '- 상위 묶음 1~2개만 집중 제작(분산 줄이기)',
+    '- 오프닝 2초/자막 크기/썸네일 텍스트 A/B 변주',
+    '- 시간대 지도 상위 슬롯에 예약 업로드',
+    '- 매주 자주 쓰는 설정에 새 조합 1~2개 추가',
+    ''
+  ].join('\n');
 
-    const blob = new Blob([md], {type:'text/markdown;charset=utf-8;'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Shorts_Radar_사용법.md';
-    document.body.appendChild(a); a.click(); a.remove();
-  }
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Shorts_Radar_사용법.md';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+</script>
+
 
   // Main pipeline
   async function run(){
