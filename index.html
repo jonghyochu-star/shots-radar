@@ -739,13 +739,14 @@ function exportManual(){
   // Preset events
   $('#presetLoad')?.addEventListener('click', ()=>{ const idx=parseInt($('#presetSelect').value||0); const list=getPresets(); const p=list[idx]; if(!p) return; $('#keywords').value=p.keywords||''; $('#channels').value=p.channels||''; });
   $('#presetSave')?.addEventListener('click', ()=>{ const name=prompt('프리셋 이름을 입력하세요'); if(!name) return; const list=getPresets(); list.unshift({name, keywords:$('#keywords').value.trim(), channels:$('#channels').value.trim()}); setPresets(list); initPresetsUI();
-  buildColControls();
+  
   buildColControls(); alert('저장 완료'); });
   $('#presetDel')?.addEventListener('click', ()=>{ const sel=$('#presetSelect'); const idx=parseInt(sel.value||0); const list=getPresets(); if(!list[idx]) return; if(!confirm(`'${list[idx].name}' 프리셋을 삭제할까요?`)) return; list.splice(idx,1); setPresets(list); initPresetsUI(); });
 
   // Restore
   const savedKey = load('yt_api_key',''); if(savedKey) $('#apiKey').value = savedKey;
   initPresetsUI();
+  buildColControls();
 })();
 </script>
 </body>
