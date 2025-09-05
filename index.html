@@ -97,13 +97,13 @@
             <option value="7" selected>최근 7일</option>
             <option value="14">최근 14일</option>
           </select>
-          <select id="region">
+          <select id="region" title="지역 힌트: 선택한 국가 이용자에게 보일 확률을 높이는 랭킹 가중치입니다. 강제 필터가 아니며 채널을 지정하면 영향이 작습니다.">
             <option value="KR" selected>KR</option>
             <option value="US">US</option>
             <option value="JP">JP</option>
             <option value="GB">GB</option>
           </select>
-          <select id="lang">
+          <select id="lang" title="언어 힌트: 선택한 언어(예: ko)와 관련성 높은 결과를 우대하는 랭킹 가중치입니다. 강제 필터가 아닙니다.">
             <option value="ko" selected>ko</option>
             <option value="en">en</option>
             <option value="ja">ja</option>
@@ -111,7 +111,7 @@
           <input id="maxResults" type="number" min="10" max="200" value="80" style="width:120px" />
           <button id="runBtn" class="primary">찾기 시작</button>
         </div>
-        <div class="hint" style="margin-top:8px">* 채널 ID는 유튜브 채널 URL의 <span class="mono">/channel/UC…</span> 부분입니다. 비워두면 주제(키워드)만으로 찾습니다.</div>
+        <div class="hint" style="margin-top:8px">* 채널 ID는 유튜브 채널 URL의 <span class=\"mono\">/channel/UC…</span> 부분입니다. 비워두면 주제(키워드)만으로 찾습니다. · <b>지역/언어</b>는 <b>검색 힌트(랭킹 가중치)</b>로, 결과를 강제로 필터링하지 않으며 채널을 지정하면 영향이 작습니다.</div>
       </div>
     </div>
 
@@ -589,8 +589,8 @@
       ];
       rows.push(r.join(','));
     }
-   const blob = new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
-
+    const blob = new Blob([rows.join('
+')],{type:'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'shorts_radar.csv';
@@ -639,8 +639,8 @@
       '- 시간대 지도 상위 슬롯에 예약 업로드',
       '- 매주 자주 쓰는 설정에 새 조합 1~2개 추가',
       ''
-    ].join('\n');
-
+    ].join('
+');
 
     const blob = new Blob([md], {type:'text/markdown;charset=utf-8;'});
     const a = document.createElement('a');
@@ -745,6 +745,7 @@
   // Preset events
   $('#presetLoad')?.addEventListener('click', ()=>{ const idx=parseInt($('#presetSelect').value||0); const list=getPresets(); const p=list[idx]; if(!p) return; $('#keywords').value=p.keywords||''; $('#channels').value=p.channels||''; });
   $('#presetSave')?.addEventListener('click', ()=>{ const name=prompt('프리셋 이름을 입력하세요'); if(!name) return; const list=getPresets(); list.unshift({name, keywords:$('#keywords').value.trim(), channels:$('#channels').value.trim()}); setPresets(list); initPresetsUI();
+  buildColControls();
   buildColControls(); alert('저장 완료'); });
   $('#presetDel')?.addEventListener('click', ()=>{ const sel=$('#presetSelect'); const idx=parseInt(sel.value||0); const list=getPresets(); if(!list[idx]) return; if(!confirm(`'${list[idx].name}' 프리셋을 삭제할까요?`)) return; list.splice(idx,1); setPresets(list); initPresetsUI(); });
 
