@@ -4,9 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Shorts Radar — 개인용 유튜브 쇼츠 레이더</title>
+  <link rel="icon" href="data:,">
   <style>
     :root { --bg:#0b1116; --card:#101922; --muted:#7a8a9a; --text:#e8f0f7; --accent:#62d26f; --accent2:#6aa7ff; --warn:#ffb84d; }
-    html,body{height:100%;}
+    html,body{height:100%}
     body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,Pretendard,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
     .wrap{max-width:1100px;margin:24px auto;padding:0 16px 56px}
     h1{font-weight:800;letter-spacing:-.5px;font-size:26px;margin:0 0 14px}
@@ -288,8 +289,7 @@
           sums[c][key]=(sums[c][key]||0)+val;
         }
       }
-      for(let c=0;c<c
-k;c++){
+      for(let c=0;c<k;c++){
         const v={}; const cnt=Math.max(1,counts[c]);
         for(const [key,val] of Object.entries(sums[c])) v[key]=val/cnt;
         centroids[c]=v;
@@ -442,7 +442,7 @@ k;c++){
 
   function avgRank(arr){ return arr.reduce((s,x)=>s+(x.metrics?.pick||0),0)/Math.max(1,arr.length); }
 
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',''':'&#39;'}[c])); }
 
   // Presets & Heatmap helpers
   const dayOrder = [1,2,3,4,5,6,0]; // 월~일 순서
@@ -463,7 +463,7 @@ k;c++){
     let max=0; for(let d=0;d<7;d++){ for(let h=0;h<24;h++){ if(grid[d][h]>max) max=grid[d][h]; }}
     const hm = $('#heatmap'); if(!hm) return; let html='';
     // header hours
-    html += `<div class="row"><span class="label"></span>${[...Array(24).keys()].map(h=>\`<span class="small" style="width:18px;text-align:center;color:#8fa4b8">\${h%6===0?h:''}</span>\`).join('')}</div>`;
+    html += `<div class="row"><span class="label"></span>${[...Array(24).keys()].map(h=>`<span class="small" style="width:18px;text-align:center;color:#8fa4b8">${h%6===0?h:''}</span>`).join('')}</div>`;
     for(const d of dayOrder){
       html += `<div class="row"><span class="label">${dayNames[d]}</span>`;
       for(let h=0;h<24;h++){
@@ -612,7 +612,8 @@ k;c++){
       ];
       rows.push(r.join(','));
     }
-    const blob = new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+    const blob = new Blob([rows.join('
+')],{type:'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'shorts_radar.csv';
@@ -661,7 +662,8 @@ k;c++){
       '- 시간대 지도 상위 슬롯에 예약 업로드',
       '- 매주 자주 쓰는 설정에 새 조합 1~2개 추가',
       ''
-    ].join('\n');
+    ].join('
+');
 
     const blob = new Blob([md], {type:'text/markdown;charset=utf-8;'});
     const a = document.createElement('a');
@@ -766,7 +768,7 @@ k;c++){
   // Preset events
   $('#presetLoad')?.addEventListener('click', ()=>{ const idx=parseInt($('#presetSelect').value||0); const list=getPresets(); const p=list[idx]; if(!p) return; $('#keywords').value=p.keywords||''; $('#channels').value=p.channels||''; });
   $('#presetSave')?.addEventListener('click', ()=>{ const name=prompt('프리셋 이름을 입력하세요'); if(!name) return; const list=getPresets(); list.unshift({name, keywords:$('#keywords').value.trim(), channels:$('#channels').value.trim()}); setPresets(list); initPresetsUI(); buildColControls(); alert('저장 완료'); });
-  $('#presetDel')?.addEventListener('click', ()=>{ const sel=$('#presetSelect'); const idx=parseInt(sel.value||0); const list=getPresets(); if(!list[idx]) return; if(!confirm(\`'\${list[idx].name}' 프리셋을 삭제할까요?\`)) return; list.splice(idx,1); setPresets(list); initPresetsUI(); });
+  $('#presetDel')?.addEventListener('click', ()=>{ const sel=$('#presetSelect'); const idx=parseInt(sel.value||0); const list=getPresets(); if(!list[idx]) return; if(!confirm(`'${list[idx].name}' 프리셋을 삭제할까요?`)) return; list.splice(idx,1); setPresets(list); initPresetsUI(); });
 
   // Restore
   const savedKey = load('yt_api_key',''); if(savedKey) $('#apiKey').value = savedKey;
