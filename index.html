@@ -760,5 +760,301 @@
   ensureHeaderClasses(); applyColumnVisibility();
 })();
 </script>
+
+<!-- === Shorts Radar "Stable + S1-table" Merge Patch === -->
+<script>
+(function(){
+  if (window.__SR_S1_PATCH_APPLIED__) return;
+  window.__SR_S1_PATCH_APPLIED__ = true;
+
+  const $  = (s, r=document)=>r.querySelector(s);
+  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+  const save=(k,v)=>localStorage.setItem(k, JSON.stringify(v));
+  const load=(k,d)=>{ try{const v=localStorage.getItem(k); return v?JSON.parse(v):d;}catch(e){return d;} };
+
+  // ---------- Parsers ----------
+  const num = (t)=> Number(String(t||'').replace(/[^\d.-]/g,'')||0);
+  function parseHMS(s){ // "1:23" or "01:02:03"
+    if(!s) return 0; const p=String(s).trim().split(':').map(x=>parseInt(x,10)||0);
+    if(p.length===3) return p[0]*3600+p[1]*60+p[2];
+    if(p.length===2) return p[0]*60+p[1];
+    return parseInt(p[0],10)||0;
+  }
+  function parseDateAny(s){
+    if(!s) return null;
+    // allow data-published="2025-09-06T11:02:41Z" or text "2025. 9. 6." 등
+    const iso = String(s).match(/\d{4}-\d{2}-\d{2}T\d\d:\d\d:\d\d/);
+    if(iso) return new Date(iso[0]);
+    const m = String(s).match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+    if(!m) return null;
+    return new Date(`${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}T12:00:00`);
+  }
+
+  // ---------- Header map ----------
+  function headerMap(){
+    const ths = $$('#table thead th, table thead th'); const map={};
+    ths.forEach((th,i)=>{
+      const t=(th.textContent||'').trim();
+      if(/제목|Title/i.test(t))       map.title    = i;
+      if(/채널|Channel/i.test(t))     map.channel  = i;
+      if(/길이|Length/i.test(t))      map.length   = i;
+      if(/^조회|Views/i.test(t))      map.views    = i;
+      if(/좋아요|Like/i.test(t))      map.likes    = i;
+      if(/댓글|Comment/i.test(t))     map.comments = i;
+      if(/업로드|게시|Published/i.test(t)) map.uploaded = i;
+    });
+    map.count = ths.length;
+    return map;
+  }
+
+  // ---------- Row read ----------
+  function rowRaw(tr, hm){
+    const tds = $$('td', tr);
+    const get = (idx)=> (idx!=null && tds[idx]) ? tds[idx].textContent.trim() : '';
+    const views    = num(get(hm.views));
+    const likes    = num(get(hm.likes));
+    const comments = num(get(hm.comments));
+    const lenSec   = parseHMS(get(hm.length));
+    let dt = null;
+    if(hm.uploaded!=null){
+      const td = tds[hm.uploaded];
+      const attr = td?.getAttribute?.('data-published') || td?.dataset?.published;
+      dt = parseDateAny(attr || td?.textContent);
+    }
+    return {views, likes, comments, lenSec, uploadedAt: dt};
+  }
+
+  // ---------- Metric calc ----------
+  function withMetrics(r, now){
+    const hours = r.uploadedAt ? (now - r.uploadedAt)/36e5 : NaN;
+    const speed = (r.views>0 && isFinite(hours) && hours>0) ? (r.views/hours) : 0;         // 조회/시간
+    const er    = r.views>0 ? ((r.likes + 5*r.comments)/r.views)*100 : 0;                  // 반응률(%)
+    const fresh = isFinite(hours) ? Math.exp(-hours/48) : 0;                               // 신선도(48h 감쇠)
+    return {hours, speed, er, fresh};
+  }
+
+  function gradeAll(list){
+    const arr = list.filter(x=>x.m.speed>0);
+    const avg=(f)=> arr.reduce((s,x)=>s+f(x),0)/Math.max(1,arr.length);
+    const aS=avg(x=>x.m.speed), aE=avg(x=>x.m.er), aF=avg(x=>x.m.fresh);
+
+    list.forEach(x=>{
+      const ns = aS? (x.m.speed/aS):0;
+      const ne = aE? (x.m.er/aE):0;
+      const nf = aF? (x.m.fresh/aF):0;
+      x.m.impact = 0.5*ns + 0.3*ne + 0.2*nf;            // 가중: 속도50/반응30/신선20
+      x.m.speedRatio = aS? (x.m.speed/aS):0;            // 속도 배율
+      x.m.viewRatio  = aS? (x.r.views / (aS*(x.m.hours>0? x.m.hours:1))) : 0; // 조회 배율(조회 ÷ 평균속도*시간)
+      x.m.grade = (x.m.impact>=1.6)? '탁월' : (x.m.impact>=1.2)? '좋음' : (x.m.impact>=0.9)? '보통' : '낮음';
+    });
+  }
+
+  // ---------- Ensure columns ----------
+  function ensureColumns(hm){
+    const headRow = $('#table thead tr, table thead tr'); if(!headRow) return hm;
+    const want = ['조회 배율','속도 배율','반응률(%)','임팩트 등급'];
+    const ths  = $$('#table thead th, table thead th');
+    const names= ths.map(th=> (th.textContent||'').trim());
+    want.forEach(w=>{
+      if(!names.includes(w)){
+        const th=document.createElement('th');
+        th.textContent=w;
+        headRow.appendChild(th);
+      }
+    });
+    return headerMap(); // 갱신
+  }
+
+  // ---------- Render ----------
+  function renderMetrics(){
+    const tbody = $('#tbody'); if(!tbody) return;
+    let hm = headerMap();
+    hm = ensureColumns(hm);
+
+    const now = new Date();
+    const rows = $$('#tbody tr');
+    const data = rows.map(tr=>{
+      const r = rowRaw(tr, hm);
+      const m = withMetrics(r, now);
+      return {tr, r, m};
+    });
+    gradeAll(data);
+
+    // 각 행의 마지막 4칸에 쓰기 (부족하면 채움)
+    data.forEach(x=>{
+      let tds = $$('td', x.tr);
+      while (tds.length < hm.count + 4) { x.tr.appendChild(document.createElement('td')); tds=$$('td',x.tr); }
+      const base = tds.length - 4;
+      tds[base+0].textContent = (x.m.viewRatio  ||0).toFixed(2);
+      tds[base+1].textContent = (x.m.speedRatio ||0).toFixed(2);
+      tds[base+2].textContent = (x.m.er         ||0).toFixed(2);
+      tds[base+3].textContent = x.m.grade || '-';
+      tds[base+0].className = 'c-viewratio';
+      tds[base+1].className = 'c-speedratio';
+      tds[base+2].className = 'c-er';
+      tds[base+3].className = 'c-grade';
+    });
+
+    injectControls(); // 1회 주입
+  }
+
+  // ---------- Controls (preset / sort / filter / CSV) ----------
+  function injectControls(){
+    if($('#sr_ctrlbar')) return;
+    const bar=document.createElement('div');
+    bar.id='sr_ctrlbar';
+    bar.style.cssText='display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0';
+    bar.innerHTML = `
+      <label style="color:#a5b6c6;font-size:12px">보기 프리셋</label>
+      <select id="sr_preset">
+        <option value="all">전체</option>
+        <option value="pack">패키징(임팩트)</option>
+        <option value="speed">속도/반응</option>
+        <option value="simple">간단</option>
+      </select>
+
+      <label style="color:#a5b6c6;font-size:12px">정렬</label>
+      <select id="sr_sortkey">
+        <option value="impact">임팩트</option>
+        <option value="speedratio">속도 배율</option>
+        <option value="er">반응률</option>
+        <option value="views">조회</option>
+      </select>
+      <select id="sr_sortdir"><option value="desc">내림차순</option><option value="asc">오름차순</option></select>
+
+      <label style="color:#a5b6c6;font-size:12px">최소 반응률(%)</label>
+      <input id="sr_min_er" type="number" step="0.1" style="width:90px">
+
+      <button id="sr_apply" class="ghost">적용</button>
+      <button id="sr_csv" class="ghost">CSV</button>
+
+      <span style="color:#7a8a9a;font-size:12px">열:</span>
+      <label style="font-size:12px"><input type="checkbox" class="sr_tgl" data-col="c-viewratio" checked>조회배율</label>
+      <label style="font-size:12px"><input type="checkbox" class="sr_tgl" data-col="c-speedratio" checked>속도배율</label>
+      <label style="font-size:12px"><input type="checkbox" class="sr_tgl" data-col="c-er" checked>반응률</label>
+      <label style="font-size:12px"><input type="checkbox" class="sr_tgl" data-col="c-grade" checked>임팩트</label>
+    `;
+    // 테이블 위에 꽂기
+    const anchor = $('#table') || $('table');
+    anchor?.parentElement?.insertBefore(bar, anchor);
+
+    // 이벤트
+    $('#sr_apply').addEventListener('click', ()=>{ applySortFilter(); saveUI(); });
+    $$('.sr_tgl').forEach(c=> c.addEventListener('change', ()=> toggleCols()));
+    $('#sr_csv').addEventListener('click', exportCSV);
+    $('#sr_preset').addEventListener('change', ()=>{ applyPreset(); saveUI(); });
+
+    // 복원
+    const mem = load('sr_ctrl_mem',{preset:'all',key:'impact',dir:'desc',minER:''});
+    $('#sr_preset').value  = mem.preset;
+    $('#sr_sortkey').value = mem.key;
+    $('#sr_sortdir').value = mem.dir;
+    $('#sr_min_er').value  = mem.minER||'';
+    applyPreset(); toggleCols();
+  }
+
+  function saveUI(){
+    save('sr_ctrl_mem',{
+      preset: $('#sr_preset').value,
+      key:    $('#sr_sortkey').value,
+      dir:    $('#sr_sortdir').value,
+      minER:  $('#sr_min_er').value
+    });
+  }
+
+  function applyPreset(){
+    const p = $('#sr_preset').value;
+    const on =(cls,flag)=> $$('.'+cls).forEach(el=> el.style.display = flag? '':'none');
+    // 기본 모두 보이기
+    on('c-viewratio', true); on('c-speedratio', true); on('c-er', true); on('c-grade', true);
+    if(p==='simple'){ on('c-viewratio', false); on('c-er', false); }
+    if(p==='pack'){   on('c-viewratio', false); }
+    if(p==='speed'){  on('c-grade', false); }
+    // 체크박스 동기화
+    $$('.sr_tgl').forEach(c=>{
+      c.checked = ($('.'+c.dataset.col)?.style.display!=='none');
+    });
+  }
+
+  function toggleCols(){
+    $$('.sr_tgl').forEach(c=>{
+      $$('.'+c.dataset.col).forEach(el=> el.style.display = c.checked? '':'none');
+    });
+  }
+
+  function applySortFilter(){
+    const key=$('#sr_sortkey').value, dir=$('#sr_sortdir').value;
+    const minER=parseFloat($('#sr_min_er').value||'');
+    const tbody=$('#tbody'); if(!tbody) return;
+    const rows = $$('#tbody tr');
+    const hm = headerMap();
+
+    const val=(tr)=>{
+      if(key==='speedratio') return parseFloat($('.c-speedratio', tr)?.textContent||'0');
+      if(key==='er')         return parseFloat($('.c-er', tr)?.textContent||'0');
+      if(key==='impact'){    // 간이 임팩트(보이는 값 기반)
+        const s=parseFloat($('.c-speedratio', tr)?.textContent||'0');
+        const e=parseFloat($('.c-er', tr)?.textContent||'0');
+        return 0.7*s + 0.3*e;
+      }
+      if(key==='views'){
+        const td = $$('td', tr)[hm.views]; return num(td?.textContent||'0');
+      }
+      return 0;
+    };
+    const pass=(tr)=>{
+      const er = parseFloat($('.c-er', tr)?.textContent||'0');
+      return isNaN(minER)? true : (er>=minER);
+    };
+
+    const sorted = rows.map(tr=>({tr, v:val(tr)}))
+                       .sort((a,b)=> dir==='asc'? (a.v-b.v):(b.v-a.v));
+    sorted.forEach(x=>{
+      x.tr.style.display = pass(x.tr)? '':'none';
+      tbody.appendChild(x.tr);
+    });
+  }
+
+  function exportCSV(){
+    const table = $('#table') || $('table'); if(!table) return;
+    const rows = Array.from(table.querySelectorAll('tr'))
+      .filter(tr=> tr.style.display!=='none');
+    const csv = rows.map(tr=>{
+      return Array.from(tr.children).map(td=>{
+        const t = (td.textContent||'').replace(/"/g,'""');
+        return `"${t}"`;
+      }).join(',');
+    }).join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='shorts_s1_merged.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // ---------- Hook render / observe ----------
+  function kick(){ try{ renderMetrics(); }catch(e){ console.warn('[S1 merge patch]', e); } }
+
+  if (typeof window.renderTable === 'function') {
+    const _rt = window.renderTable;
+    window.renderTable = function(...args){
+      const r = _rt.apply(this, args);
+      requestAnimationFrame(kick);
+      return r;
+    };
+  }
+
+  const tb = $('#tbody');
+  if (tb) {
+    const mo = new MutationObserver(()=> requestAnimationFrame(kick));
+    mo.observe(tb, {childList:true});
+  }
+  // 첫 진입
+  requestAnimationFrame(kick);
+})();
+</script>
+<!-- === /Shorts Radar "Stable + S1-table" Merge Patch === -->
+
+  
 </body>
 </html>
