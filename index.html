@@ -218,10 +218,15 @@
   const toISO = d => new Date(d).toISOString();
 
   function escapeHtml(s){
-    return String(s || "").replace(/[&<>\"']/g, function(c){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
-    });
-  }
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<' : '&lt;',
+    '>' : '&gt;',
+    '"' : '&quot;',
+    "'" : '&#39;'   // 작은따옴표는 이렇게!
+  }[c]));
+}
+
 
   function tokenize(text){
     const t = String(text || "")
