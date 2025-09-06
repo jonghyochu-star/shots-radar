@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Shorts Radar — S1 테이블·Export (통합판)</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#0b1116;--card:#101922;--muted:#7a8a9a;--text:#e8f0f7;--accent:#62d26f;--accent2:#6aa7ff;--warn:#ffb84d}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,Pretendard,Helvetica,Arial,sans-serif}
+.wrap{max-width:1200px;margin:24px auto;padding:0 16px 80px}
+h1{margin:0 0 14px;font-size:26px;font-weight:800;letter-spacing:-.3px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.card{background:linear-gradient(180deg,#0f1821,#0a1118);border:1px solid #1e2a36;border-radius:14px;padding:12px 12px 14px;margin:10px 0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input,select,button{border-radius:10px;border:1px solid #2a3a4a;background:#0c141c;color:var(--text);padding:9px 10px;font-size:14px}
+button{cursor:pointer}
+button.primary{background:linear-gradient(180deg,#2a6fff,#2461e6);border:0}
+button.ghost{background:#132233}
+.tag{display:inline-block;background:#0e1620;border:1px solid #213142;border-radius:999px;padding:4px 8px;margin:2px;color:#a8b9cc;font-size:12px}
+.pill{background:#0f1620;border:1px solid #1f2a36;border-radius:999px;padding:8px 12px;font-size:12px;color:#b9c7d6}
+.small{font-size:12px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:9px;border-bottom:1px solid #1e2a36;text-align:left;font-size:13px}
+.table th{color:#a5b6c6;font-weight:600}
+.thumb{width:120px;height:68px;object-fit:cover;border-radius:10px;border:1px solid #233142;background:#0a1118}
+.badge{padding:4px 8px;border-radius:999px;background:#0e1b29;border:1px solid #23374a;font-size:11px}
+.good{color:#c7ffd3}
+.warn{color:var(--warn)}
+.qbar{position:relative;height:8px;width:160px;border:1px solid #213142;border-radius:999px;background:#0e1620}
+.qbar .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2a6fff,#62d26f)}
+.star{cursor:pointer;font-size:18px;user-select:none}
+.star.on{color:#ffd166}
+.footer{position:fixed;left:0;right:0;bottom:0;background:rgba(9,14,20,.9);border-top:1px solid #1e2a36;padding:8px 16px;display:flex;gap:8px;align-items:center;justify-content:center;font-size:12px;color:#b5c4d8}
+.controls{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:930px){.controls{grid-template-columns:1.2fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Shorts Radar <span class="tag">S1 통합 테이블</span></h1>
+  <div class="sub">업로드일·조회/속도 배율·반응률·임팩트 등급 포함, 프리셋/열토글/정렬·필터/CSV·JSON 내보내기까지 한 화면에서.</div>
+
+  <div class="controls">
+    <div class="card">
+      <b>1) 연결 설정</b>
+      <div class="row" style="margin-top:6px">
+        <input id="apiKey" placeholder="YouTube Data API 키" style="min-width:280px" autocomplete="off">
+        <button id="saveKey" class="primary">키 저장</button>
+        <span class="small" style="color:var(--muted)">* GCP 콘솔에서 referrer(본인 GitHub Pages 도메인) 제한을 설정하세요.</span>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label class="small">일일 한도</label><input id="quotaLimit" type="number" value="10000" style="width:120px" autocomplete="off">
+        <button id="quotaApply" class="ghost">적용</button>
+        <span id="quotaStat" class="pill">API 사용량(오늘) 0 / 10000 (0%)</span>
+        <div id="quotaBar" class="qbar"><div class="fill" style="width:0%"></div></div>
+        <button id="quotaReset" class="ghost">사용량 초기화</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <b>2) 찾을 조건</b>
+      <div class="row" style="margin-top:6px">
+        <input id="keywords" placeholder="찾을 주제(예: 정치, 고양이 모래매트)" style="flex:1" autocomplete="off">
+        <input id="channels" placeholder="경쟁 채널 ID들(쉼표로 구분 · 선택)" style="flex:1" autocomplete="off">
+      </div>
+      <div class="row" style="margin-top:8px">
+        <select id="days"><option value="3">최근 3일</option><option value="7" selected>최근 7일</option><option value="14">최근 14일</option><option value="30">최근 30일</option></select>
+        <select id="region"><option value="KR" selected>KR</option><option value="US">US</option><option value="JP">JP</option><option value="GB">GB</option></select>
+        <select id="lang"><option value="ko" selected>ko</option><option value="en">en</option><option value="ja">ja</option></select>
+        <input id="maxResults" type="number" value="80" min="10" max="200" style="width:120px">
+        <button id="runBtn" class="primary">찾기 시작</button>
+        <button id="exportCsv" class="ghost">CSV</button>
+        <button id="exportJson" class="ghost">JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="row">
+        <b>보기/필터</b>
+        <select id="viewPreset">
+          <option value="all">전체(기본)</option>
+          <option value="speedeng">속도·반응만</option>
+          <option value="metrics">지표만</option>
+          <option value="packaging">패키징(썸네일/Δ/임팩트)</option>
+          <option value="simple">간단</option>
+        </select>
+        <label class="small">최소 반응률(‰)</label><input id="minER" type="number" value="0" min="0" style="width:90px" title="좋아요+댓글 / 조회 × 1000">
+        <label class="small">최소 조회 배율</label><input id="minViewMult" type="number" value="0" min="0" step="0.1" style="width:90px">
+        <label class="small">최소 임팩트 등급</label>
+        <select id="minImpact"><option value="E">무관</option><option value="D">D</option><option value="C">C</option><option value="B">B</option><option value="A">A</option><option value="S">S</option></select>
+        <button id="applyFilter" class="ghost">필터 적용</button>
+        <button id="resetFilter" class="ghost">필터 초기화</button>
+      </div>
+      <div class="row">
+        <label class="small">정렬</label>
+        <select id="sortKey"></select>
+        <select id="sortDir"><option value="desc">내림차순</option><option value="asc">오름차순</option></select>
+      </div>
+    </div>
+    <div id="colToggles" class="row" style="gap:6px;margin-top:8px"></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="gap:10px;flex-wrap:wrap">
+      <span id="summary" class="pill">총 0건</span>
+      <span class="pill">힌트: ☆로 워치리스트에 저장하고 이후 재측정 버튼으로 24h 증가량을 확인하세요.</span>
+    </div>
+    <div style="overflow:auto;margin-top:6px">
+      <table id="table" class="table">
+        <thead>
+          <tr>
+            <th>☆</th>
+            <th>썸네일</th>
+            <th>제목</th>
+            <th>채널</th>
+            <th>업로드일</th>
+            <th>길이</th>
+            <th>조회</th>
+            <th>좋아요</th>
+            <th>댓글</th>
+            <th>속도</th>
+            <th>반응률(‰)</th>
+            <th>신선도</th>
+            <th>조회 배율</th>
+            <th>속도 배율</th>
+            <th>임팩트</th>
+            <th>Δ24h</th>
+            <th>종합</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Tip: 속도·반응·신선도가 높은 영상을 골라 오늘 바로 따라 만들 주제를 고르세요.</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const fmt=n=> (n==null?'-':Number(n).toLocaleString('en-US'));
+  const toISO=d=> new Date(d).toISOString();
+  const isoToSec = dur => { const m=(dur||'').match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/); return m? (Number(m[1]||0)*3600+Number(m[2]||0)*60+Number(m[3]||0)) : 0; };
+  const secToHMS = s => { const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=Math.floor(s%60); return (h? h+':':'')+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); };
+  const hoursSince = iso => (Date.now() - new Date(iso).getTime())/36e5;
+  const expDecay = (h,tau=48)=> Math.exp(-h/tau);
+  const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const load=(k,d)=>{ try{ const v=localStorage.getItem(k); return v? JSON.parse(v):d;}catch(e){return d}};
+
+  // Quota
+  const QUOTA='sr_quota';
+  const today = ()=> new Date().toISOString().slice(0,10);
+  function getQuota(){ let q=load(QUOTA,null); if(!q) q={date:today(), used:0, limit:10000}; if(q.date!==today()){ q.date=today(); q.used=0; } return q; }
+  function saveQuota(q){ save(QUOTA,q); renderQuota(); }
+  function incQuota(u){ const q=getQuota(); q.used += Math.max(0,u|0); saveQuota(q); }
+  function setLimit(n){ const q=getQuota(); q.limit=Math.max(1000,Number(n)||10000); saveQuota(q); }
+  function resetQuota(){ const q=getQuota(); q.used=0; q.date=today(); saveQuota(q); }
+  function renderQuota(){ const q=getQuota(); const pct=Math.min(100,Math.round((q.used/(q.limit||1))*100)); $('#quotaStat').innerHTML=`API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%)`; $('#quotaLimit').value=q.limit; const bar=$('#quotaBar .fill'); if(bar) bar.style.width=pct+'%'; }
+
+  // Key
+  const KEY='yt_api_key';
+  $('#saveKey').addEventListener('click', ()=>{ save(KEY,$('#apiKey').value.trim()); alert('저장됨'); });
+  const savedKey=load(KEY,''); if(savedKey) $('#apiKey').value=savedKey;
+
+  // Sort and columns
+  const sortMap={
+    'uploadedAt':'업로드일',
+    'views':'조회','likes':'좋아요','comments':'댓글',
+    'vel':'속도','er':'반응률(‰)','fresh':'신선도',
+    'viewMult':'조회 배율','velMult':'속도 배율',
+    'impactScore':'임팩트','delta':'Δ24h',
+    'pick':'종합','length':'길이'
+  };
+  (function fillSort(){ const sk=$('#sortKey'); Object.entries(sortMap).forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v;o.textContent=t; sk.appendChild(o);}); sk.value='pick'; })();
+
+  const colKeys=['bookmark','thumb','title','channel','uploaded','length','views','likes','comments','vel','er','fresh','viewMult','velMult','impact','delta','pick'];
+  function defaultColVis(){ const m={}; colKeys.forEach(k=>m[k]=true); return m; }
+  let COLS= load('sr_cols', defaultColVis());
+  function buildColToggles(){
+    const box=$('#colToggles'); box.innerHTML='';
+    colKeys.forEach(k=>{ const id='c_'+k; const lbl=document.createElement('label'); lbl.className='small'; lbl.style.display='flex'; lbl.style.alignItems='center'; lbl.style.gap='6px'; lbl.innerHTML=`<input type="checkbox" id="${id}" ${COLS[k]?'checked':''}/> ${k}`; box.appendChild(lbl);
+      document.getElementById(id).addEventListener('change',()=>{ COLS[k]=document.getElementById(id).checked; save('sr_cols',COLS); applyColumnVisibility(); });
+    });
+  }
+  function applyColumnVisibility(){
+    const idxMap={'bookmark':0,'thumb':1,'title':2,'channel':3,'uploaded':4,'length':5,'views':6,'likes':7,'comments':8,'vel':9,'er':10,'fresh':11,'viewMult':12,'velMult':13,'impact':14,'delta':15,'pick':16};
+    Object.entries(COLS).forEach(([k,v])=>{
+      const i=idxMap[k]; document.querySelectorAll('#table tr').forEach(tr=>{ const c=tr.children[i]; if(c) c.style.display=v?'':'none'; });
+    });
+  }
+  buildColToggles();
+
+  // Presets
+  $('#viewPreset').addEventListener('change',()=>{
+    const p=$('#viewPreset').value; const vis=defaultColVis(); Object.keys(vis).forEach(k=>vis[k]=true);
+    if(p==='speedeng'){ Object.keys(vis).forEach(k=>vis[k]=false); ['thumb','title','vel','er','pick'].forEach(k=>vis[k]=true); }
+    if(p==='metrics'){ Object.keys(vis).forEach(k=>vis[k]=false); ['vel','er','fresh','viewMult','velMult','impact','pick'].forEach(k=>vis[k]=true); }
+    if(p==='packaging'){ Object.keys(vis).forEach(k=>vis[k]=false); ['thumb','title','impact','delta','pick'].forEach(k=>vis[k]=true); }
+    if(p==='simple'){ Object.keys(vis).forEach(k=>vis[k]=false); ['thumb','title','pick'].forEach(k=>vis[k]=true); }
+    COLS=vis; save('sr_cols',COLS); buildColToggles(); renderTable(STATE.videos);
+  });
+
+  // Data
+  let STATE={videos:[], watch:new Set(load('sr_watch',[])), snapshots:load('sr_snap',{})};
+  function saveWatch(){ save('sr_watch',[...STATE.watch]); save('sr_snap',STATE.snapshots); }
+  function toggleWatch(id){ if(STATE.watch.has(id)) STATE.watch.delete(id); else STATE.watch.add(id); saveWatch(); renderTable(STATE.videos); }
+  function pushSnapshot(id,v){ const s=STATE.snapshots[id]||(STATE.snapshots[id]=[]); s.push({t:toISO(new Date()), views:Number(v.statistics.viewCount||0)}); STATE.snapshots[id]=s.slice(-50); saveWatch(); }
+  function delta24h(id){ const s=STATE.snapshots[id]||[]; if(s.length<2) return 0; const from=Date.now()-24*3600*1000; const r=s.filter(x=> new Date(x.t).getTime()>=from); if(r.length<2) return 0; return (r[r.length-1].views - r[0].views) }
+  function impactGrade(score){ if(score>=85) return 'S'; if(score>=70) return 'A'; if(score>=55) return 'B'; if(score>=40) return 'C'; if(score>=25) return 'D'; return 'E'; }
+
+  // Filters
+  function applyFilter(){ const er=Number($('#minER').value||0); const vm=Number($('#minViewMult').value||0); const minG=$('#minImpact').value;
+    const levels={'S':5,'A':4,'B':3,'C':2,'D':1,'E':0}; const minLv=levels[minG]??0;
+    const filtered=STATE.videos.filter(v=> (v.metrics.er*1000)>=er && v.metrics.viewMult>=vm && levels[v.metrics.impactGrade]>=minLv );
+    renderTable(filtered);
+  }
+  function resetFilter(){ $('#minER').value=0; $('#minViewMult').value=0; $('#minImpact').value='E'; renderTable(STATE.videos); }
+  $('#applyFilter').addEventListener('click',applyFilter);
+  $('#resetFilter').addEventListener('click',resetFilter);
+
+  // API
+  async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, key, pageToken}){
+    const params = new URLSearchParams({ part:'snippet', q, maxResults:String(Math.min(50,maxResults||50)), type:'video', order:'date', publishedAfter, regionCode, key, relevanceLanguage: $('#lang').value });
+    if(channelId) params.set('channelId',channelId);
+    if(pageToken) params.set('pageToken',pageToken);
+    const url='https://www.googleapis.com/youtube/v3/search?'+params.toString();
+    const res=await fetch(url); if(!res.ok) throw new Error('search '+res.status); incQuota(100); return res.json();
+  }
+  async function ytVideos(ids,key){
+    const params = new URLSearchParams({ part:'snippet,contentDetails,statistics', id:ids.join(','), key });
+    const url='https://www.googleapis.com/youtube/v3/videos?'+params.toString();
+    const res=await fetch(url); if(!res.ok) throw new Error('videos '+res.status); incQuota(1); return res.json();
+  }
+
+  // Metrics
+  function calcMetrics(v, channelMed){
+    const hours=hoursSince(v.snippet.publishedAt);
+    const views=Number(v.statistics.viewCount||0);
+    const likes=Number(v.statistics.likeCount||0);
+    const comments=Number(v.statistics.commentCount||0);
+    const vel= views/Math.max(1,hours);
+    const er = (likes+comments)/Math.max(1,views); // ratio
+    const fresh = expDecay(hours,48);
+    const viewMult = (views/Math.max(1,channelMed.views||1));
+    const velMult = (vel/Math.max(1,channelMed.vel||1));
+    const pick = Math.pow(vel,0.55) * Math.pow(Math.max(er,0),0.35) * Math.pow(fresh,0.10);
+    const impactScore = Math.max(0, Math.min(100, (viewMult*25 + velMult*25 + (er*1000)*0.6 + fresh*20)));
+    return {hours,views,likes,comments,vel,er,fresh,viewMult,velMult,pick, impactScore, impactGrade: impactGrade(impactScore)};
+  }
+  function byChannelMedians(list){
+    const by={}; list.forEach(v=>{ const c=v.snippet.channelId; (by[c]=by[c]||{views:[],vel:[]}).views.push(Number(v.statistics.viewCount||0)); (by[c].vel).push(Number(v.statistics.viewCount||0)/Math.max(1,hoursSince(v.snippet.publishedAt))); });
+    const med=m=>{ const a=[...m].sort((x,y)=>x-y); if(a.length===0) return 1; const h=a.length>>1; return a.length%2?a[h]:(a[h-1]+a[h])/2; };
+    const out={}; Object.entries(by).forEach(([cid,o])=> out[cid]={views:med(o.views), vel:med(o.vel)} ); return out;
+  }
+
+  function setSummary(videos){
+    const n=videos.length, shorts=n;
+    const avg = (arr,fn)=> (arr.reduce((s,x)=>s+fn(x),0)/Math.max(1,arr.length));
+    $('#summary').innerHTML = `총 <b>${n}</b> · 평균 속도 <b>${avg(videos,x=>x.metrics.vel).toFixed(1)}</b> · 평균 반응률 <b>${(avg(videos,x=>x.metrics.er)*1000).toFixed(1)}‰</b>`;
+  }
+
+  function renderTable(list){
+    const tb=$('#tbody'); tb.innerHTML='';
+    const key=$('#sortKey').value; const asc=$('#sortDir').value==='asc';
+    const get = v => {
+      switch(key){
+        case 'uploadedAt': return new Date(v.snippet.publishedAt).getTime();
+        case 'views': return v.metrics.views;
+        case 'likes': return v.metrics.likes;
+        case 'comments': return v.metrics.comments;
+        case 'vel': return v.metrics.vel;
+        case 'er': return v.metrics.er;
+        case 'fresh': return v.metrics.fresh;
+        case 'viewMult': return v.metrics.viewMult;
+        case 'velMult': return v.metrics.velMult;
+        case 'impactScore': return v.metrics.impactScore;
+        case 'delta': return v.delta24h||0;
+        case 'pick': default: return v.metrics.pick;
+      }
+    };
+    list=[...list].sort((a,b)=> asc? (get(a)-get(b)) : (get(b)-get(a)));
+
+    list.forEach(v=>{
+      const sec=isoToSec(v.contentDetails.duration);
+      const d24 = delta24h(v.id);
+      v.delta24h=d24;
+      const tr=document.createElement('tr');
+      const star = STATE.watch.has(v.id) ? '★' : '☆';
+      tr.innerHTML = `
+        <td><span class="star ${STATE.watch.has(v.id)?'on':''}" data-id="${v.id}">${star}</span></td>
+        <td><a href="https://www.youtube.com/watch?v=${v.id}" target="_blank"><img class="thumb" src="${v.snippet.thumbnails?.medium?.url||''}"></a></td>
+        <td>${v.snippet.title?.replace(/</g,'&lt;')}</td>
+        <td class="small">${v.snippet.channelTitle?.replace(/</g,'&lt;')}</td>
+        <td class="small">${new Date(v.snippet.publishedAt).toLocaleString()}</td>
+        <td>${secToHMS(sec)}</td>
+        <td>${fmt(v.metrics.views)}</td>
+        <td>${fmt(v.metrics.likes)}</td>
+        <td>${fmt(v.metrics.comments)}</td>
+        <td>${v.metrics.vel.toFixed(1)}</td>
+        <td>${(v.metrics.er*1000).toFixed(1)}</td>
+        <td>${v.metrics.fresh.toFixed(2)}</td>
+        <td>${v.metrics.viewMult.toFixed(2)}</td>
+        <td>${v.metrics.velMult.toFixed(2)}</td>
+        <td><span class="badge">${v.metrics.impactGrade}</span> <span class="small">${v.metrics.impactScore.toFixed(0)}</span></td>
+        <td class="${d24>0?'good':''}">+${fmt(d24)}</td>
+        <td><b class="good">${v.metrics.pick.toFixed(2)}</b></td>
+      `;
+      tb.appendChild(tr);
+    });
+    tb.querySelectorAll('.star').forEach(s=> s.addEventListener('click',(e)=>{ const id=e.target.getAttribute('data-id'); toggleWatch(id); }));
+    setSummary(list);
+    applyColumnVisibility();
+  }
+
+  async function run(){
+    try{
+      const key=$('#apiKey').value.trim(); if(!key) return alert('API 키가 필요합니다.');
+      const q=$('#keywords').value.trim();
+      const chs=$('#channels').value.trim().split(',').map(x=>x.trim()).filter(Boolean);
+      const days=Number($('#days').value||7), region=$('#region').value||'KR', maxR=Number($('#maxResults').value||80);
+      const publishedAfter = new Date(Date.now()-days*24*3600*1000).toISOString();
+
+      const items=[];
+      async function collectBy(q,channelId){
+        let fetched=0, token=null;
+        do{
+          const data=await ytSearch({q,channelId,publishedAfter,regionCode:region,maxResults:Math.min(50,maxR-fetched),key,pageToken:token});
+          const vids=(data.items||[]).filter(it=>it.id?.videoId);
+          items.push(...vids.map(it=>({id:it.id.videoId,snippet:it.snippet})));
+          fetched+=vids.length; token = (data.nextPageToken && fetched<maxR)? data.nextPageToken : null;
+        }while(token);
+      }
+      if(chs.length){ for(const c of chs) await collectBy(q||'',c); } else await collectBy(q||'',null);
+
+      const ids=[...new Set(items.map(x=>x.id))];
+      const videos=[]; for(let i=0;i<ids.length;i+=50){ const batch=ids.slice(i,i+50); const data=await ytVideos(batch,key); (data.items||[]).forEach(v=>videos.push(v)); }
+
+      // medians by channel
+      const meds=byChannelMedians(videos);
+      videos.forEach(v=>{ const m=meds[v.snippet.channelId]||{views:1,vel:1}; v.metrics=calcMetrics(v,m); });
+
+      STATE.videos=videos;
+      renderTable(STATE.videos);
+    }catch(e){ console.error(e); alert('오류: '+e.message); }
+  }
+
+  // Export
+  function exportCsv(){
+    const cols=['id','title','channel','uploadedAt','durationSec','views','likes','comments','vel','er_per_mille','fresh','viewMult','velMult','impactGrade','impactScore','delta24h','pick'];
+    const rows=[cols.join(',')];
+    STATE.videos.forEach(v=>{
+      const sec=isoToSec(v.contentDetails.duration);
+      const r=[
+        v.id,
+        '"'+(v.snippet.title||'').replace(/"/g,'""')+'"',
+        '"'+(v.snippet.channelTitle||'').replace(/"/g,'""')+'"',
+        v.snippet.publishedAt,
+        sec,
+        v.metrics.views||0,
+        v.metrics.likes||0,
+        v.metrics.comments||0,
+        v.metrics.vel.toFixed(3),
+        (v.metrics.er*1000).toFixed(3),
+        v.metrics.fresh.toFixed(5),
+        v.metrics.viewMult.toFixed(5),
+        v.metrics.velMult.toFixed(5),
+        v.metrics.impactGrade,
+        v.metrics.impactScore.toFixed(0),
+        v.delta24h||0,
+        v.metrics.pick.toFixed(5)
+      ];
+      rows.push(r.join(','));
+    });
+    const blob=new Blob([rows.join('\\n')],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='shorts_radar_s1.csv'; a.click();
+  }
+  function exportJson(){
+    const out=STATE.videos.map(v=>({id:v.id,title:v.snippet.title,channel:v.snippet.channelTitle,uploadedAt:v.snippet.publishedAt,
+      duration: v.contentDetails.duration, stats:v.statistics, metrics:v.metrics, delta24h:v.delta24h||0}));
+    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='shorts_radar_s1.json'; a.click();
+  }
+  $('#exportCsv').addEventListener('click',exportCsv);
+  $('#exportJson').addEventListener('click',exportJson);
+
+  // Hooks
+  $('#runBtn').addEventListener('click', run);
+  $('#quotaApply').addEventListener('click', ()=> setLimit($('#quotaLimit').value));
+  $('#quotaReset').addEventListener('click', resetQuota);
+  $('#sortKey').addEventListener('change',()=>renderTable(STATE.videos));
+  $('#sortDir').addEventListener('change',()=>renderTable(STATE.videos));
+
+  renderQuota();
+  applyColumnVisibility();
+})();
+</script>
+</body>
+</html>
