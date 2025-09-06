@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Shorts Radar Pro — 패키징·모멘텀·운영 신호까지</title>
   <link rel="icon" href="data:,">
+  <script>
+    // ---- Lazy-load Tesseract (kor+eng) ----
+    window.loadTesseract = async function(){
+      if (window.Tesseract) return;
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
+      document.head.appendChild(s);
+      await new Promise(function(res){ s.onload = res; s.onerror = res; });
+    };
+  </script>
   <style>
     :root { --bg:#0b1116; --card:#101922; --muted:#7a8a9a; --text:#e8f0f7; --accent:#62d26f; --accent2:#6aa7ff; --warn:#ffb84d; }
     html,body{height:100%}
@@ -43,16 +53,18 @@
     .hero{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media (max-width:1000px){.grid.cols-3{grid-template-columns:1fr}.grid.cols-2{grid-template-columns:1fr}.thumb{width:96px;height:54px}}
+
+    /* Heatmap */
     .hm{font-size:11px}
     .hm .row{display:flex;align-items:center;gap:4px;margin:2px 0}
     .hm .label{width:18px;color:#8fa4b8;text-align:right;margin-right:6px}
     .hm .cell{width:18px;height:18px;border-radius:4px;border:1px solid #213142;background:#0e1620}
     .hm .legend{display:flex;align-items:center;gap:6px;margin-top:6px}
     .hm .legend .box{width:18px;height:18px;border-radius:4px;border:1px solid #213142}
+    /* Quota bar */
     .qbar{position:relative;height:8px;width:160px;border:1px solid #213142;border-radius:999px;background:#0e1620}
     .qbar .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#2a6fff,#62d26f)}
-    .star{cursor:pointer;font-size:18px;user-select:none}
-    .star.on{color:#ffd166}
+    /* Channel board */
     .channel-card{display:flex;justify-content:space-between;align-items:center;border:1px solid #223243;border-radius:12px;padding:10px 12px;background:#0e1620}
   </style>
 </head>
@@ -61,7 +73,7 @@
     <div class="hero">
       <div>
         <h1>Shorts Radar <span class="muted">Pro</span> <span class="muted">— 패키징·모멘텀·운영 신호까지</span></h1>
-        <div class="sub">썸네일OCR/제목패턴/워치리스트 스냅샷/채널 운영카드가 추가되었습니다. (kor+eng OCR 포함)</div>
+        <div class="sub">썸네일OCR/제목패턴/워치리스트 스냅샷/채널 운영카드가 포함된 kor+eng OCR 포함.</div>
       </div>
       <div class="row">
         <button id="exportCsv" class="ghost">CSV 내보내기</button>
@@ -72,13 +84,14 @@
       </div>
     </div>
 
+    <!-- 1. 연결 설정 -->
     <div class="grid cols-2">
       <div class="card">
         <h3 style="margin:0 0 8px">1) 연결 설정</h3>
         <div class="row" style="gap:8px">
           <input id="apiKey" placeholder="YouTube Data API 키 붙여넣기" style="min-width:300px" aria-label="YouTube API Key" autocomplete="off"/>
           <button id="saveKey" class="primary">키 저장</button>
-          <span class="hint">* GCP 콘솔에서 HTTP referrer(본인 GitHub Pages 도메인) 제한을 꼭 설정.</span>
+          <span class="hint">* GCP 콘솔에서 HTTP referrer(본인 GitHub Pages 도메인) 제한을 꼭 설정하세요.</span>
         </div>
         <div class="row" style="gap:8px;margin-top:10px">
           <label>일일 한도(유닛)</label>
@@ -90,6 +103,7 @@
         </div>
       </div>
 
+      <!-- 2. 찾을 조건 -->
       <div class="card">
         <h3 style="margin:0 0 8px">2) 찾을 조건</h3>
         <div class="row" style="gap:8px">
@@ -126,11 +140,13 @@
       </div>
     </div>
 
+    <!-- KPI -->
     <div class="card" style="margin-top:12px">
       <h3 style="margin:0 0 8px">요약</h3>
       <div id="summary" class="kpi"></div>
     </div>
 
+    <!-- 클러스터 보드 -->
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">비슷한 주제 묶음</h3>
@@ -145,6 +161,7 @@
       <div id="clusters" class="grid cols-2" style="margin-top:8px"></div>
     </div>
 
+    <!-- 올리기 좋은 시간대 -->
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">올리기 좋은 시간대 (시간대 지도)</h3>
@@ -160,6 +177,7 @@
       </div>
     </div>
 
+    <!-- 채널 운영 카드 -->
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">경쟁 채널 운영 카드</h3>
@@ -168,6 +186,7 @@
       <div id="chanBoard" class="grid cols-2" style="margin-top:8px"></div>
     </div>
 
+    <!-- 영상 테이블 -->
     <div class="card" style="margin-top:12px">
       <h3 style="margin:0 0 8px">영상 리스트</h3>
       <div id="colControls" class="row" style="gap:8px; margin:6px 0 8px; align-items:center; flex-wrap:wrap"></div>
@@ -196,6 +215,7 @@
       </table>
     </div>
 
+    <!-- 비슷하게 만들기 도우미 -->
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">비슷하게 만들기 도우미</h3>
@@ -211,568 +231,60 @@
 
 <script>
 (function(){
-  const $ = sel => document.querySelector(sel);
-  const now = () => new Date();
-  const hoursSince = iso => (now() - new Date(iso)) / 36e5;
-  const fmt = n => n ? Number(n).toLocaleString("en-US") : "0";
-  const toISO = d => new Date(d).toISOString();
+  // ---------- 작은 유틸 ----------
+  function $(sel){ return document.querySelector(sel); }
+  function now(){ return new Date(); }
+  function hoursSince(iso){ return (now() - new Date(iso)) / 36e5; }
+  function fmt(n){ return (n!=null && n!=undefined) ? Number(n).toLocaleString('en-US') : '-'; }
+  function toISO(d){ return new Date(d).toISOString(); }
+  function escapeHtml(s){ 
+    s = s || '';
+    return s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+  }
+  // 안전 접근
+  function getv(obj, path, def){
+    var parts = path.split('.');
+    var o = obj;
+    for(var i=0;i<parts.length;i++){
+      if(o && (parts[i] in o)) o = o[parts[i]];
+      else { o = undefined; break; }
+    }
+    return (o==null ? def : o);
+  }
 
-  function escapeHtml(s){
-  return (s || '').replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<' : '&lt;',
-    '>' : '&gt;',
-    '"' : '&quot;',
-    "'" : '&#39;'   // 작은따옴표는 이렇게!
-  }[c]));
-}
-
-
+  // ---------- 텍스트/랭킹 ----------
+  var stopwords = new Set("이 그 저 데 는 은 는 을 를 와 과 도 의 에 로 으로 한 하는 했다 하기 하며 또는 그리고 그러나 그래서 부터 까지 보다 보다도 및 등 더 것 같은 이런 저런 뭐 왜 또 좀 아주 경우 대한 위한 누구 무엇 어디 어떻게 모두 너무 정말 지금 매우 그냥 서로 또한 약간 만큼 만큼의 라는 라고 으로서 으로써 때문 때문인 듯 함께 대해 다른 했다가 하다가 된다 했다면 까지도 뿐만 아니라 including with the a an to of for in on at as is are be this that those these from by and or but so very much more less only just than then when where who what how why while into onto about over under again still really".split(/\s+/));
   function tokenize(text){
-    const t = String(text || "")
-      .toLowerCase()
-      .replace(/[\\p{P}\\p{S}]/gu, " ")
-      .split(/\\s+/)
-      .filter(function(w){ return w && w.length > 1; });
+    text = (text||'').toLowerCase().replace(/[\p{P}\p{S}]/gu,' ');
+    var t = text.split(/\s+/).filter(function(w){ return w && !stopwords.has(w) && w.length>1; });
     return t;
   }
   function uniq(arr){ return Array.from(new Set(arr)); }
   function cosine(a,b){
-    var dot=0,na=0,nb=0, k, keys=new Set(Object.keys(a).concat(Object.keys(b)));
-    keys.forEach(function(k){ var va=a[k]||0, vb=b[k]||0; dot+=va*vb; na+=va*va; nb+=vb*vb; });
+    var dot=0,na=0,nb=0;
+    var keys = new Set(Object.keys(a).concat(Object.keys(b)));
+    keys.forEach(function(k){ var va=a[k]||0,vb=b[k]||0; dot+=va*vb; na+=va*va; nb+=vb*vb; });
     return dot/(Math.sqrt(na)*Math.sqrt(nb)||1);
   }
-  function tf(tokens){ var m={}; tokens.forEach(function(w){ m[w]=(m[w]||0)+1; }); var n=tokens.length||1; Object.keys(m).forEach(function(k){ m[k]/=n; }); return m; }
-  function idf(docs){ var df={}, N=docs.length||1; docs.forEach(function(doc){ Object.keys(doc).forEach(function(k){ df[k]=(df[k]||0)+1; }); }); var m={}; Object.keys(df).forEach(function(k){ m[k]=Math.log(1+N/df[k])+1; }); return m; }
-  function tfidf(tfMap,idfMap){ var v={}, k; for(k in tfMap){ v[k]=tfMap[k]*(idfMap[k]||1); } return v; }
-  function topKeywords(vec, n){ return Object.keys(vec).sort(function(a,b){ return (vec[b]-vec[a]); }).slice(0,n||6); }
-  function expDecay(hours){ return Math.exp(-hours/48); }
-  function hoursToHMS(sec){ var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=Math.floor(sec%60); return (h? h+":" : "")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"); }
-  function isoToSeconds(dur){ var m=(dur||"").match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/); return m? (Number(m[1]||0)*3600 + Number(m[2]||0)*60 + Number(m[3]||0)) : 0; }
+  function tf(tokens){ var m={}; tokens.forEach(function(w){ m[w]=(m[w]||0)+1; }); var n=tokens.length||1; Object.keys(m).forEach(function(k){ m[k]/=n;}); return m; }
+  function idf(docs){ var df={},N=docs.length||1; docs.forEach(function(doc){ Object.keys(doc).forEach(function(k){ df[k]=(df[k]||0)+1; });}); var m={}; Object.keys(df).forEach(function(k){ m[k]=Math.log(1+N/df[k])+1;}); return m; }
+  function tfidf(tfMap,idfMap){ var v={}; Object.keys(tfMap).forEach(function(k){ v[k]=tfMap[k]*(idfMap[k]||1);}); return v; }
+  function topKeywords(vec,n){ return Object.entries(vec).sort(function(a,b){return b[1]-a[1]}).slice(0,n||6).map(function(x){return x[0]}); }
+  function expDecay(hours,tau){ return Math.exp(-hours/(tau||48)); }
+  function secToHMS(sec){ sec=sec|0; var h=(sec/3600)|0, m=((sec%3600)/60)|0, s=(sec%60)|0; return (h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
+  function isoToSeconds(dur){ var m = (dur||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/); return m? (Number(m[1]||0)*3600 + Number(m[2]||0)*60 + Number(m[3]||0)) : 0; }
 
+  // ---------- 전역 상태 ----------
   var STATE = { videos:[], clusters:[], idf:null, vectors:[], topicVec:{}, labels:[], colVis:null, sortKey:null, sortDir:null, watch:new Set(), snapshots:{}, ocr:{} };
 
+  // ---------- 저장소 ----------
   function save(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
-  function load(key,def){ try{ var v=localStorage.getItem(key); return v? JSON.parse(v) : def; }catch(e){ return def; }}
-  var QUOTA_KEY="sr_quota";
+  function load(key,def){ try{ var v=localStorage.getItem(key); return v? JSON.parse(v):def; }catch(e){ return def; } }
 
+  // ---------- 제목 패턴 분석 ----------
   function analyzeTitle(title){
-    title = String(title||"");
-    var emoji = (title.match(/[\\p{Extended_Pictographic}]/gu) || []).length;
-    var hasNum = /\\d/.test(title);
-    var isQ = /[?？]|\\b(왜|무엇|어떻게|누가|언제|가능|인가)\\b/.test(title);
-    var hasBracket = /[\\[\\(（【]/.test(title);
-    var series = /(part\\s*\\d+|ep\\s*\\d+|시즌\\s*\\d+|파트\\s*\\d+)/i.test(title);
-    return {emoji:emoji, hasNum:hasNum, isQ:isQ, hasBracket:hasBracket, series:series};
-  }
-  function patternIcon(p){
-    var icons=[];
-    if(p.hasNum) icons.push("🔢");
-    if(p.isQ) icons.push("❓");
-    if(p.hasBracket) icons.push("🧩");
-    if(p.series) icons.push("📚");
-    if(p.emoji>0) icons.push("😊×"+p.emoji);
-    return icons.join(" ");
-  }
-
-  function todayStr(){ var d=new Date(); return d.toISOString().slice(0,10); }
-  function getQuota(){ var q=load(QUOTA_KEY,null), today=todayStr(); if(!q) q={date:today, used:0, limit:10000}; if(q.date!==today){ q.date=today; q.used=0; } return q; }
-  function saveQuota(q){ save(QUOTA_KEY,q); }
-  function setQuotaLimit(n){ var q=getQuota(); q.limit=Math.max(1000, Number(n)||10000); saveQuota(q); renderQuota(); }
-  function incQuota(units){ var q=getQuota(); q.used += Math.max(0, units|0); saveQuota(q); renderQuota(); }
-  function resetQuota(){ var q={date:todayStr(), used:0, limit:getQuota().limit}; saveQuota(q); renderQuota(); }
-  function renderQuota(){
-    var q=getQuota();
-    var pct=Math.min(100, Math.round((q.used/(q.limit||1))*100));
-    var stat=document.getElementById("quotaStat"); if(stat) stat.innerHTML="API 사용량(오늘) <b>"+q.used+"</b> / "+q.limit+" ("+pct+"%)";
-    var lim=document.getElementById("quotaLimit"); if(lim) lim.value=q.limit;
-    var bar=document.querySelector("#quotaBar .fill"); if(bar) bar.style.width=pct+"%";
-  }
-
-  async function loadTesseract(){
-    if(window.Tesseract) return;
-    await new Promise(function(res){
-      var s=document.createElement("script");
-      s.src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js";
-      s.onload=function(){ res(); };
-      s.onerror=function(){ res(); };
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ocrTopN(n){
-    await loadTesseract();
-    if(!window.Tesseract){ alert("Tesseract 로드 실패"); return; }
-    var list=[].concat(STATE.videos).sort(function(a,b){ return (b.metrics.pick - a.metrics.pick); }).slice(0, n||20);
-    for(var i=0;i<list.length;i++){
-      var v=list[i]; if(STATE.ocr[v.id]) continue;
-      try{
-        var url=(v.snippet.thumbnails && v.snippet.thumbnails.medium && v.snippet.thumbnails.medium.url) || "";
-        if(!url) continue;
-        var res = await Tesseract.recognize(url, "kor+eng", { langPath: "https://tessdata.projectnaptha.com/4.0.0" });
-        var text = (res && res.data && res.data.text) ? String(res.data.text).replace(/\\s+/g," ").trim() : "";
-        var toks = tokenize(text).slice(0,8);
-        STATE.ocr[v.id] = { len: text.length, keys: toks };
-      }catch(e){ STATE.ocr[v.id] = { len:0, keys:[] }; }
-    }
-    renderTable(STATE.videos);
-  }
-
-  async function ytSearch(opts){
-    var q=opts.q||"", channelId=opts.channelId, publishedAfter=opts.publishedAfter, regionCode=opts.regionCode, maxResults=opts.maxResults, key=opts.key, pageToken=opts.pageToken;
-    var params = new URLSearchParams({
-      part:"snippet", q:q, maxResults:String(Math.min(50, maxResults||50)), type:"video",
-      order:"date", publishedAfter:publishedAfter, regionCode:regionCode, relevanceLanguage:(document.getElementById("lang")?document.getElementById("lang").value:"ko"),
-      key:key
-    });
-    if(channelId) params.set("channelId", channelId);
-    if(pageToken) params.set("pageToken", pageToken);
-    var url = "https://www.googleapis.com/youtube/v3/search?"+params.toString();
-    var res = await fetch(url);
-    if(!res.ok) throw new Error("search "+res.status);
-    incQuota(100);
-    return res.json();
-  }
-  async function ytVideos(ids,key){
-    var params = new URLSearchParams({ part:"snippet,contentDetails,statistics", id: ids.join(","), key:key });
-    var url = "https://www.googleapis.com/youtube/v3/videos?"+params.toString();
-    var res = await fetch(url);
-    if(!res.ok) throw new Error("videos "+res.status);
-    incQuota(1);
-    return res.json();
-  }
-  function isShort(snippet, contentDetails){
-    var m = (contentDetails && contentDetails.duration || "").match(/PT(?:(\\d+)M)?(?:(\\d+)S)?/);
-    var sec = m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0;
-    var hastag = String((snippet && snippet.title || "")+" "+(snippet && snippet.description || "")).toLowerCase().indexOf("#shorts") >= 0;
-    return sec>0 ? (sec<=62) : hastag;
-  }
-  function buildTopicVec(input){ return tf(tokenize(input)); }
-  function calcMetrics(v, topicVec){
-    var hours = hoursSince(v.snippet.publishedAt);
-    var views = Number(v.statistics.viewCount||0);
-    var likes = Number(v.statistics.likeCount||0);
-    var comments = Number(v.statistics.commentCount||0);
-    var vel = views / Math.max(1, hours);
-    var eng = (likes + 5*comments) / Math.max(1, views) * 1000;
-    var fresh = expDecay(hours);
-    var text = String(v.snippet.title||"") + " " + String(v.snippet.description||"") + " " + (Array.isArray(v.snippet.tags)?v.snippet.tags.join(" "):"");
-    var tfMap = tf(tokenize(text));
-    var fit = cosine(tfidf(tfMap, STATE.idf||{}), topicVec || {});
-    var pick = Math.pow(vel,0.5) * Math.pow(Math.max(eng,0),0.3) * Math.pow(fresh,0.2) * Math.max(fit,0.0001);
-    return {vel:vel,eng:eng,fresh:fresh,fit:fit,pick:pick, tfMap:tfMap};
-  }
-
-  function loadWatch(){ STATE.watch = new Set(load("sr_watchlist", [])); STATE.snapshots = load("sr_snapshots", {} ) || {}; }
-  function saveWatch(){ save("sr_watchlist", Array.from(STATE.watch)); save("sr_snapshots", STATE.snapshots); }
-  function toggleWatch(id){ if(STATE.watch.has(id)) STATE.watch.delete(id); else STATE.watch.add(id); saveWatch(); renderTable(STATE.videos); }
-  function pushSnapshot(id, v){ var s=STATE.snapshots[id] || (STATE.snapshots[id]=[]); s.push({t:toISO(new Date()), views:Number(v.statistics.viewCount||0), likes:Number(v.statistics.likeCount||0), comments:Number(v.statistics.commentCount||0)}); STATE.snapshots[id]=s.slice(-50); saveWatch(); }
-  function delta24h(id){ var s=STATE.snapshots[id]||[]; if(s.length<2) return {views:0,likes:0,comments:0}; var nowt = new Date(); var from = new Date(nowt - 24*3600*1000); var recent = s.filter(function(x){ return new Date(x.t)>=from; }); if(recent.length<2) return {views:0,likes:0,comments:0}; var first=recent[0], last=recent[recent.length-1]; return {views:last.views-first.views, likes:last.likes-first.likes, comments:last.comments-first.comments}; }
-
-  async function reprobeWatchlist(){
-    var ids = Array.from(STATE.watch); if(ids.length===0) return alert("워치리스트가 비어 있습니다.");
-    var key = document.getElementById("apiKey").value.trim(); if(!key) return alert("API 키 필요");
-    for(var i=0;i<ids.length;i+=50){
-      var data = await ytVideos(ids.slice(i,i+50), key);
-      (data.items||[]).forEach(function(v){ pushSnapshot(v.id, v); });
-    }
-    alert("재측정 완료"); renderTable(STATE.videos);
-  }
-
-  function setSummary(videos){
-    var n = videos.length;
-    var shorts = videos.filter(function(v){ return v._isShort; }).length;
-    var top = [].concat(videos).sort(function(a,b){ return (b.metrics.pick - a.metrics.pick); }).slice(0,5);
-    function avg(arr,fn){ var s=0; for(var i=0;i<arr.length;i++) s+=fn(arr[i]); return arr.length? s/arr.length : 0; }
-    var pills = [
-      '<span class="pill">총 수집 <b>'+n+'</b> (쇼츠 '+shorts+')</span>',
-      '<span class="pill">평균 속도 <b>'+avg(videos,function(x){return x.metrics.vel;}).toFixed(1)+'</b></span>',
-      '<span class="pill">평균 반응 <b>'+avg(videos,function(x){return x.metrics.eng;}).toFixed(2)+'</b></span>',
-      '<span class="pill">종합 1위: <b>'+escapeHtml((top[0]&&top[0].snippet&&top[0].snippet.title||"-").slice(0,36))+'</b></span>'
-    ];
-    document.getElementById("summary").innerHTML = pills.join(" ");
-  }
-
-  function ensureHeaderClasses(){ var ths=document.querySelectorAll("#table thead th"); var classes=["bookmark","thumb","title","pattern","channel","length","views","likes","comments","vel","eng","fresh","fit","delta","pick","cluster"]; classes.forEach(function(k,i){ if(ths[i]) ths[i].classList.add("c-"+k); }); }
-  function defaultColVis(){ var m={bookmark:true,thumb:true,title:true,pattern:true,channel:true,length:true,views:true,likes:true,comments:true,vel:true,eng:true,fresh:true,fit:true,delta:true,pick:true,cluster:true}; return m; }
-  function applyColumnVisibility(){ var vis = STATE.colVis || load("sr_cols", null) || defaultColVis(); Object.keys(vis).forEach(function(k){ document.querySelectorAll(".c-"+k).forEach(function(el){ el.style.display = vis[k] ? "" : "none"; }); }); }
-  function getSortValue(v,key){
-    if(key==="views") return Number(v.statistics.viewCount||0);
-    if(key==="likes") return Number(v.statistics.likeCount||0);
-    if(key==="comments") return Number(v.statistics.commentCount||0);
-    if(key==="vel") return Number(v.metrics && v.metrics.vel || 0);
-    if(key==="eng") return Number(v.metrics && v.metrics.eng || 0);
-    if(key==="fresh") return Number(v.metrics && v.metrics.fresh || 0);
-    if(key==="fit") return Number(v.metrics && v.metrics.fit || 0);
-    if(key==="length") return isoToSeconds(v.contentDetails && v.contentDetails.duration || "PT0S");
-    if(key==="delta"){ var d=delta24h(v.id); return Number(d.views||0); }
-    return Number(v.metrics && v.metrics.pick || 0);
-  }
-  function buildColControls(){
-    if(!STATE.colVis) STATE.colVis = load("sr_cols", null) || defaultColVis();
-    if(!STATE.sortKey) STATE.sortKey = load("sr_sortKey", null) || "pick";
-    if(!STATE.sortDir) STATE.sortDir = load("sr_sortDir", null) || "desc";
-    var holder = document.getElementById("colControls"); if(!holder) return;
-    var labelMap = {pick:"종합", vel:"속도", eng:"반응", fresh:"신선도", fit:"적합", views:"조회", likes:"좋아요", comments:"댓글", length:"길이", delta:"Δ24h"};
-    holder.innerHTML = [
-      '<label>보기 프리셋</label>',
-      '<select id="viewPreset">',
-      '<option value="all">전체(기본)</option>',
-      '<option value="speedeng">속도·반응만</option>',
-      '<option value="metrics">지표만</option>',
-      '<option value="packaging">패키징(썸네일/패턴/Δ)</option>',
-      '<option value="simple">간단</option>',
-      '</select>',
-      '<label>정렬</label>',
-      '<select id="sortKey"></select>',
-      '<select id="sortDir"><option value="desc">내림차순</option><option value="asc">오름차순</option></select>',
-      '<div id="colToggles" class="row" style="gap:6px"></div>'
-    ].join("");
-    var sortKeys=["pick","delta","vel","eng","fresh","fit","views","likes","comments","length"];
-    var sk = document.getElementById("sortKey");
-    sortKeys.forEach(function(k){ var o=document.createElement("option"); o.value=k; o.textContent=labelMap[k]||k; sk.appendChild(o); });
-    sk.value = STATE.sortKey; document.getElementById("sortDir").value = STATE.sortDir;
-    var box=document.getElementById("colToggles"); box.innerHTML="";
-    var keys = Object.keys(defaultColVis());
-    keys.forEach(function(k){
-      var id="vis_"+k;
-      var lbl=document.createElement("label");
-      lbl.className="small"; lbl.style.display="flex"; lbl.style.alignItems="center"; lbl.style.gap="6px";
-      lbl.innerHTML='<input type="checkbox" id="'+id+'" '+(STATE.colVis[k]?'checked':'')+'/> '+k;
-      box.appendChild(lbl);
-      document.getElementById(id).addEventListener("change",function(){ STATE.colVis[k]=document.getElementById(id).checked; save("sr_cols", STATE.colVis); applyColumnVisibility(); });
-    });
-    document.getElementById("viewPreset").addEventListener("change",function(){
-      var p=document.getElementById("viewPreset").value; var vis=defaultColVis(); keys.forEach(function(k){ vis[k]=true; });
-      if(p==="speedeng"){ keys.forEach(function(k){ vis[k]=false; }); ["thumb","title","vel","eng","pick"].forEach(function(k){ vis[k]=true; }); }
-      else if(p==="metrics"){ keys.forEach(function(k){ vis[k]=false; }); ["vel","eng","fresh","fit","pick"].forEach(function(k){ vis[k]=true; }); }
-      else if(p==="packaging"){ keys.forEach(function(k){ vis[k]=false; }); ["thumb","title","pattern","delta","pick","bookmark"].forEach(function(k){ vis[k]=true; }); }
-      else if(p==="simple"){ keys.forEach(function(k){ vis[k]=false; }); ["thumb","title","pick"].forEach(function(k){ vis[k]=true; }); }
-      STATE.colVis=vis; save("sr_cols", vis); keys.forEach(function(k){ var chk=document.getElementById("vis_"+k); if(chk) chk.checked=!!vis[k]; }); applyColumnVisibility();
-    });
-    sk.addEventListener("change",function(){ STATE.sortKey=sk.value; save("sr_sortKey", STATE.sortKey); renderTable(STATE.videos); applyColumnVisibility(); });
-    document.getElementById("sortDir").addEventListener("change",function(){ STATE.sortDir=document.getElementById("sortDir").value; save("sr_sortDir", STATE.sortDir); renderTable(STATE.videos); applyColumnVisibility(); });
-  }
-
-  function renderTable(videos){
-    var tb = document.getElementById("tbody"); tb.innerHTML="";
-    var key = STATE.sortKey || "pick";
-    var asc = (STATE.sortDir || "desc")==="asc";
-    videos.sort(function(a,b){ var av=getSortValue(a,key), bv=getSortValue(b,key); return asc? (av-bv):(bv-av); });
-    for(var i=0;i<videos.length;i++){
-      var v=videos[i];
-      var sec = isoToSeconds(v.contentDetails.duration);
-      var pat = patternIcon(v._pattern||{});
-      var d24 = delta24h(v.id);
-      var ocr = STATE.ocr[v.id];
-      var star = STATE.watch.has(v.id) ? "★" : "☆";
-      var ocrTip = ocr ? ("OC:"+ocr.len+" "+ocr.keys.slice(0,3).join("/")) : "";
-      var tr = document.createElement("tr");
-      tr.innerHTML = [
-        '<td class="c-bookmark"><span class="star '+(STATE.watch.has(v.id)?'on':'')+'" data-id="'+v.id+'">'+star+'</span></td>',
-        '<td class="c-thumb"><a href="https://www.youtube.com/watch?v='+v.id+'" target="_blank"><img class="thumb" src="'+(v.snippet.thumbnails&&v.snippet.thumbnails.medium&&v.snippet.thumbnails.medium.url||'')+'" title="'+escapeHtml(ocrTip)+'"/></a></td>',
-        '<td class="c-title">'+escapeHtml(v.snippet.title||"")+'</td>',
-        '<td class="c-pattern small">'+escapeHtml(pat)+'</td>',
-        '<td class="c-channel small">'+escapeHtml(v.snippet.channelTitle||"")+'</td>',
-        '<td class="c-length">'+hoursToHMS(sec)+'</td>',
-        '<td class="c-views">'+fmt(v.statistics.viewCount)+'</td>',
-        '<td class="c-likes">'+fmt(v.statistics.likeCount)+'</td>',
-        '<td class="c-comments">'+fmt(v.statistics.commentCount)+'</td>',
-        '<td class="c-vel">'+v.metrics.vel.toFixed(1)+'</td>',
-        '<td class="c-eng">'+v.metrics.eng.toFixed(2)+'</td>',
-        '<td class="c-fresh">'+v.metrics.fresh.toFixed(2)+'</td>',
-        '<td class="c-fit">'+v.metrics.fit.toFixed(2)+'</td>',
-        '<td class="c-delta"><span class="'+((d24.views||0)>0?'good':'')+'">+'+fmt(d24.views||0)+'</span></td>',
-        '<td class="c-pick"><b class="good">'+v.metrics.pick.toFixed(2)+'</b></td>',
-        '<td class="c-cluster"><span class="badge">'+(v.clusterId!=null?v.clusterId:"-")+'</span></td>'
-      ].join("");
-      tb.appendChild(tr);
-    }
-    tb.querySelectorAll(".star").forEach(function(s){ s.addEventListener("click", function(ev){ var id=ev.target.getAttribute("data-id"); toggleWatch(id); }); });
-  }
-
-  function avgRank(arr){ var s=0; for(var i=0;i<arr.length;i++) s+=(arr[i].metrics && arr[i].metrics.pick || 0); return arr.length? s/arr.length : 0; }
-  function renderClusters(state){
-    var el = document.getElementById("clusters"); el.innerHTML="";
-    var groups = {};
-    state.videos.forEach(function(v){ var id=v.clusterId!=null?v.clusterId:0; (groups[id]=groups[id]||[]).push(v); });
-    var entries = Object.keys(groups).map(function(k){ return [k, groups[k]]; }).sort(function(a,b){ return (avgRank(b[1]) - avgRank(a[1])); });
-    entries.forEach(function(pair){
-      var cid=pair[0], arr=pair[1]; if(!arr.length) return;
-      var rep = [].concat(arr).sort(function(a,b){return b.metrics.pick-a.metrics.pick;})[0];
-      var keys = topKeywords(state.centroids[cid]||{}, 8);
-      var card = document.createElement("div");
-      card.className="card cluster";
-      card.innerHTML = [
-        '<img class="thumb" src="'+(rep&&rep.snippet&&rep.snippet.thumbnails&&rep.snippet.thumbnails.medium&&rep.snippet.thumbnails.medium.url||'')+'"/>',
-        '<div>',
-        '<div class="row" style="justify-content:space-between;align-items:flex-start">',
-        '<div><b>묶음 '+cid+'</b> · <span class="muted">'+arr.length+'개</span></div>',
-        '<div class="badge">평균 종합점수 '+avgRank(arr).toFixed(2)+'</div>',
-        '</div>',
-        '<div style="margin:6px 0 2px">'+keys.map(function(k){return '<span class="tag">'+escapeHtml(k)+'</span>';}).join('')+'</div>',
-        '<div class="hint">대표: '+escapeHtml((rep&&rep.snippet&&rep.snippet.title||"").slice(0,80))+'</div>',
-        '</div>'
-      ].join("");
-      el.appendChild(card);
-    });
-  }
-
-  var dayOrder=[1,2,3,4,5,6,0], dayNames=["일","월","화","수","목","금","토"];
-  function formatHour(h){ return String(h).padStart(2,"0")+":00"; }
-  function colorFor(val,max){ var n = max>0? (val/max) : 0; var l = 16 + n*48; return "hsl(210,80%,"+l+"%)"; }
-  function renderHeatmap(videos){
-    var grid = Array.from({length:7}, function(){ return Array(24).fill(0); });
-    videos.forEach(function(v){ var d=new Date(v.snippet.publishedAt), dow=d.getDay(), h=d.getHours(); var w=Math.max(0, v.metrics && v.metrics.pick || 0); grid[dow][h]+=w; });
-    var max=0, d,h; for(d=0;d<7;d++){ for(h=0;h<24;h++){ if(grid[d][h]>max) max=grid[d][h]; }}
-    var hm = document.getElementById("heatmap"); if(!hm) return; var html="";
-    html += '<div class="row"><span class="label"></span>'+Array.from({length:24},function(_,i){ return '<span class="small" style="width:18px;text-align:center;color:#8fa4b8">'+(i%6===0?i:"")+'</span>'; }).join("")+'</div>';
-    dayOrder.forEach(function(dow){
-      html += '<div class="row"><span class="label">'+dayNames[dow]+'</span>';
-      for(h=0;h<24;h++){ var v=grid[dow][h]; var clr=colorFor(v,max); html += '<span class="cell" title="'+dayNames[dow]+' '+formatHour(h)+' · '+v.toFixed(2)+'" style="background:'+clr+'"></span>'; }
-      html += '</div>';
-    });
-    html += '<div class="legend"><span class="small muted">낮음</span><span class="box" style="background:'+colorFor(0,max)+'"></span><span class="box" style="background:'+colorFor(max*0.5,max)+'"></span><span class="box" style="background:'+colorFor(max,max)+'"></span><span class="small muted">높음</span></div>';
-    hm.innerHTML = html;
-
-    var arr=[], i; for(d=0;d<7;d++){ for(h=0;h<24;h++){ arr.push({d:d,h:h,score:grid[d][h]}); }}
-    arr.sort(function(a,b){ return b.score-a.score; });
-    var top = arr.filter(function(x){ return x.score>0; }).slice(0,6);
-    var best = document.getElementById("bestTimes"); if(best) best.innerHTML = top.map(function(t){ return "<li>"+dayNames[t.d]+" "+formatHour(t.h)+"–"+formatHour((t.h+1)%24)+" · 지수 "+t.score.toFixed(2)+"</li>"; }).join("");
-  }
-
-  function runWizard(clusterId){
-    var group = STATE.videos.filter(function(v){ return v.clusterId===clusterId; });
-    var out = document.getElementById("wizardOut"); out.innerHTML="";
-    if(group.length===0){ out.innerHTML='<div class="hint">해당 묶음이 비어 있습니다.</div>'; return; }
-    var rep = [].concat(group).sort(function(a,b){ return b.metrics.pick-a.metrics.pick; })[0];
-    var keys = topKeywords(STATE.centroids[clusterId]||{}, 8);
-    var hooks = [
-      "딱 10초로 끝내는 "+(keys[0]||"핵심")+" 요약",
-      "댓글 폭발한 "+(keys[1]||"장면")+", 3초 리메이크",
-      (keys[2]||"논란")+" 한 문장, 앞뒤 맥락은?"
-    ];
-    var shotlist = [
-      "0–2s: 강렬한 썸네일 텍스트 + 효과음",
-      "3–8s: "+(keys[0]||"핵심요소")+" 장면 클립/밈",
-      "9–15s: 대비 장면/팩트 1",
-      "16–22s: 반전 장면/팩트 2",
-      "23–27s: 요약 한 문장(자막 크게)",
-      "28–30s: 구독/팔로우 CTA + 다음 편 예고"
-    ];
-    var hashtags = ["#shorts","#trending"].concat(keys.slice(0,4).map(function(k){ return "#"+k; })).join(" ");
-    var left = document.createElement("div"); left.className="card";
-    left.innerHTML = "<b>훅(Hooks) 3안</b><ul>"+hooks.map(function(h){ return "<li>"+escapeHtml(h)+"</li>"; }).join("")+"</ul>";
-    var right = document.createElement("div"); right.className="card";
-    right.innerHTML = "<b>샷리스트(30초)</b><ol>"+shotlist.map(function(s){ return "<li>"+escapeHtml(s)+"</li>"; }).join("")+"</ol><div style=\"margin-top:6px\"><b>해시태그:</b> <span class=\"muted\">"+escapeHtml(hashtags)+"</span></div>";
-    out.appendChild(left); out.appendChild(right);
-  }
-
-  function exportCsv(){
-    if(!STATE.videos.length){ alert("데이터가 없습니다."); return; }
-    var cols = ["id","title","channel","publishedAt","durationSec","views","likes","comments","vel","eng","fresh","fit","pick","delta24h","titleFlags","ocrLen","ocrKeys","clusterId"];
-    var rows = [cols.join(",")];
-    STATE.videos.forEach(function(v){
-      var sec = isoToSeconds(v.contentDetails.duration);
-      var d=delta24h(v.id); var oc=STATE.ocr[v.id]||{len:0,keys:[]};
-      var flags=v._pattern||{};
-      var r = [
-        v.id,
-        '"'+String(v.snippet.title||"").replace(/"/g,'""')+'"',
-        '"'+String(v.snippet.channelTitle||"").replace(/"/g,'""')+'"',
-        v.snippet.publishedAt,
-        sec,
-        v.statistics.viewCount||0,
-        v.statistics.likeCount||0,
-        v.statistics.commentCount||0,
-        (v.metrics.vel||0).toFixed(3),
-        (v.metrics.eng||0).toFixed(3),
-        (v.metrics.fresh||0).toFixed(5),
-        (v.metrics.fit||0).toFixed(5),
-        (v.metrics.pick||0).toFixed(5),
-        d.views||0,
-        "num:"+(flags.hasNum?1:0)+";q:"+(flags.isQ?1:0)+";emo:"+(flags.emoji||0)+";br:"+(flags.hasBracket?1:0)+";ser:"+(flags.series?1:0),
-        oc.len||0,
-        '"'+(oc.keys||[]).join(" ").replace(/"/g,'""')+'"',
-        v.clusterId!=null?v.clusterId:""
-      ];
-      rows.push(r.join(","));
-    });
-    var blob = new Blob([rows.join("\\n")],{type:"text/csv;charset=utf-8;"});
-    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "shorts_radar_pro.csv"; document.body.appendChild(a); a.click(); a.remove();
-  }
-
-  function exportManual(){
-    var date = new Date().toLocaleDateString("ko-KR");
-    var md = [
-      "# Shorts Radar Pro 사용 매뉴얼 (한 장)",
-      "생성일: "+date,
-      "",
-      "- 새 기능: 썸네일 OCR, 제목 패턴, 워치리스트 스냅샷, 채널 운영 카드",
-      "- 워치리스트: ☆ 클릭 → '워치리스트 재측정'으로 24시간 증가량 확인",
-      "- OCR: 상위 N개(기본20)만 추출. 무거우니 필요할 때 버튼으로 실행",
-      "- 채널 카드: 최근 결과 기준. 평균 주기(일), 히트 시간대 추천",
-      ""
-    ].join("\\n");
-    var blob = new Blob([md], {type:"text/markdown;charset=utf-8;"});
-    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Shorts_Radar_Pro_사용법.md"; document.body.appendChild(a); a.click(); a.remove();
-  }
-
-  async function run(){
-    try{
-      var key = document.getElementById("apiKey").value.trim(); if(!key) return alert("API 키를 입력하세요.");
-      var q = document.getElementById("keywords").value.trim();
-      var channels = document.getElementById("channels").value.trim().split(",").map(function(s){return s.trim();}).filter(Boolean);
-      var days = Number(document.getElementById("days").value||7);
-      var regionCode = document.getElementById("region").value || "KR";
-      var maxResults = Number(document.getElementById("maxResults").value||80);
-      var publishedAfter = new Date(Date.now()-days*24*3600*1000).toISOString();
-
-      var items = [];
-      async function collectBy(qword, channelId){
-        var pageToken=null, fetched=0, limit=maxResults;
-        do{
-          var data = await ytSearch({q:qword, channelId:channelId, publishedAfter:publishedAfter, regionCode:regionCode, maxResults: Math.min(50, limit-fetched), key:key, pageToken:pageToken});
-          var vids = (data.items||[]).filter(function(it){ return it.id && it.id.videoId; });
-          items.push.apply(items, vids.map(function(it){ return {id:it.id.videoId, snippet:it.snippet}; }));
-          fetched += vids.length; pageToken = data.nextPageToken && fetched < limit ? data.nextPageToken : null;
-        } while(pageToken);
-      }
-      if(channels.length){ for(var i=0;i<channels.length;i++) await collectBy(q||"", channels[i]); }
-      else await collectBy(q||"", null);
-
-      var ids = uniq(items.map(function(x){ return x.id; }));
-      var videos=[]; for(var j=0;j<ids.length;j+=50){
-        var batch = ids.slice(j,j+50);
-        var data2 = await ytVideos(batch, key);
-        (data2.items||[]).forEach(function(v){ videos.push(v); });
-      }
-
-      var shorts = videos.filter(function(v){ return isShort(v.snippet, v.contentDetails); });
-
-      var docs = shorts.map(function(v){ return tf(tokenize(String(v.snippet.title||"")+" "+String(v.snippet.description||"")+" "+(Array.isArray(v.snippet.tags)?v.snippet.tags.join(" "):""))); });
-      STATE.idf = idf(docs);
-      STATE.topicVec = buildTopicVec(q);
-
-      shorts.forEach(function(v){
-        v._isShort = true;
-        v.metrics = calcMetrics(v, STATE.topicVec);
-        v._pattern = analyzeTitle(v.snippet.title||"");
-      });
-
-      var vecs = docs.map(function(d){ return tfidf(d, STATE.idf); });
-      var kManual = Number(document.getElementById("kValue").value||0);
-      var k = kManual>0? kManual : Math.max(1, Math.round(Math.sqrt(vecs.length||1)));
-      var km = kmeans(vecs, k);
-      var labels = km.labels, centroids = km.centroids;
-      shorts.forEach(function(v,i){ v.clusterId = labels[i]; });
-
-      var minRank = Number(document.getElementById("minRank").value||0);
-      var filtered = shorts.filter(function(v){ return v.metrics.pick >= minRank; });
-
-      STATE.videos = filtered; STATE.vectors = vecs; STATE.centroids = centroids; STATE.labels = labels;
-
-      setSummary(filtered);
-      renderClusters(STATE);
-      renderTable(filtered);
-      renderHeatmap(filtered);
-      renderChannelBoard(filtered);
-      ensureHeaderClasses();
-      applyColumnVisibility();
-    }catch(e){ console.error(e); alert("오류: "+e.message); }
-  }
-
-  function renderChannelBoard(videos){
-    var byCh={};
-    videos.forEach(function(v){
-      var cid=v.snippet.channelId|| (v.snippet.channel && v.snippet.channel.id) || "unknown";
-      (byCh[cid]=byCh[cid]||{title:v.snippet.channelTitle,id:cid,times:[]}).times.push(v.snippet.publishedAt);
-    });
-    var list=Object.values(byCh).sort(function(a,b){ return b.times.length-a.times.length; }).slice(0,8);
-    var board=document.getElementById("chanBoard"); board.innerHTML="";
-    list.forEach(function(ch){
-      var times=ch.times.map(function(t){return new Date(t).getTime();}).sort(function(a,b){return a-b;});
-      var gaps=[], i; for(i=1;i<times.length;i++) gaps.push( (times[i]-times[i-1])/(24*3600*1000) );
-      var avgGap=gaps.length? (gaps.reduce(function(s,x){return s+x;},0)/gaps.length):0;
-      var hours=new Array(24).fill(0); ch.times.forEach(function(t){ hours[new Date(t).getHours()]++; });
-      var topHour=hours.map(function(v,i){return {v:v,i:i};}).sort(function(a,b){return b.v-a.v;})[0]; topHour = topHour? topHour.i : 0;
-      var el=document.createElement("div"); el.className="channel-card";
-      el.innerHTML='<div><b>'+escapeHtml(ch.title||"-")+'</b><div class="small muted">결과수 '+ch.times.length+' · 평균 주기 '+(avgGap?avgGap.toFixed(1)+"일":"-")+'</div></div><div class="small">히트 시간대: <b>'+String(topHour).padStart(2,"0")+":00</b></div>';
-      board.appendChild(el);
-    });
-  }
-
-  function kmeans(vectors, k, maxIter){
-    maxIter = maxIter || 20;
-    var n = vectors.length; if(n===0) return {labels:[],centroids:[]};
-    k = Math.max(1, Math.min(k, n));
-    function dist(a,b){return 1 - cosine(a,b);}
-    var idxs = Array.from({length:n}, function(_,i){return i;}).sort(function(){return Math.random()-0.5;}).slice(0,k);
-    var centroids = idxs.map(function(i){ var o={}, key; for(key in vectors[i]) o[key]=vectors[i][key]; return o; });
-    var labels = new Array(n).fill(0);
-    for(var iter=0; iter<maxIter; iter++){
-      var changed=false;
-      for(var i=0;i<n;i++){
-        var best=0,bestd=Infinity;
-        for(var c=0;c<k;c++){ var d=dist(vectors[i],centroids[c]); if(d<bestd){bestd=d;best=c;} }
-        if(labels[i]!==best){labels[i]=best;changed=true;}
-      }
-      if(!changed) break;
-      var sums=Array.from({length:k},function(){return {};});
-      var counts=new Array(k).fill(0);
-      for(i=0;i<n;i++){
-        var c=labels[i]; counts[c]++;
-        Object.keys(vectors[i]).forEach(function(key){ sums[c][key]=(sums[c][key]||0)+vectors[i][key]; });
-      }
-      for(var c2=0;c2<k;c2++){
-        var v={}, cnt=Math.max(1,counts[c2]);
-        Object.keys(sums[c2]).forEach(function(key){ v[key]=sums[c2][key]/cnt; });
-        centroids[c2]=v;
-      }
-    }
-    return {labels:labels,centroids:centroids};
-  }
-
-  document.getElementById("runBtn").addEventListener("click", run);
-  document.getElementById("recluster").addEventListener("click", function(){
-    if(!STATE.videos.length){ alert("데이터가 없습니다."); return; }
-    var vecs = STATE.vectors; var kManual = Number(document.getElementById("kValue").value||0);
-    var k = kManual>0? kManual : Math.max(1, Math.round(Math.sqrt(vecs.length||1)));
-    var km=kmeans(vecs,k);
-    STATE.videos.forEach(function(v,i){ v.clusterId = km.labels[i]; });
-    STATE.centroids = km.centroids; STATE.labels = km.labels;
-    renderClusters(STATE); renderTable(STATE.videos); renderHeatmap(STATE.videos); renderChannelBoard(STATE.videos);
-    ensureHeaderClasses(); applyColumnVisibility();
-  });
-  document.getElementById("runWizard").addEventListener("click", function(){ var cid = Number(document.getElementById("wizCluster").value||0); runWizard(cid); });
-  document.getElementById("saveKey").addEventListener("click", function(){ save("yt_api_key", document.getElementById("apiKey").value.trim()); alert("저장됨"); });
-  document.getElementById("exportCsv").addEventListener("click", exportCsv);
-  document.getElementById("exportManual").addEventListener("click", exportManual);
-  document.getElementById("resetBtn").addEventListener("click", function(){ localStorage.clear(); document.getElementById("apiKey").value=""; alert("초기화 완료"); });
-  document.getElementById("btnOcr").addEventListener("click", function(){ ocrTopN(20); });
-  document.getElementById("btnReprobe").addEventListener("click", reprobeWatchlist);
-
-  var BUILTIN_PRESETS = [
-    {name:"정치드립(시사풍자)", keywords:"정치풍자, 시사 요약, 밈", channels:""},
-    {name:"BrotLab 베이킹", keywords:"사워도우, 발효빵, 베이킹 팁", channels:""},
-    {name:"Paw Chu 반려동물", keywords:"고양이, 반려동물, 모래매트, 집사 팁", channels:""}
-  ];
-  function getPresets(){ var p = load("sr_presets", null); if(!p){ p = BUILTIN_PRESETS; save("sr_presets", p);} return p; }
-  function setPresets(p){ save("sr_presets", p); }
-  function initPresetsUI(){ var sel = document.getElementById("presetSelect"); if(!sel) return; var list=getPresets(); sel.innerHTML=list.map(function(p,i){ return '<option value="'+i+'">'+escapeHtml(p.name)+'</option>'; }).join(""); }
-  document.addEventListener("DOMContentLoaded", initPresetsUI);
-  document.getElementById("presetLoad").addEventListener("click", function(){ var idx=parseInt(document.getElementById("presetSelect").value||0,10); var list=getPresets(); var p=list[idx]; if(!p) return; document.getElementById("keywords").value=p.keywords||""; document.getElementById("channels").value=p.channels||""; });
-  document.getElementById("presetSave").addEventListener("click", function(){ var name=prompt("프리셋 이름을 입력하세요"); if(!name) return; var list=getPresets(); list.unshift({name:name, keywords:document.getElementById("keywords").value.trim(), channels:document.getElementById("channels").value.trim()}); setPresets(list); initPresetsUI(); buildColControls(); alert("저장 완료"); });
-  document.getElementById("presetDel").addEventListener("click", function(){ var sel=document.getElementById("presetSelect"); var idx=parseInt(sel.value||0,10); var list=getPresets(); if(!list[idx]) return; if(!confirm("'"+list[idx].name+"' 프리셋을 삭제할까요?")) return; list.splice(idx,1); setPresets(list); initPresetsUI(); });
-
-  var savedKey = load("yt_api_key",""); if(savedKey) document.getElementById("apiKey").value = savedKey;
-  loadWatch();
-  buildColControls();
-  renderQuota();
-  document.getElementById("quotaApply").addEventListener("click", function(){ setQuotaLimit(document.getElementById("quotaLimit").value); });
-  document.getElementById("quotaReset").addEventListener("click", resetQuota);
-  ensureHeaderClasses(); applyColumnVisibility();
-})();
-</script>
-</body>
-</html>
+    title = title || '';
+    var emoji = (title.match(/\p{Extended_Pictographic}/gu) || []).length;
+    var hasNum = /\d/.test(title);
+    var isQ = /[?？]|\b(왜|무엇|어떻게|누가|언제|가능|인가)\b/.test(title);
+    var hasBracket = /[\[\(（]()]()
