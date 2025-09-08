@@ -5,9 +5,5 @@
   "private": true,
   "scripts": {
     "start": "node scripts/fetch-trend.js"
-  },
-  "dependencies": {
-    "node-fetch": "^3.3.2",
-    "p-limit": "^4.0.0"
   }
 }
