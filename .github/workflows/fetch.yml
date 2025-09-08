@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: npm ci
+      - run: npm install --no-audit --no-fund
       - name: Fetch & Build
         env:
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
