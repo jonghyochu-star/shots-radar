@@ -313,8 +313,8 @@
 
 function renderKeyState(){
   // --- 선택 인덱스 핀 고정(렌더마다 덮어쓰기) ---
-  var savedCur = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
-  if (!isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
+  var  = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
+  if (!isNaN() &&  >= 0 &&  < ROT.keys.length) {
     ROT.idx = savedCur;
   }
 
@@ -925,14 +925,18 @@ function renderKeyState(){
   (function init(){
     // 키는 보안을 위해 input에 미리 채우지 않음
     ROT.load();
-        var savedCur = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
-    if (!isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) { ROT.idx = savedCur; if (typeof renderKeyState==='function') renderKeyState(); }
-
-    // ✅ 마지막 선택값 복원
-const savedCur = +localStorage.getItem('sr_curIdx');
-if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
+      // ✅ 마지막 선택값 복원(중복 선언 제거/안전성 강화)
+let savedCur = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
+if (
+  !Number.isNaN(savedCur) &&
+  savedCur >= 0 &&
+  window.ROT && Array.isArray(ROT.keys) &&
+  savedCur < ROT.keys.length
+) {
   ROT.idx = savedCur;
-  if (typeof renderKeyState === 'function') renderKeyState();
+}
+if (typeof renderKeyState === 'function') renderKeyState();
+
 }
     const savedCols = load('sr_cols', null); if(savedCols) STATE.colVis=savedCols;
     const savedSortKey = load('sr_sortKey', null); if(savedSortKey) STATE.sortKey=savedSortKey;
