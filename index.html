@@ -923,8 +923,8 @@
   })();
 })();
 </script>
+  
 <script>
-  // 수동 선택: i번째 키를 NOW(선두)로
   window._pickKey = function(i){
     try{
       const keys = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
@@ -939,11 +939,11 @@
       if(stat[key]){ stat[key].blocked = false; stat[key].fail = 0; }
       localStorage.setItem('sr_keyStat', JSON.stringify(stat));
 
-      // 즉시 UI 갱신
       try { ROT.load(); } catch(e) { location.reload(); }
     }catch(e){ console.error('[pickKey]', e); }
   };
 </script>
+
 
 </body>
 </html>
