@@ -26,9 +26,13 @@
     .hint{color:var(--muted);font-size:12px}
     .kpi{display:flex;gap:10px;flex-wrap:wrap}
     .pill{background:#0f1620;border:1px solid #1f2a36;border-radius:999px;padding:8px 12px;font-size:12px;color:#b9c7d6}
+    .pill.good{border-color:#225c3a;color:#bfffd7}
+    .pill.danger{border-color:#6b2c24;color:#ffcab3;background:#2a1510}
     .table{width:100%;border-collapse:collapse}
     th,td{padding:10px;border-bottom:1px solid #1e2a36;text-align:left;font-size:13px}
     th{color:#a5b6c6;font-weight:600;white-space:nowrap}
+    /* 🔒 헤더 sticky */
+    #table thead th{position:sticky;top:0;background:#0f1821;z-index:3}
     .thumb{width:120px;height:68px;background:#111;border:1px solid #253444;border-radius:10px;object-fit:cover}
     .badge{padding:4px 8px;border-radius:999px;background:#0e1b29;border:1px solid #23374a;font-size:11px}
     .grade-S{background:#0f2b1a;border-color:#1f4b2a;color:#b9ffd0}
@@ -43,17 +47,6 @@
     .star.on{color:#ffd166}
     .tag{display:inline-block;background:#0e1620;border:1px solid #213142;border-radius:999px;padding:4px 8px;margin:2px;color:#a8b9cc;font-size:12px}
     .tableWrap{max-height:68vh;overflow:auto;border:1px solid #1e2a36;border-radius:12px;position:relative}
-
-/* sticky table header */
-.tableWrap thead th{
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #0c141c;
-  border-bottom: 1px solid #2a3a4a;
-  box-shadow: 0 2px 0 rgba(0,0,0,.25);
-}
-
     .sideScroll{position:absolute;right:-56px;top:0;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
     .sideScroll button{width:44px;height:36px;border-radius:10px;border:1px solid #2a3a4a;background:#0c141c;color:#e8f0f7;cursor:pointer}
     @media (max-width:1200px){.sideScroll{right:-2px;top:-54px;flex-direction:row}}
@@ -79,16 +72,16 @@
 .sideHead .title{font-weight:700;font-size:16px;letter-spacing:-0.2px}
 .sideHead .meta{font-size:12px;color:#9fb2c4;letter-spacing:-0.1px}
 
-</style>
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="row" style="justify-content:space-between">
       <div>
         <h1>Shorts Radar — <span class="muted">통합판</span></h1>
-        <div class="sub">라벨 한글화 · S1 확장 지표/필터/정렬 · CSV/JSON Export · 워치리스트 스냅샷(Δ24h)</div>
+        <div class="sub">라벨 한글화 · S1 확장 지표/필터/정렬 · Excel Export · 워치리스트 스냅샷(Δ24h)</div>
       </div>
       <div class="row">
         <button id="exportXlsx" class="ghost">Excel</button>
@@ -102,7 +95,7 @@
       <div class="card">
         <h3 style="margin:0 0 8px">1) 연결 설정</h3>
         <div class="row" style="gap:8px">
-          <input id="apiKey" placeholder="YouTube Data API 키 (쉼표로 여러 개, 저장 후 화면에 표시되지 않음)" style="min-width:300px" aria-label="YouTube API Key" autocomplete="off"/>
+          <input id="apiKey" placeholder="YouTube Data API 키 (쉼표/공백/줄바꿈으로 여러 개 입력 가능)" style="min-width:300px" aria-label="YouTube API Key" autocomplete="off"/>
           <button id="saveKey" class="primary">키 저장</button>
           <span class="hint">* GCP 콘솔에서 HTTP referrer(본인 GitHub Pages 도메인) 제한을 꼭 설정하세요.</span>
         </div>
@@ -112,9 +105,10 @@
           <button id="quotaApply" class="ghost">적용</button>
           <span id="quotaStat" class="pill">API 사용량(오늘) 0 / 10000 (0%)</span>
           <div id="quotaBar" class="qbar"><div class="fill" style="width:0%"></div></div>
-          <span id="keyStat" class="pill">키 상태: -</span>
           <button id="quotaReset" class="ghost">사용량 초기화</button>
         </div>
+        <!-- 🔁 키 회전 상태 표시 (실제 키는 절대 노출하지 않음) -->
+        <div id="keyState" class="row" style="gap:6px;margin-top:8px"></div>
       </div>
 
       <div class="card">
@@ -144,7 +138,7 @@
       <div id="summary" class="kpi"></div>
     </div>
 
-    <!-- 올리기 좋은 시간대 (간단 텍스트) -->
+    <!-- 올리기 좋은 시간대 -->
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between">
         <h3 style="margin:0">올리기 좋은 시간대</h3>
@@ -153,48 +147,47 @@
       <div id="bestTimes" class="row" style="margin-top:6px; flex-wrap:wrap"></div>
     </div>
 
-    <!-- 영상 테이블 -->
-    
-  <!-- S3: 키워드 장기 트렌드 (INTEGRATED TEST) -->
-  <div class="longdash" id="longDash">
-    <div class="ctrls">
-      <h3>키워드 장기 트렌드 (TEST)</h3>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <label>지표</label>
-        <select id="ltMetric">
-          <option value="views">조회 합(일)</option>
-          <option value="ema28" selected>EMA28(조회)</option>
-          <option value="score">상승력 점수</option>
-        </select>
-        <label>기간</label>
-        <select id="ltDays">
-          <option value="90">90일</option>
-          <option value="180" selected>180일</option>
-        </select>
-        <label>최소 표본</label>
-        <input id="ltMinN" type="number" min="1" value="10" style="width:90px"/>
-        <label><input id="ltSmoothing" type="checkbox" checked/> 스무딩(EMA)</label>
-        <button class="k" id="ltReload">대시보드 갱신</button>
-      </div>
-    </div>
-    <div class="note">샘플 데이터로 동작합니다. 배포 시 <code>kw-trend.json</code> 엔드포인트로 교체합니다.</div>
-    <div class="pills" id="ltPills"></div>
-    <div class="grid">
-      <div class="main"><div class="chart"><canvas id="ltChart"></canvas></div></div>
-      <div class="side">
-        <div class="sideOverlay">
-          <div class="sideHead">
-            <div class="title">상승 키워드 Top5</div>
-            <div class="meta">최근 7일 vs 직전 7일 · 업데이트: <span id="ltUpdate"></span></div>
-          </div>
-          <div class="risers" id="ltRisers"></div>
+    <!-- S3: 키워드 장기 트렌드 -->
+    <div class="longdash" id="longDash">
+      <div class="ctrls">
+        <h3>키워드 장기 트렌드 (TEST)</h3>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label>지표</label>
+          <select id="ltMetric">
+            <option value="views">조회 합(일)</option>
+            <option value="ema28" selected>EMA28(조회)</option>
+            <option value="score">상승력 점수</option>
+          </select>
+          <label>기간</label>
+          <select id="ltDays">
+            <option value="90">90일</option>
+            <option value="180" selected>180일</option>
+          </select>
+          <label>최소 표본</label>
+          <input id="ltMinN" type="number" min="1" value="10" style="width:90px"/>
+          <label><input id="ltSmoothing" type="checkbox" checked/> 스무딩(EMA)</label>
+          <button class="k" id="ltReload">대시보드 갱신</button>
         </div>
-        <div class="sideChart"><canvas id="ltShare"></canvas></div>
+      </div>
+      <div class="note">샘플 데이터로 동작합니다. 배포 시 <code>kw-trend.json</code> 엔드포인트로 교체합니다.</div>
+      <div class="pills" id="ltPills"></div>
+      <div class="grid">
+        <div class="main"><div class="chart"><canvas id="ltChart"></canvas></div></div>
+        <div class="side">
+          <div class="sideOverlay">
+            <div class="sideHead">
+              <div class="title">상승 키워드 Top5</div>
+              <div class="meta">최근 7일 vs 직전 7일 · 업데이트: <span id="ltUpdate"></span></div>
+            </div>
+            <div class="risers" id="ltRisers"></div>
+          </div>
+          <div class="sideChart"><canvas id="ltShare"></canvas></div>
+        </div>
       </div>
     </div>
-  </div>
 
-<div class="card" style="margin-top:12px; position:relative">
+    <!-- 영상 리스트 -->
+    <div class="card" style="margin-top:12px; position:relative">
       <div class="row" style="justify-content:space-between;align-items:center">
         <h3 style="margin:0">영상 리스트</h3>
         <div class="row small">
@@ -279,6 +272,58 @@
   function save(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
   function load(key,def){ try{ return JSON.parse(localStorage.getItem(key)) ?? def;}catch(e){return def}}
 
+  // ---------- 키 회전(로컬) ----------
+  const ROT = {
+    keys: [],
+    idx: 0,
+    stat: [],
+    load(){
+      const arr = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
+      const legacy = JSON.parse(localStorage.getItem('yt_api_key')||'""');
+      this.keys = (arr && arr.length) ? arr : (legacy? [legacy] : []);
+      this.idx = 0;
+      const saved = load('sr_keyStat', []);
+      this.stat = this.keys.map((_,i)=> saved[i] || {ok:0, fail:0, blocked:false});
+      renderKeyState();
+    },
+    saveStat(){ save('sr_keyStat', this.stat); },
+    current(){ return this.keys.length? this.keys[this.idx] : null; },
+    rotate(){ if(this.keys.length>1){ this.idx=(this.idx+1)%this.keys.length; renderKeyState(); } },
+    markOk(){ (this.stat[this.idx]||(this.stat[this.idx]={ok:0,fail:0,blocked:false})).ok++; this.saveStat(); renderKeyState(); },
+    markFail(){ const s=(this.stat[this.idx]||(this.stat[this.idx]={ok:0,fail:0,blocked:false})); s.fail++; if(s.fail>=3) s.blocked=true; this.saveStat(); this.rotate(); },
+  };
+
+  function renderKeyState(){
+    const holder = $('#keyState'); if(!holder) return;
+    if(!ROT.keys.length){ holder.innerHTML='<span class="pill">키 상태: 없음</span>'; return; }
+    holder.innerHTML = ROT.keys.map((_,i)=>{
+      const s=ROT.stat[i]||{ok:0,fail:0,blocked:false};
+      const cls = s.blocked ? 'danger' : (i===ROT.idx ? 'good' : '');
+      return `<span class="pill ${cls}" title="ok:${s.ok} · fail:${s.fail}">yt_api_key${i+1}</span>`;
+    }).join('');
+  }
+
+  async function fetchWithRotate(url, quotaInc){
+    const maxTry = Math.max(1, ROT.keys.length);
+    for(let t=0;t<maxTry;t++){
+      const key = ROT.current(); if(!key) break;
+      const final = url + (url.includes('?')?'&':'?') + 'key=' + encodeURIComponent(key);
+      try{
+        const res = await fetch(final, {cache:'no-store'});
+        if(res.ok){
+          if(quotaInc) incQuota(quotaInc);
+          ROT.markOk();
+          return await res.json();
+        }else{
+          ROT.markFail();
+        }
+      }catch(e){
+        ROT.markFail();
+      }
+    }
+    throw new Error('모든 키 시도 실패');
+  }
+
   // ---------- 쿼터 ----------
   const QUOTA_KEY='sr_quota';
   function todayStr(){ const d=new Date(); return d.toISOString().slice(0,10); }
@@ -287,118 +332,32 @@
   function setQuotaLimit(n){ const q=getQuota(); q.limit=Math.max(1000, Number(n)||10000); saveQuota(q); renderQuota(); }
   function incQuota(units){ const q=getQuota(); q.used += Math.max(0, units|0); saveQuota(q); renderQuota(); }
   function resetQuota(){ const q={date:todayStr(), used:0, limit:getQuota().limit}; saveQuota(q); renderQuota(); }
-  function renderQuota(){ const q=getQuota(); const pct=Math.min(100, Math.round((q.used/(q.limit||1))*100)); $('#quotaStat').innerHTML=`API 사용량(오늘) <b>${q.used}
-  // ---------- 키 로테이션 ----------
-  const KEYS_STORE = 'yt_keys';
-  const KEY_IDX_STORE = 'sr_key_idx';
-  const KEY_USAGE_STORE = 'sr_keys_usage'; // {date, used: []}
-
-  function loadKeys(){
-    try{ const arr = JSON.parse(localStorage.getItem(KEYS_STORE)||'[]'); return Array.isArray(arr)? arr : []; }
-    catch(e){ return []; }
-  }
-  function saveKeys(arr){
-    localStorage.setItem(KEYS_STORE, JSON.stringify(arr||[]));
-  }
-  function getKeyIdx(){
-    let idx = +localStorage.getItem(KEY_IDX_STORE) || 0;
-    const n = loadKeys().length || 1;
-    if(idx<0) idx = 0;
-    if(idx>=n) idx = 0;
-    localStorage.setItem(KEY_IDX_STORE, String(idx));
-    return idx;
-  }
-  function setKeyIdx(i){
-    localStorage.setItem(KEY_IDX_STORE, String(i));
-  }
-  function activeKey(){
-    const keys = loadKeys();
-    if(!keys.length){
-      const single = JSON.parse(localStorage.getItem('yt_api_key')||'""');
-      if(single) { saveKeys([single]); return single; }
-      return null;
-    }
-    return keys[getKeyIdx()] || null;
-  }
-  function 'yt_api_key'+(getKeyIdx()+1){
-    if(!k) return '-';
-    if(k.length<=12) return k;
-    return k.slice(0,6)+'…'+k.slice(-4);
-  }
-  function keyUsageObj(){
-    let u = load(KEY_USAGE_STORE, null);
-    const today = todayStr();
-    const n = loadKeys().length;
-    if(!u || u.date!==today){ u = {date:today, used: Array(n).fill(0)}; }
-    if(u.used.length<n){ u.used = (u.used||[]).concat(Array(n - (u.used||[]).length).fill(0)); }
-    return u;
-  }
-  function saveKeyUsage(u){ save(KEY_USAGE_STORE, u); }
-  function incKeyUsage(units){
-    const keys = loadKeys();
-    if(!keys.length) return;
-    const u = keyUsageObj();
-    const idx = getKeyIdx();
-    u.used[idx] = (u.used[idx]||0) + Math.max(0, units|0);
-    saveKeyUsage(u);
-    renderKeyStat();
-  }
-  function rotateKey(reason){
-    const keys = loadKeys();
-    if(keys.length<=1) return false;
-    const next = (getKeyIdx()+1) % keys.length;
-    setKeyIdx(next);
-    renderKeyStat();
-    console.warn('Rotate API key -> yt_api_key'+(next+1), 'reason:', reason||'');
-    return true;
-  }
-  function renderKeyStat(){
-    const keys = loadKeys();
-    const idx = getKeyIdx();
-    const el = $('#keyStat');
-    if(!el) return;
-    if(!keys.length){ el.textContent='키 상태: 없음'; return; }
-    const u = keyUsageObj();
-    const used = (u.used[idx]||0)|0;
-    const q = getQuota();
-    const label = 'yt_api_key'+(idx+1);
-    el.textContent = `키 ${idx+1}/${keys.length} · ${label} · ${used}/${q.limit}`;
-  }
-    const u = keyUsageObj();
-    const used = (u.used[idx]||0)|0;
-    const q = getQuota();
-    const el = $('#keyStat');
-    if(el) el.textContent = `키 ${idx+1}/${keys.length} · ${'yt_api_key'+(getKeyIdx()+1)} · ${used}/${q.limit}`;
-  }
-</b> / ${q.limit} (${pct}%)`; $('#quotaLimit').value=q.limit; $('#quotaBar .fill').style.width=pct+'%'; renderKeyStat(); }
+  function renderQuota(){ const q=getQuota(); const pct=Math.min(100, Math.round((q.used/(q.limit||1))*100)); $('#quotaStat').innerHTML=`API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%)`; $('#quotaLimit').value=q.limit; $('#quotaBar .fill').style.width=pct+'%'; }
 
   // ---------- API ----------
-  async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, key, pageToken, lang, durBucket}){
+  async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, pageToken, lang, durBucket}){
     const params = new URLSearchParams({
       part:'snippet', type:'video', order:'date', maxResults:String(Math.min(50, maxResults||50)),
-      publishedAfter, regionCode, relevanceLanguage: (lang||'ko'), key
+      publishedAfter, regionCode, relevanceLanguage:(lang||'ko')
     });
     if(q) params.set('q', q);
     if(channelId) params.set('channelId', channelId);
     if(pageToken) params.set('pageToken', pageToken);
     if(durBucket) params.set('videoDuration', durBucket);
     const url = `https://www.googleapis.com/youtube/v3/search?${params.toString()}`;
-    const res = await fetch(url); if(!res.ok) throw new Error('search '+res.status);
-    incQuota(100);
-    return res.json();
+    return fetchWithRotate(url, 100);
   }
-  async function ytVideos(ids,key){
-    const url = `https://www.googleapis.com/youtube/v3/videos?`+new URLSearchParams({part:'snippet,contentDetails,statistics', id: ids.join(','), key});
-    const res = await fetch(url); if(!res.ok) throw new Error('videos '+res.status);
-    incQuota(1);
-    return res.json();
+  async function ytVideos(ids){
+    const url = `https://www.googleapis.com/youtube/v3/videos?`+
+      new URLSearchParams({part:'snippet,contentDetails,statistics', id: ids.join(',')}).toString();
+    return fetchWithRotate(url, 1);
   }
   function isShort(snippet, contentDetails, minSec, maxSec){
     const m = (contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
     const sec = (m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0);
     const hashtag = (snippet?.title + ' ' + (snippet?.description||'')).toLowerCase().includes('#shorts');
     if(sec>0){ return (sec>= (minSec||0)) && (sec <= (maxSec||1e9)); }
-    return hashtag; // 길이가 없으면 해시태그 힌트 사용
+    return hashtag;
   }
 
   // ---------- 지표 ----------
@@ -438,7 +397,6 @@
       if(p>=90) g='S'; else if(p>=80) g='A'; else if(p>=60) g='B'; else if(p>=40) g='C'; else g='D';
       v._impact = {percentile:p, grade:g};
     });
-    // 컬럼 가시성 변경 후 레이아웃/사이드바 재계산
     adjustTableHeight();
     setupSideScroll();
   }
@@ -465,12 +423,10 @@
       holder.appendChild(w);
       w.querySelector('input').addEventListener('change', ()=>{ STATE.colVis[k]=w.querySelector('input').checked; save('sr_cols', STATE.colVis); applyColumnVisibility(); });
     });
-    // 컬럼 가시성 변경 후 레이아웃/사이드바 재계산
     adjustTableHeight();
     setupSideScroll();
   }
   function applyColumnVisibility(){
-    const before = document.getElementById('tableWrap')?.scrollHeight || 0;
     const keys = Object.keys(defaultColVis());
     keys.forEach(k=>{
       $$('#table thead th')[keys.indexOf(k)]?.classList.add('c-'+k);
@@ -480,7 +436,6 @@
       const show = STATE.colVis[k];
       document.querySelectorAll('.c-'+k).forEach(el=>{ el.style.display = show ? '' : 'none'; });
     });
-    // 컬럼 가시성 변경 후 레이아웃/사이드바 재계산
     adjustTableHeight();
     setupSideScroll();
   }
@@ -570,7 +525,7 @@
 
   // ---------- 실행 파이프라인 ----------
   async function run(){
-    const key = $('#apiKey').value.trim() || JSON.parse(localStorage.getItem('yt_api_key')||'""'); if(!key) return alert('API 키 필요');
+    if(!ROT.keys.length) return alert('API 키가 필요합니다. 상단에 여러 키를 붙여 넣고 [키 저장]을 눌러주세요.');
     const days = +$('#days').value||7;
     const region = $('#region').value||'KR';
     const lang = $('#lang').value||'ko';
@@ -587,7 +542,7 @@
     if(q){
       let next=null;
       do{
-        const res = await ytSearch({q, publishedAfter, regionCode:region, maxResults, key, pageToken:next, lang, durBucket});
+        const res = await ytSearch({q, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
@@ -595,7 +550,7 @@
     for(const ch of chanIds){
       let next=null;
       do{
-        const res = await ytSearch({channelId:ch, publishedAfter, regionCode:region, maxResults, key, pageToken:next, lang, durBucket});
+        const res = await ytSearch({channelId:ch, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
@@ -604,7 +559,7 @@
     const ids = uniq(items.map(x=>x.id?.videoId).filter(Boolean)).slice(0, maxResults);
     const videos = [];
     for(let i=0;i<ids.length;i+=50){
-      const res = await ytVideos(ids.slice(i,i+50), key);
+      const res = await ytVideos(ids.slice(i,i+50));
       (res.items||[]).forEach(v=> videos.push(v));
     }
     const shorts = videos.filter(v=> isShort(v.snippet, v.contentDetails, minSec, maxSec));
@@ -613,55 +568,7 @@
     renderTable(STATE.videos);
   }
 
-  // ---------- Export ----------
-  function exportCsv(){
-    if(!STATE.videos.length) return alert('데이터가 없습니다.');
-    const f = STATE.filters;
-    const filtered = STATE.videos.filter(v=> (v._d.er >= (f.minER||0)) && (v._d.velMult >= (f.minVX||0)) && (f.minGrade==='ALL' || rankGrade(v._impact.grade) >= rankGrade(f.minGrade)));
-    const headers = ["id","title","channel","publishedAt","durationSec","views","likes","comments","vel","er","fresh","fit","velMult","impact","delta","clusterId"];
-    const rows = [headers.join(',')];
-    for(const v of filtered){
-      const sec = isoToSeconds(v.contentDetails.duration||'PT0S');
-      const delta = delta24h(v.id);
-      const vals = [
-        v.id,
-        '\"'+(v.snippet.title||'').replace(/\"/g,'\"\"')+'\"',
-        '\"'+(v.snippet.channelTitle||'').replace(/\"/g,'\"\"')+'\"',
-        v.snippet.publishedAt,
-        sec,
-        v.statistics.viewCount||0,
-        v.statistics.likeCount||0,
-        v.statistics.commentCount||0,
-        (v._d.vel||0).toFixed(3),
-        (v._d.er||0).toFixed(3),
-        (v._d.fresh||0).toFixed(3),
-        0, // fit placeholder
-        (v._d.velMult||0).toFixed(3),
-        v._impact.grade,
-        delta||0,
-        '' // cluster removed
-      ];
-      rows.push(vals.join(','));
-    }
-    const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`shorts_radar_export_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
-  }
-  function exportJson(){
-    if(!STATE.videos.length) return alert('데이터가 없습니다.');
-    const f = STATE.filters;
-    const filtered = STATE.videos.filter(v=> (v._d.er >= (f.minER||0)) && (v._d.velMult >= (f.minVX||0)) && (f.minGrade==='ALL' || rankGrade(v._impact.grade) >= rankGrade(f.minGrade)));
-    const arr = filtered.map(v=> ({
-      id:v.id, title:v.snippet.title||'', channel:v.snippet.channelTitle||'', publishedAt:v.snippet.publishedAt,
-      durationSec: (isoToSeconds(v.contentDetails.duration||'PT0S')),
-      views: +v.statistics.viewCount||0, likes:+v.statistics.likeCount||0, comments:+v.statistics.commentCount||0,
-      vel: v._d.vel, er: v._d.er, fresh: v._d.fresh, fit: 0,
-      velMult: v._d.velMult, impact: v._impact.grade, delta: delta24h(v.id), clusterId: null
-    }));
-    const blob = new Blob([JSON.stringify(arr,null,2)], {type:'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`shorts_radar_export_${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
-  }
-
-  
+  // ---------- Export (XLSX) ----------
   function exportXlsx(){
     if(!STATE.videos.length) return alert('데이터가 없습니다.');
     const f = STATE.filters;
@@ -693,30 +600,26 @@
     }
     if(typeof XLSX==='undefined'){ alert('XLSX 라이브러리를 불러오지 못했습니다. 네트워크를 확인하세요.'); return; }
     const ws = XLSX.utils.aoa_to_sheet(rows);
-    // column widths (rough)
-    const colw = [16, 60, 28, 24, 14, 12, 12, 12, 12, 12, 10, 8, 12, 12, 10, 10, 10].map(w=>({wch:w}));
-    ws['!cols'] = colw;
+    ws['!cols'] = [16,60,28,24,14,12,12,12,12,12,10,8,12,12,10,10,10].map(w=>({wch:w}));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'ShortsRadar');
     XLSX.writeFile(wb, `shorts_radar_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
-  
-  // ---------- 레이아웃 보정(동적 높이) ----------
+  // ---------- 레이아웃 보정 ----------
   function adjustTableHeight(){
     const wrap = document.getElementById('tableWrap');
     if(!wrap) return;
     const rect = wrap.getBoundingClientRect();
-    const footerReserve = 110; // bottom tip 영역 여유
+    const footerReserve = 110;
     const available = Math.max(320, Math.floor(window.innerHeight - rect.top - footerReserve));
-    const rowH = 56; const headerH = 48; const desired = headerH + rowH*10; // 10행 보이기
+    const rowH = 56; const headerH = 48; const desired = headerH + rowH*10;
     const height = Math.max(300, Math.min(available, desired));
     wrap.style.height = height + 'px';
     wrap.style.maxHeight = height + 'px';
   }
 
-  
-  // ---------- S3: 장기 트렌드 대시보드 (Integrated v3.2) ----------
+  // ---------- S3: 장기 트렌드 ----------
   async function loadTrendData(){
     const url = './kw-trend.sample.json';
     const res = await fetch(url, {cache:'no-store'});
@@ -861,58 +764,20 @@
     bar.querySelector('#scrollBottom').addEventListener('click', ()=> wrap.scrollTo({top:wrap.scrollHeight, behavior:'smooth'}));
   }
 
-  
-  // --- Override YouTube calls with key-rotation aware fetchers ---
-  async function ytFetchWithRotation(baseUrl, params, cost){
-    const tries = Math.max(1, loadKeys().length);
-    for(let i=0;i<tries;i++){
-      const key = activeKey();
-      if(!key) throw new Error('API 키가 없습니다.');
-      const p = new URLSearchParams(params || {});
-      p.set('key', key);
-      const url = baseUrl + '?' + p.toString();
-      const res = await fetch(url);
-      if(res.ok){
-        incQuota(cost);
-        incKeyUsage(cost);
-        try { return await res.json(); } catch(e){ return {}; }
-      }
-      if(res.status===400 || res.status===403 || res.status===429){
-        rotateKey('HTTP '+res.status);
-        continue;
-      }
-      throw new Error('YouTube HTTP '+res.status);
-    }
-    throw new Error('모든 API 키가 실패했습니다.');
-  }
-  async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, pageToken, lang, durBucket}){
-    const params = {
-      part:'snippet', type:'video', order:'date', maxResults:String(Math.min(50, maxResults||50)),
-      publishedAfter, regionCode, relevanceLanguage:(lang||'ko')
-    };
-    if(q) params.q = q;
-    if(channelId) params.channelId = channelId;
-    if(pageToken) params.pageToken = pageToken;
-    if(durBucket) params.videoDuration = durBucket;
-    return await ytFetchWithRotation('https://www.googleapis.com/youtube/v3/search', params, 100);
-  }
-  async function ytVideos(ids){
-    const params = { part:'snippet,contentDetails,statistics', id: (ids||[]).join(',') };
-    return await ytFetchWithRotation('https://www.googleapis.com/youtube/v3/videos', params, 1);
-  }
-
   // ---------- 이벤트 바인딩 ----------
   $('#runBtn').addEventListener('click', run);
   $('#exportXlsx').addEventListener('click', exportXlsx);
+  // 키 저장: 여러 키를 콤마/공백/줄바꿈으로
   $('#saveKey').addEventListener('click', ()=>{
-  const raw = ($('#apiKey').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  if(!raw.length) return alert('API 키를 입력하세요. 쉼표로 여러 개를 넣을 수 있습니다.');
-  saveKeys(raw);
-  localStorage.setItem('yt_api_key', JSON.stringify(raw[0])); // backward compat
-  localStorage.setItem('sr_key_idx', '0');
-  renderKeyStat();
-  alert('저장되었습니다. 총 '+raw.length+'개의 키가 등록되었습니다.');
-});
+    const raw=$('#apiKey').value.trim();
+    const keys = raw.split(/[\s,]+/).map(s=>s.trim()).filter(Boolean);
+    if(!keys.length) return alert('1개 이상 키를 입력하세요.');
+    localStorage.removeItem('yt_api_key');        // 레거시 제거
+    localStorage.setItem('yt_api_keys', JSON.stringify(keys));
+    $('#apiKey').value='';                         // 값 노출 방지
+    ROT.load();
+    alert('키가 저장되었습니다.');
+  });
   $('#resetBtn').addEventListener('click', ()=>{ if(confirm('모든 설정을 초기화할까요?')){ localStorage.clear(); location.reload(); } });
   $('#quotaApply').addEventListener('click', ()=> setQuotaLimit($('#quotaLimit').value) );
   $('#quotaReset').addEventListener('click', resetQuota);
@@ -935,7 +800,8 @@
 
   // 초기화
   (function init(){
-    const keys = loadKeys(); if(keys.length) $('#apiKey').value = keys.join(','); else { const savedKey = JSON.parse(localStorage.getItem('yt_api_key')||'""'); if(savedKey) $('#apiKey').value=savedKey; } renderKeyStat();
+    // 키는 보안을 위해 input에 미리 채우지 않음
+    ROT.load();
     const savedCols = load('sr_cols', null); if(savedCols) STATE.colVis=savedCols;
     const savedSortKey = load('sr_sortKey', null); if(savedSortKey) STATE.sortKey=savedSortKey;
     const savedSortDir = load('sr_sortDir', null); if(savedSortDir) STATE.sortDir=savedSortDir;
