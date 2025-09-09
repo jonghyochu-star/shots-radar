@@ -972,8 +972,57 @@ if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
 
 </script>
 
+<!-- SR PICK-PILL PATCH v7 (inline) -->
+<script>
+(function(){
+  if (window.__srPickPatchApplied) return; window.__srPickPatchApplied = true;
 
-<script src="./sr-patch-pickpill.inline.v7.js"></script>
+  // 저장 + 상태 반영
+  function setCurIdx(i){
+    try{
+      i = parseInt(i, 10);
+      if (Number.isNaN(i)) return;
+      localStorage.setItem('sr_curIdx', String(i));
+      if (window.ROT && Array.isArray(ROT.keys)) {
+        ROT.idx = Math.max(0, Math.min(i, ROT.keys.length - 1));
+      }
+    }catch(e){ console.warn('[SR] setCurIdx', e); }
+  }
+
+  // 배지 클릭 핸들러 (renderKeyState가 있으면 호출, 없으면 DOM만 갱신)
+  window._pickKey = function(i){
+    setCurIdx(i);
+    // 1) 가장 좋음: 내부 렌더러가 노출돼 있으면 즉시 재렌더
+    if (typeof window.renderKeyState === 'function') {
+      try { window.renderKeyState(); return; } catch(e){}
+    }
+    // 2) 폴백: 배지 DOM에서 NOW만 교체
+    const holder = document.querySelector('#keyState');
+    if (!holder) return;
+    holder.querySelectorAll('.pill').forEach((pill, j)=>{
+      pill.querySelectorAll('.badge').forEach(b=>{
+        if (b.textContent.trim() === 'NOW') b.remove();
+      });
+      if (j === i) {
+        const b = pill.querySelector('b');
+        if (b) {
+          const now = document.createElement('span');
+          now.className = 'badge';
+          now.textContent = 'NOW';
+          b.insertAdjacentText('afterend', ' ');
+          b.insertAdjacentElement('afterend', now);
+        }
+      }
+    });
+  };
+
+  // 첫 로드 시 저장된 인덱스 반영(있으면)
+  const saved = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
+  if (!Number.isNaN(saved)) { setCurIdx(saved); }
+})();
+</script>
+<!-- /SR PICK-PILL PATCH v7 -->
+
 
 
 </body>
