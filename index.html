@@ -321,7 +321,14 @@
       const now = i===ROT.idx ? '<span class="badge">NOW</span>' : '';
       const mini = `<span class="badge">ok:${s.ok}</span> <span class="badge">fail:${s.fail}</span>`;
       const bl  = s.blocked ? '<span class="badge">BLOCK?</span>' : '';
-      return `<span class="pill ${cls}" title="${tip}"><b>yt_api_key${i+1}</b> ${now} ${mini} ${bl}</span>`;
+      return `<span class="pill ${cls}"
+  role="button" tabindex="0"
+  title="${tip}"
+  onclick="window._pickKey(${i})"
+  onkeydown="if(event.key==='Enter'||event.key===' '||event.code==='Space'){event.preventDefault();window._pickKey(${i});}">
+  <b>yt_api_key${i+1}</b> ${now} ${mini} ${bl}
+</span>`;
+
     }).join('');
   }
 
@@ -916,8 +923,27 @@
   })();
 })();
 </script>
-<!-- v2/v3/v4 줄을 다음으로 교체 -->
-<script src="./sr-patch-pickpill.v5.js"></script>
+<script>
+  // 수동 선택: i번째 키를 NOW(선두)로
+  window._pickKey = function(i){
+    try{
+      const keys = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
+      if(!(i>=0 && i<keys.length)) return;
+
+      const key  = keys[i];
+      const next = [key, ...keys.filter((_,j)=>j!==i)];
+      localStorage.setItem('yt_api_keys', JSON.stringify(next));
+
+      // (옵션) 수동 선택 시 차단 해제
+      const stat = JSON.parse(localStorage.getItem('sr_keyStat')||'{}');
+      if(stat[key]){ stat[key].blocked = false; stat[key].fail = 0; }
+      localStorage.setItem('sr_keyStat', JSON.stringify(stat));
+
+      // 즉시 UI 갱신
+      try { ROT.load(); } catch(e) { location.reload(); }
+    }catch(e){ console.error('[pickKey]', e); }
+  };
+</script>
 
 </body>
 </html>
