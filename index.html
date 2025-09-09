@@ -910,6 +910,12 @@
   (function init(){
     // 키는 보안을 위해 input에 미리 채우지 않음
     ROT.load();
+    // ✅ 마지막 선택값 복원
+const savedCur = +localStorage.getItem('sr_curIdx');
+if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
+  ROT.idx = savedCur;
+  if (typeof renderKeyState === 'function') renderKeyState();
+}
     const savedCols = load('sr_cols', null); if(savedCols) STATE.colVis=savedCols;
     const savedSortKey = load('sr_sortKey', null); if(savedSortKey) STATE.sortKey=savedSortKey;
     const savedSortDir = load('sr_sortDir', null); if(savedSortDir) STATE.sortDir=savedSortDir;
@@ -925,24 +931,28 @@
 </script>
   
 <script>
+  // ✅ 클릭 시 배열은 건드리지 않고 “선택 인덱스”만 저장 → 즉시 그 배지에 NOW 표시
   window._pickKey = function(i){
     try{
       const keys = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
       if(!(i>=0 && i<keys.length)) return;
 
-      const key  = keys[i];
-      const next = [key, ...keys.filter((_,j)=>j!==i)];
-      localStorage.setItem('yt_api_keys', JSON.stringify(next));
+      // 1) 선택 인덱스 저장
+      localStorage.setItem('sr_curIdx', String(i));
 
-      // (옵션) 수동 선택 시 차단 해제
+      // 2) (옵션) 수동 선택 시 차단 해제/실패 카운트 리셋
+      const key  = keys[i];
       const stat = JSON.parse(localStorage.getItem('sr_keyStat')||'{}');
       if(stat[key]){ stat[key].blocked = false; stat[key].fail = 0; }
       localStorage.setItem('sr_keyStat', JSON.stringify(stat));
 
-      try { ROT.load(); } catch(e) { location.reload(); }
+      // 3) 현재 인덱스 적용 + 즉시 재렌더
+      if (window.ROT) { ROT.idx = i; }
+      if (typeof renderKeyState === 'function') renderKeyState();
     }catch(e){ console.error('[pickKey]', e); }
   };
 </script>
+
 
 <script src="./sr-patch-pickpill.inline.v7.js"></script>
 
