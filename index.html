@@ -312,6 +312,16 @@
 
 
   function renderKeyState(){
+    // ✅ 저장된 선택 인덱스로 항상 덮어써서 NOW가 밀리지 않도록 ‘핀’ 고정
+  const savedCur = +localStorage.getItem('sr_curIdx');
+  if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
+    ROT.idx = savedCur;
+  }
+
+  const holder = $('#keyState');
+  if(!holder) return;
+  …
+}
     const holder = $('#keyState'); if(!holder) return;
     if(!ROT.keys.length){ holder.innerHTML='<span class="pill">키 상태: 없음</span>'; return; }
     holder.innerHTML = ROT.keys.map((_,i)=>{
@@ -931,7 +941,7 @@ if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
 </script>
   
 <script>
-  // ✅ 클릭 시 배열은 건드리지 않고 “선택 인덱스”만 저장 → 즉시 그 배지에 NOW 표시
+  // ✅ 클릭 시 배열은 건드리지 않고 “선택 인덱스”만 저장 → 즉시 그 배지에 NOW 표시  
   window._pickKey = function(i){
     try{
       const keys = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
