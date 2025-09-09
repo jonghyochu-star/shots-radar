@@ -311,36 +311,41 @@
   try{ globalThis.ROT = ROT; }catch(e){}
 
 
-  function renderKeyState(){
-    // ✅ 저장된 선택 인덱스로 항상 덮어써서 NOW가 밀리지 않도록 ‘핀’ 고정
-  const savedCur = +localStorage.getItem('sr_curIdx');
-  if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
+function renderKeyState(){
+  // --- 선택 인덱스 핀 고정(렌더마다 덮어쓰기) ---
+  var savedCur = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
+  if (!isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
     ROT.idx = savedCur;
   }
 
-  const holder = $('#keyState');
-  if(!holder) return;
-  …
-}
-    const holder = $('#keyState'); if(!holder) return;
-    if(!ROT.keys.length){ holder.innerHTML='<span class="pill">키 상태: 없음</span>'; return; }
-    holder.innerHTML = ROT.keys.map((_,i)=>{
-      const s=ROT.stat[i]||{ok:0,fail:0,blocked:false};
-      const cls = s.blocked ? 'danger' : (i===ROT.idx ? 'good' : '');
-      const tip = `${i===ROT.idx?'현재 사용 · ':''}${s.blocked?'차단 추정 · ':''}성공:${s.ok} · 실패:${s.fail}${s.fail>=3?' · 회전 사유: 실패 3회':''}`;
-      const now = i===ROT.idx ? '<span class="badge">NOW</span>' : '';
-      const mini = `<span class="badge">ok:${s.ok}</span> <span class="badge">fail:${s.fail}</span>`;
-      const bl  = s.blocked ? '<span class="badge">BLOCK?</span>' : '';
-      return `<span class="pill ${cls}"
-  role="button" tabindex="0"
-  title="${tip}"
-  onclick="window._pickKey(${i})"
-  onkeydown="if(event.key==='Enter'||event.key===' '||event.code==='Space'){event.preventDefault();window._pickKey(${i});}">
-  <b>yt_api_key${i+1}</b> ${now} ${mini} ${bl}
-</span>`;
+  var holder = $('#keyState');
+  if (!holder) return;
 
-    }).join('');
+  if (!ROT.keys.length) {
+    holder.innerHTML = '<span class="pill">키 상태: 없음</span>';
+    return;
   }
+
+  holder.innerHTML = ROT.keys.map(function(_, i){
+    var k = ROT.keys[i];
+    var s = ROT.stat[k] || { ok:0, fail:0, blocked:false };
+    var cls = s.blocked ? 'danger' : (i === ROT.idx ? 'good' : '');
+    var tip = (i===ROT.idx ? '현재 사용 중 - ' : '') + '성공:' + s.ok + ' - 실패:' + s.fail + (s.fail>=3 ? ' - 회전 사유: 실패 3회' : '');
+    var now = (i===ROT.idx ? '<span class="badge">NOW</span>' : '');
+    var mini = '<span class="badge">ok:' + s.ok + '</span> <span class="badge">fail:' + s.fail + '</span>';
+    var bl = (s.blocked ? '<span class="badge">BLOCK?</span>' : '');
+
+    return (
+      '<span class="pill ' + cls + '" ' +
+      'role="button" tabindex="0" ' +
+      'title="' + tip + '" ' +
+      'onclick="window._pickKey(' + i + ')" ' +
+      'onkeydown="if(event.key===\'Enter\'||event.key===\' \'||event.code===\'Space\'){event.preventDefault();window._pickKey(' + i + ');}">' +
+      '<b>yt_api_key' + (i+1) + '</b> ' + now + ' ' + mini + ' ' + bl +
+      '</span>'
+    );
+  }).join('');
+}
 
   async function fetchWithRotate(url, quotaInc){
     const maxTry = Math.max(1, ROT.keys.length);
@@ -920,6 +925,9 @@
   (function init(){
     // 키는 보안을 위해 input에 미리 채우지 않음
     ROT.load();
+        var savedCur = parseInt(localStorage.getItem('sr_curIdx') || '-1', 10);
+    if (!isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) { ROT.idx = savedCur; if (typeof renderKeyState==='function') renderKeyState(); }
+
     // ✅ 마지막 선택값 복원
 const savedCur = +localStorage.getItem('sr_curIdx');
 if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
@@ -943,24 +951,25 @@ if (!Number.isNaN(savedCur) && savedCur >= 0 && savedCur < ROT.keys.length) {
 <script>
   // ✅ 클릭 시 배열은 건드리지 않고 “선택 인덱스”만 저장 → 즉시 그 배지에 NOW 표시  
   window._pickKey = function(i){
-    try{
-      const keys = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
-      if(!(i>=0 && i<keys.length)) return;
+  try{
+    var keys = JSON.parse(localStorage.getItem('yt_api_keys') || '[]');
+    if (!(i >= 0 && i < keys.length)) return;
 
-      // 1) 선택 인덱스 저장
-      localStorage.setItem('sr_curIdx', String(i));
+    // 1) 선택 인덱스 저장
+    localStorage.setItem('sr_curIdx', String(i));
 
-      // 2) (옵션) 수동 선택 시 차단 해제/실패 카운트 리셋
-      const key  = keys[i];
-      const stat = JSON.parse(localStorage.getItem('sr_keyStat')||'{}');
-      if(stat[key]){ stat[key].blocked = false; stat[key].fail = 0; }
-      localStorage.setItem('sr_keyStat', JSON.stringify(stat));
+    // 2) (옵션) 수동 선택 시 차단 해제/실패 리셋
+    var key = keys[i];
+    var stat = JSON.parse(localStorage.getItem('sr_keyStat') || '{}');
+    if (stat[key]) { stat[key].blocked = false; stat[key].fail = 0; }
+    localStorage.setItem('sr_keyStat', JSON.stringify(stat));
 
-      // 3) 현재 인덱스 적용 + 즉시 재렌더
-      if (window.ROT) { ROT.idx = i; }
-      if (typeof renderKeyState === 'function') renderKeyState();
-    }catch(e){ console.error('[pickKey]', e); }
-  };
+    // 3) 현재 인덱스 적용 + 즉시 렌더
+    if (window.ROT) { ROT.idx = i; }
+    if (typeof renderKeyState === 'function') renderKeyState();
+  }catch(e){ console.error('[pickKey]', e); }
+};
+
 </script>
 
 
