@@ -1009,6 +1009,61 @@ async function fetchWithRotate(url, quotaInc){
 </script>
 <!-- /SR PICK-PILL PATCH v7 -->
 
+<script>
+/**
+ * 채널 링크 클릭 시 기존 모달 오픈 함수를 호출.
+ * - 기존 전역 함수들을 우선 탐색: showChannelModal, openChannelModal, openChannelDialog, openChannelInfo
+ * - 아무것도 없으면 간단 alert로만 표시(임시)
+ * - a 태그에 class나 data-*가 달라져도 최대한 유연히 잡도록 선택자 구성
+ */
+(function () {
+  const openExistingModal =
+      window.showChannelModal ||
+      window.openChannelModal ||
+      window.openChannelDialog ||
+      window.openChannelInfo ||
+      null;
+
+  // 이벤트 위임: 테이블 전체에서 채널 링크 클릭을 감지
+  document.addEventListener('click', (e) => {
+    // a.js-ch-link 또는 data-chid 속성 보유 요소를 유연하게 인식
+    const a = e.target.closest('a.js-ch-link, a[data-chid], [data-chid].ch, .ch a');
+    if (!a) return;
+
+    // 클릭이 우측 오버레이(TOP/END 등)에 가로막히지 않도록
+    // (만약 오버레이가 덮고 있다면 CSS에서 pointer-events 처리 필요 – 아래 참고)
+    e.preventDefault();
+
+    // 채널 ID/이름 추출(프로젝트마다 속성명이 조금씩 달라질 수 있어 여러가지 시도)
+    const chId =
+      a.dataset.chid ||
+      a.getAttribute('data-channel-id') ||
+      a.getAttribute('data-ch') ||
+      a.getAttribute('data-id') ||
+      '';
+
+    const chName =
+      a.dataset.chname ||
+      a.getAttribute('data-channel') ||
+      a.textContent.trim();
+
+    if (!chId) {
+      console.warn('[channel modal] 채널 ID를 찾지 못했습니다. a=', a);
+      return;
+    }
+
+    if (typeof openExistingModal === 'function') {
+      // ✅ 기존 모달 오픈 함수로 위임
+      try { openExistingModal(chId, chName); }
+      catch (err) { console.error('openExistingModal error:', err); }
+      return;
+    }
+
+    // ⚠️ 정말로 기존 모달 오픈 함수가 전혀 없을 때만 임시 처리
+    alert(`채널: ${chName}\nID: ${chId}`);
+  });
+})();
+</script>
 
 
 </body>
