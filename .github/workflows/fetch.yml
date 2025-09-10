@@ -31,11 +31,11 @@ jobs:
 
       - name: Run fetch-trend.js
         env:
-          YT_API_KEY_1: ${{ secrets.YT_API_KEY_1 }}
-          YT_API_KEY_2: ${{ secrets.YT_API_KEY_2 }}
-          YT_API_KEY_3: ${{ secrets.YT_API_KEY_3 }}
-          YT_API_KEY_4: ${{ secrets.YT_API_KEY_4 }}
-          YT_API_KEY_5: ${{ secrets.YT_API_KEY_5 }}
+          YT_KEY_1: ${{ secrets.YT_KEY_1 }}
+          YT_KEY_2: ${{ secrets.YT_KEY_2 }}
+          YT_KEY_3: ${{ secrets.YT_KEY_3 }}
+          YT_KEY_4: ${{ secrets.YT_KEY_4 }}
+          YT_KEY_5: ${{ secrets.YT_KEY_5 }}
         run: node scripts/fetch-trend.js
 
       - name: Commit kw-trend.json
