@@ -20,11 +20,11 @@ const CATEGORIES = ['AI','게임','커뮤니티','리뷰','정치','연예','시
 
 // 서버/프론트 동일 키 사용 가능. 여기엔 "서버에서 쓸" 키를 Secrets로 넣어주세요.
 const KEY_POOL = [
-  process.env.YT_API_KEY_1,
-  process.env.YT_API_KEY_2,
-  process.env.YT_API_KEY_3,
-  process.env.YT_API_KEY_4,
-  process.env.YT_API_KEY_5,
+  process.env.YT_KEY_1,
+  process.env.YT_KEY_2,
+  process.env.YT_KEY_3,
+  process.env.YT_KEY_4,
+  process.env.YT_KEY_5,
 ].filter(Boolean);
 
 if (!KEY_POOL.length) {
