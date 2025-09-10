@@ -1,128 +1,164 @@
-// scripts/fetch-trend.js
-// public/kw-trend.json + public/kw-status.json 생성
+/**
+ * scripts/fetch-trend.js
+ * - 매시간 2페이지(RESULT_PAGES_PER_RUN=2) 수집
+ * - YT API 키 라운드로빈 로테이션 (Actions Secrets: YT_API_KEY_1..5)
+ * - 기존 public/kw-trend.json과 "일 단위" 병합(최대 180일 유지)
+ */
+
 import fs from 'fs';
 import path from 'path';
-import { YT } from './lib/yt.js';
+import { fileURLToPath } from 'url';
 
-const OUTPUT = 'public/kw-trend.json';
-const REGION = 'KR';
-const LANG   = 'ko';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
 
-// 비용 제어 (필요 시 조정)
-const MAX_RESULTS = parseInt(process.env.SEARCH_MAX || '25', 10);
-const QUERIES_PER_CAT = parseInt(process.env.QPER || '1', 10);
+// === 설정 ===
+const RESULT_PAGES_PER_RUN = 2;        // ✅ 매시간 2 페이지
+const RESULTS_PER_PAGE     = 50;       // search 최대 50
+const MAX_DAYS_KEEP        = 180;      // 180일 유지
+const CATEGORIES = ['AI','게임','커뮤니티','리뷰','정치','연예','시니어','오피셜','스포츠'];
 
-const QUERIES = {
-  "정치": ["정치", "국회"],
-  "AI": ["AI", "인공지능", "chatgpt"],
-  "연예": ["연예", "연예뉴스"],
-  "스포츠": ["스포츠", "야구", "축구"],
-  "커뮤니티": ["커뮤니티", "밈"],
-  "게임": ["게임", "게임뉴스"],
-  "시니어": ["시니어", "실버"],
-  "오피셜": ["공식", "오피셜"],
-  "리뷰": ["리뷰", "언박싱"]
-};
+// 서버/프론트 동일 키 사용 가능. 여기엔 "서버에서 쓸" 키를 Secrets로 넣어주세요.
+const KEY_POOL = [
+  process.env.YT_API_KEY_1,
+  process.env.YT_API_KEY_2,
+  process.env.YT_API_KEY_3,
+  process.env.YT_API_KEY_4,
+  process.env.YT_API_KEY_5,
+].filter(Boolean);
 
-const KEYS = [
-  process.env.YT_KEY_1, process.env.YT_KEY_2, process.env.YT_KEY_3,
-  process.env.YT_KEY_4, process.env.YT_KEY_5
-];
+if (!KEY_POOL.length) {
+  console.error('❌ No YT API keys in Secrets (YT_API_KEY_1..5)');
+  process.exit(1);
+}
+let keyIdx = 0;
+function nextKey(){ const k = KEY_POOL[keyIdx]; keyIdx = (keyIdx+1) % KEY_POOL.length; return k; }
 
-const yt = new YT(KEYS);
-
-function dayStr(d){ return d.toISOString().slice(0,10); }
-function plusDays(d,n){ const x=new Date(d); x.setUTCDate(x.getUTCDate()+n); return x; }
-function readJSON(p){ try{ return JSON.parse(fs.readFileSync(p,'utf-8')); } catch{ return null; } }
-function uniq(a){ return [...new Set(a)]; }
-
-async function fetchDay(category, dateISO){
-  const qlist = QUERIES[category] || [category];
-  let views = 0, n = 0, ids = [];
-
-  for (const q of qlist.slice(0, QUERIES_PER_CAT)) {
-    const res = await yt.search({
-      part: 'snippet',
-      q,
-      type: 'video',
-      maxResults: MAX_RESULTS,
-      publishedAfter:  `${dateISO}T00:00:00Z`,
-      publishedBefore: `${dateISO}T23:59:59Z`,
-      relevanceLanguage: LANG,
-      regionCode: REGION,
-      order: 'viewCount',
-      videoDuration: 'short'
-    });
-    ids.push(...(res.items || []).map(i => i.id && i.id.videoId).filter(Boolean));
+async function httpGet(url){
+  const res = await fetch(url, { headers: { 'accept':'application/json' } });
+  if(!res.ok){
+    const t = await res.text().catch(()=> '');
+    throw new Error(`HTTP ${res.status} ${res.statusText} – ${t.slice(0,200)}`);
   }
+  return res.json();
+}
 
-  ids = uniq(ids);
-  for (let i=0;i<ids.length;i+=50){
-    const chunk = ids.slice(i,i+50);
-    if (!chunk.length) break;
-    const v = await yt.videos({
-      part: 'statistics',
-      id: chunk.join(','),
-      fields: 'items(statistics/viewCount)'
-    });
-    for (const it of (v.items || [])) {
-      const s = it.statistics || {};
-      views += Number(s.viewCount || 0);
-      n++;
-    }
+// YouTube API
+async function ytSearch(q, pageToken=''){
+  const params = new URLSearchParams({
+    key: nextKey(),
+    part: 'snippet',
+    type: 'video',
+    maxResults: String(RESULTS_PER_PAGE),
+    q,
+    order: 'date',
+    publishedAfter: new Date(Date.now()-14*86400e3).toISOString(), // 최근 14일
+  });
+  if(pageToken) params.set('pageToken', pageToken);
+  const url = `https://www.googleapis.com/youtube/v3/search?${params.toString()}`;
+  return httpGet(url); // search 1회 = 100 unit
+}
+async function ytVideos(ids){
+  const params = new URLSearchParams({
+    key: nextKey(),
+    part: 'statistics,contentDetails,snippet',
+    id: ids.join(',')
+  });
+  const url = `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`;
+  return httpGet(url); // videos 1회 = 1 unit
+}
+
+// 합계
+function sumViews(items){
+  let total = 0, n=0;
+  for(const it of items){
+    const v = Number(it?.statistics?.viewCount||0);
+    if(!Number.isNaN(v)){ total += v; n++; }
   }
+  return { views: total, n };
+}
 
-  return { views, n };
+// 병합
+function mergeSeries(oldSeries, append){
+  const out = { ...oldSeries };
+  for(const [cat, rec] of Object.entries(append)){
+    const arr = Array.isArray(out[cat]) ? out[cat].slice() : [];
+    const idx = arr.findIndex(x=> x.d === rec.d);
+    if(idx>=0) arr[idx] = rec; else arr.push(rec);
+    arr.sort((a,b)=> (a.d < b.d ? -1 : 1));
+    while(arr.length > MAX_DAYS_KEEP) arr.shift();
+    out[cat] = arr;
+  }
+  return out;
+}
+function todayYmd(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
 }
 
 async function main(){
-  const tStart = Date.now();
-  const today = new Date(); today.setUTCHours(0,0,0,0);
+  const TARGET = path.join(__dirname, '..', 'public', 'kw-trend.json');
 
-  const existing = readJSON(OUTPUT) || { updatedAt: null, series: {} };
-  for (const k of Object.keys(QUERIES)) existing.series[k] = existing.series[k] || [];
+  // 1) 기존 로드
+  let old = {};
+  try {
+    const raw = fs.readFileSync(TARGET, 'utf8');
+    old = JSON.parse(raw||'{}')?.series || {};
+  } catch(e){ /* 최초 실행일 수 있음 */ }
 
-  const bootstrapDays = parseInt(process.env.BOOTSTRAP_DAYS || '0', 10);
-  let days = [];
-  if (bootstrapDays > 0){
-    const start = plusDays(today, -bootstrapDays + 1);
-    for (let d = new Date(start); d <= today; d = plusDays(d,1)) days.push(dayStr(d));
-  } else {
-    days = [ dayStr(today) ];
-  }
+  const ymd = todayYmd();
+  const appended = {}; // {카테고리:{d,views,n}}
 
-  for (const ds of days){
-    for (const cat of Object.keys(QUERIES)){
-      const arr = existing.series[cat];
-      const idx = arr.findIndex(x => x.d === ds);
-      if (idx !== -1) arr.splice(idx,1);
+  // 2) 카테고리 순회 (매시간 2페이지)
+  for(const cat of CATEGORIES){
+    let pageToken = '';
+    let allVideoIds = [];
 
-      const r = await fetchDay(cat, ds);
-      arr.push({ d: ds, views: r.views, n: r.n });
-      arr.sort((a,b) => a.d.localeCompare(b.d));
-      if (arr.length > 180) existing.series[cat] = arr.slice(-180);
+    for(let p=0; p<RESULT_PAGES_PER_RUN; p++){
+      const js = await ytSearch(cat, pageToken);
+      const ids = (js?.items||[])
+        .map(it=> it?.id?.videoId)
+        .filter(Boolean);
+      allVideoIds.push(...ids);
+
+      pageToken = js?.nextPageToken || '';
+      if(!pageToken) break;
     }
+
+    // videos.list(50개 단위)
+    const batches = [];
+    for(let i=0; i<allVideoIds.length; i+=50){
+      const part = allVideoIds.slice(i, i+50);
+      if(part.length) batches.push(part);
+    }
+
+    const details = [];
+    for(const part of batches){
+      const v = await ytVideos(part);
+      details.push(...(v?.items||[]));
+    }
+
+    const {views, n} = sumViews(details);
+    appended[cat] = { d: ymd, views, n };
+    console.log(`✔ ${cat}: videos=${details.length}, views=${views.toLocaleString()}`);
   }
 
-  existing.updatedAt = dayStr(today);
-  fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
-  fs.writeFileSync(OUTPUT, JSON.stringify(existing, null, 2));
-  console.log('Wrote', OUTPUT, 'updatedAt', existing.updatedAt);
+  // 3) 병합 & 저장
+  const merged = mergeSeries(old, appended);
+  const out = {
+    updatedAt: new Date().toISOString(),
+    series: merged
+  };
+  fs.mkdirSync(path.dirname(TARGET), { recursive: true });
+  fs.writeFileSync(TARGET, JSON.stringify(out, null, 2), 'utf8');
 
-  // --- 키 로테이션 상태 파일 출력 ---
-  const status = yt.getStats();
-  status.updatedAt = existing.updatedAt;
-  status.runtimeSec = Math.round((Date.now()-tStart)/1000);
-  fs.writeFileSync('public/kw-status.json', JSON.stringify(status, null, 2));
-  console.log('Wrote public/kw-status.json');
+  console.log(`✅ kw-trend.json updated: ${TARGET}`);
 }
 
-main().catch(e => {
-  const msg = String(e || '');
-  if (msg.includes('quotaExceeded')) {
-    console.warn('[INFO] Quota exhausted. 기존 kw-trend.json 유지 후 성공 처리');
-    process.exit(0);
-  }
-  console.error(e);
+main().catch(err=>{
+  console.error('❌ fetch-trend failed:', err);
   process.exit(1);
 });
