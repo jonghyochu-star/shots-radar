@@ -1183,5 +1183,119 @@ async function fetchWithRotate(url, quotaInc){
 })();
 </script>
 
+  <script>
+/* ========== 채널 미니 모달: 최초 호출 시 자동 생성 ========== */
+(function () {
+  // 전역에서 쓸 수 있게 노출
+  window.openChannelModal = function (chId, chName) {
+    ensureChModal();
+
+    // 채울 내용
+    document.getElementById('chm-title').textContent = chName || '(채널명 없음)';
+    document.getElementById('chm-id').textContent = chId || '(ID 없음)';
+
+    // 버튼 핸들러
+    const addBtn = document.getElementById('chm-add');
+    const onlyBtn = document.getElementById('chm-only');
+    const ytBtn  = document.getElementById('chm-yt');
+    const close1 = document.getElementById('chm-close-x');
+    const close2 = document.getElementById('chm-close');
+
+    const setCompInput = (value, append=false) => {
+      // 경쟁 채널 ID 입력창(여러 리포/버전 호환)
+      const compInput = document.querySelector(
+        '#compChInput, #compChIds, input[name="compChIds"], input[data-role="comp-ids"], input[placeholder*="경쟁 채널"]'
+      );
+      if (!compInput) return;
+
+      const norm = (s)=> (s||'').trim();
+      if (append) {
+        const cur = compInput.value.split(/[,\s]+/).map(norm).filter(Boolean);
+        if (!cur.includes(value)) cur.push(value);
+        compInput.value = cur.join(', ');
+      } else {
+        compInput.value = value;
+      }
+      compInput.dispatchEvent(new Event('input', {bubbles:true}));
+      compInput.dispatchEvent(new Event('change', {bubbles:true}));
+    };
+
+    addBtn.onclick = () => { if (chId) setCompInput(chId, true); };
+    onlyBtn.onclick = () => { if (chId) setCompInput(chId, false); };
+    ytBtn.onclick  = () => { if (chId) window.open('https://www.youtube.com/channel/' + chId, '_blank'); };
+    close1.onclick = close2.onclick = hideChModal;
+
+    showChModal();
+  };
+
+  function ensureChModal() {
+    if (document.getElementById('chm-wrap')) return;
+
+    // CSS
+    const css = `
+      .chm-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:9998}
+      .chm-modal{position:fixed;inset:auto auto 50%;left:50%;transform:translate(-50%,50%);
+        width:min(520px,calc(100% - 32px));background:#14161a;color:#e8eef7;border:1px solid #2a2f36;
+        border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:none;z-index:9999}
+      .chm-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #222831}
+      .chm-tt{font-weight:700;font-size:16px}
+      .chm-x{cursor:pointer;border:0;background:transparent;color:#9aa4b2;font-size:18px}
+      .chm-bd{padding:16px}
+      .chm-row{margin:8px 0;color:#aeb7c2}
+      .chm-id{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;color:#8bd5ff}
+      .chm-ft{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid #222831}
+      .chm-btn{padding:8px 12px;border-radius:8px;border:1px solid #2a2f36;background:#0e1013;color:#e8eef7;cursor:pointer}
+      .chm-btn:hover{background:#15181d}
+      .chm-btn.primary{background:#0b5cff;border-color:#0b5cff}
+      .chm-btn.primary:hover{filter:brightness(1.05)}
+    `;
+    const style = document.createElement('style');
+    style.id = 'chm-style';
+    style.textContent = css;
+    document.head.appendChild(style);
+
+    // HTML
+    const html = `
+      <div id="chm-wrap" class="chm-backdrop"></div>
+      <div id="chm-modal" class="chm-modal" role="dialog" aria-modal="true" aria-labelledby="chm-title">
+        <div class="chm-hd">
+          <div class="chm-tt">채널 정보</div>
+          <button id="chm-close-x" class="chm-x" aria-label="닫기">✕</button>
+        </div>
+        <div class="chm-bd">
+          <div class="chm-row">채널명 : <b id="chm-title"></b></div>
+          <div class="chm-row">채널ID : <span id="chm-id" class="chm-id"></span></div>
+          <div class="chm-row" style="margin-top:14px;">작업:</div>
+          <ul style="margin:0 0 0 18px; padding:0; line-height:1.9;">
+            <li>경쟁 채널 입력창에 <b>추가</b></li>
+            <li>이 채널만 <b>단독 필터</b></li>
+            <li>유튜브 <b>채널 페이지</b> 열기</li>
+          </ul>
+        </div>
+        <div class="chm-ft">
+          <button id="chm-yt"   class="chm-btn">유튜브 채널 열기</button>
+          <button id="chm-add"  class="chm-btn">경쟁 채널 입력창에 추가</button>
+          <button id="chm-only" class="chm-btn primary">이 채널만 필터</button>
+          <button id="chm-close" class="chm-btn">닫기</button>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+
+  function showChModal() {
+    document.getElementById('chm-wrap').style.display = 'block';
+    const modal = document.getElementById('chm-modal');
+    modal.style.display = 'block';
+    // 포커스 이동
+    setTimeout(() => document.getElementById('chm-close-x').focus(), 0);
+  }
+  function hideChModal() {
+    document.getElementById('chm-wrap').style.display = 'none';
+    document.getElementById('chm-modal').style.display = 'none';
+  }
+})();
+</script>
+
+  
 </body>
 </html>
