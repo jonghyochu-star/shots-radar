@@ -1065,6 +1065,65 @@ async function fetchWithRotate(url, quotaInc){
 })();
 </script>
 
+<style id="fix-overlay-click">
+  .side-sticky, .sticky-right, .scroll-nav, .scroll-ctl { pointer-events: none; }
+  .side-sticky .btn, .sticky-right .btn, .scroll-nav .btn, .scroll-ctl .btn,
+  .side-sticky button, .sticky-right button, .scroll-nav button, .scroll-ctl button { pointer-events: auto; }
+</style>
+
+<script>
+  (function(){
+    const openExistingModal =
+      window.showChannelModal ||
+      window.openChannelModal ||
+      window.openChannelDialog ||
+      window.openChannelInfo ||
+      null;
+
+    function sniffChannelId(root) {
+      if (!root) return null;
+      const el = root.querySelector('[data-chid],[data-channel-id],[data-owner-id],[data-channel],[data-ch]');
+      if (el) return el.dataset.chid || el.dataset.channelId || el.dataset.ownerId || el.dataset.channel || el.dataset.ch || null;
+      const link = root.querySelector('a[href*="/channel/"]');
+      if (link && link.href) {
+        const m = link.href.match(/\/channel\/(UC[\w-]{22})/);
+        if (m) return m[1];
+      }
+      const html = root.outerHTML;
+      const m2 = html && html.match(/UC[\w-]{22}/);
+      if (m2) return m2[0];
+      for (const attr of (root.getAttributeNames?.() || [])) {
+        const v = root.getAttribute(attr);
+        const m3 = v && v.match(/UC[\w-]{22}/);
+        if (m3) return m3[0];
+      }
+      return null;
+    }
+
+    function isChannelCell(td) {
+      const table = td.closest('table');
+      if (!table) return false;
+      const headTexts = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+      const chIdx = headTexts.findIndex(t => t.includes('채널') || /channel/i.test(t));
+      return chIdx >= 0 && td.cellIndex === chIdx;
+    }
+
+    document.addEventListener('click', (e) => {
+      const td = e.target.closest('td');
+      if (!td || !isChannelCell(td)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const tr = td.closest('tr');
+      const chName = td.textContent.trim();
+      const chId = sniffChannelId(tr) || sniffChannelId(td);
+      if (typeof openExistingModal === 'function') {
+        try { openExistingModal(chId, chName); } catch (err) { console.error('[channel modal] err:', err); }
+      } else {
+        alert(`채널: ${chName}\nID: ${chId || '(ID 미탐지)'}`);
+      }
+    }, true);
+  })();
+</script>
 
 </body>
 </html>
