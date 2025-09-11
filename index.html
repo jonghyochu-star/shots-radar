@@ -1096,31 +1096,66 @@
     try{
       const vEl = document.getElementById('ltValidation');
       const eEl = document.getElementById('ltEndpoint');
-      const L = labels.length; const DAYS_CHECK = Math.min(30, L);
+      const L = labels.length; 
+      const DAYS_CHECK = Math.min(30, L);
       const startIdx = L - DAYS_CHECK;
-      let sampleN=0, nonZero=0, expected=usableKeys.length*DAYS_CHECK;
-      let minV=Infinity, maxV=0;
+      
+      let totalSamples = 0;  // 전체 수집된 영상 수
+      let dataPoints = 0;     // 데이터 포인트 수
+      let missingPoints = 0;  // 결측 데이터 포인트
+      let minViews = Infinity, maxViews = 0;
+      let totalViews = 0;
+      let activeKeywords = 0;
+      
       for(const k of usableKeys){
         const vArr = ds[k].views.slice(startIdx);
         const nArr = ds[k].n.slice(startIdx);
-        sampleN += nArr.reduce((a,b)=>a+b,0);
-        for(const v of vArr){ if(v>0){ nonZero++; if(v<minV)minV=v; if(v>maxV)maxV=v; } }
+        
+        // 해당 키워드가 활성 상태인지 확인
+        const hasData = vArr.some(v => v > 0);
+        if(hasData) activeKeywords++;
+        
+        // 전체 샘플 수 계산
+        totalSamples += nArr.reduce((a,b) => a + b, 0);
+        
+        // 데이터 포인트 계산
+        for(let i = 0; i < vArr.length; i++){
+          dataPoints++;
+          if(vArr[i] === 0 || nArr[i] === 0) {
+            missingPoints++;
+          } else {
+            totalViews += vArr[i];
+            if(vArr[i] < minViews) minViews = vArr[i];
+            if(vArr[i] > maxViews) maxViews = vArr[i];
+          }
+        }
       }
-      const miss = expected>0? Math.max(0,1 - nonZero/expected) : 1;
-      if(!Number.isFinite(minV)) minV=0;
+      
+      const missRate = dataPoints > 0 ? (missingPoints / dataPoints * 100) : 0;
+      const avgDailyViews = totalViews / Math.max(1, DAYS_CHECK);
+      const avgSamplesPerDay = totalSamples / Math.max(1, DAYS_CHECK);
+      
+      if(!Number.isFinite(minViews)) minViews = 0;
+      
       if(vEl){
         vEl.innerHTML = [
-          `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
-          `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
-          `<span class="pill">일 조회합 범위: ${Math.round(minV).toLocaleString()} ~ ${Math.round(maxV).toLocaleString()}</span>`,
-          `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
-          `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__||'sample'}</code></span>`
+          `<span class="pill" title="최근 ${DAYS_CHECK}일간 수집된 총 영상 수">표본수: ${totalSamples.toLocaleString()}개</span>`,
+          `<span class="pill" title="일평균 수집 영상 수">일평균: ${Math.round(avgSamplesPerDay)}개/일</span>`,
+          `<span class="pill ${missRate > 30 ? 'danger' : (missRate > 15 ? 'warn' : '')}" title="데이터가 없는 날짜/키워드 비율">결측률: ${missRate.toFixed(1)}%</span>`,
+          `<span class="pill" title="일별 조회수 최소~최대 범위">일 조회수: ${Math.round(minViews).toLocaleString()} ~ ${Math.round(maxViews).toLocaleString()}</span>`,
+          `<span class="pill" title="일평균 전체 조회수">일평균 조회: ${Math.round(avgDailyViews).toLocaleString()}</span>`,
+          `<span class="pill" title="데이터가 있는 활성 키워드 수">활성 키워드: ${activeKeywords}/${usableKeys.length}</span>`,
+          `<span class="pill">데이터 소스: <code>${window.__LT_ENDPOINT__||'sample'}</code></span>`
         ].join(' ');
       }
       if(eEl) eEl.textContent = window.__LT_ENDPOINT__||'-';
     }catch(e){ console.warn('validation error', e); }
   }
   setTimeout(()=>{ const btn = document.getElementById('ltReload'); if(btn) btn.addEventListener('click', buildLongTrend); buildLongTrend(); },0);
+
+  // 전역에서 접근 가능하도록 노출
+  window.buildLongTrend = buildLongTrend;
+  window.ROT = ROT;
 
   // ---------- 이벤트 바인딩 ----------
   $('#runBtn').addEventListener('click', run);
