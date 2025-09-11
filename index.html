@@ -452,6 +452,25 @@
   async function fetchWithRotate(url, quotaInc){
     const maxTry = Math.max(1, ROT.keys.length * 2); // 더 많은 시도
     let lastError = null;
+    let allBlocked = true;
+    
+    // 모든 키가 블록되었는지 확인
+    for(let i = 0; i < ROT.keys.length; i++) {
+      if(!ROT.stat[i]?.blocked) {
+        allBlocked = false;
+        break;
+      }
+    }
+    
+    // 모든 키가 블록되었다면 첫 번째 키의 블록을 해제하고 시도
+    if(allBlocked && ROT.keys.length > 0) {
+      console.log('모든 키가 차단됨. 첫 번째 키 블록 해제 시도...');
+      ROT.stat[0].blocked = false;
+      ROT.stat[0].fail = 0;
+      ROT.saveStat();
+      ROT.idx = 0;
+      renderKeyState();
+    }
     
     for(let t = 0; t < maxTry; t++){
       const key = ROT.current();
@@ -459,8 +478,8 @@
         throw new Error('사용 가능한 API 키가 없습니다');
       }
       
-      // 블록된 키는 건너뛰기
-      if(ROT.stat[ROT.idx]?.blocked) {
+      // 블록된 키는 건너뛰기 (단, 모든 키가 블록된 경우는 제외)
+      if(ROT.stat[ROT.idx]?.blocked && !allBlocked) {
         ROT.rotate();
         continue;
       }
