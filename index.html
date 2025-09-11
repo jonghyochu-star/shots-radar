@@ -1153,6 +1153,10 @@
   }
   setTimeout(()=>{ const btn = document.getElementById('ltReload'); if(btn) btn.addEventListener('click', buildLongTrend); buildLongTrend(); },0);
 
+  // 전역에서 접근 가능하도록 노출
+  window.buildLongTrend = buildLongTrend;
+  window.ROT = ROT;
+
   // ---------- 이벤트 바인딩 ----------
   $('#runBtn').addEventListener('click', run);
   $('#exportXlsx').addEventListener('click', exportXlsx);
