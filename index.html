@@ -1103,29 +1103,59 @@ if(risers) risers.innerHTML = rises.map((r,i)=> `<span class="pill"><b>${i+1}. $
         plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:100, grid:{color:'rgba(255,255,255,0.06)'}}} }
     });
     try{
-      const vEl = document.getElementById('ltValidation');
-      const eEl = document.getElementById('ltEndpoint');
-      const L = labels.length; const DAYS_CHECK = Math.min(30, L);
-      const startIdx = L - DAYS_CHECK;
-      let sampleN=0, nonZero=0, expected=usableKeys.length*DAYS_CHECK;
-      let minV=Infinity, maxV=0;
-      for(const k of usableKeys){
-        const vArr = ds[k].views.slice(startIdx);
-        const nArr = ds[k].n.slice(startIdx);
-        sampleN += nArr.reduce((a,b)=>a+b,0);
-        for(const v of vArr){ if(v>0){ nonZero++; if(v<minV)minV=v; if(v>maxV)maxV=v; } }
-      }
-      const miss = expected>0? Math.max(0,1 - nonZero/expected) : 1;
-      if(!Number.isFinite(minV)) minV=0;
-      if(vEl){
-        vEl.innerHTML = [
-          `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
-          `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
-          `<span class="pill">일 조회합 범위: ${Math.round(minV).toLocaleString()} ~ ${Math.round(maxV).toLocaleString()}</span>`,
-          `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
-          `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__||'sample'}</code></span>`
-        ].join(' ');
-      }
+
+const vEl = document.getElementById('ltValidation');
+const eEl = document.getElementById('ltEndpoint');
+
+const L = labels.length;
+const DAYS_CHECK = Math.min(30, L);
+const startIdx = L - DAYS_CHECK;
+
+// 하루 단위 합계를 만들고(키워드 전체 합), 그걸로 범위/평균 계산
+const totalViewsByDay  = Array(DAYS_CHECK).fill(0);
+const totalSampleByDay = Array(DAYS_CHECK).fill(0);
+
+let nonZero = 0;
+const expected = usableKeys.length * DAYS_CHECK;
+
+for (const k of usableKeys) {
+  const vArr = ds[k].views.slice(startIdx, startIdx + DAYS_CHECK);
+  const nArr = ds[k].n.slice(startIdx, startIdx + DAYS_CHECK);
+  for (let i = 0; i < DAYS_CHECK; i++) {
+    const v = +vArr[i] || 0;
+    const n = +nArr[i] || 0;
+    totalViewsByDay[i]  += v;
+    totalSampleByDay[i] += n;
+    if (v > 0) nonZero++;
+  }
+}
+
+const sampleN   = totalSampleByDay.reduce((a,b)=>a+b,0);      // 30일 누적 표본수
+const sumViews  = totalViewsByDay.reduce((a,b)=>a+b,0);       // 30일 누적 조회수
+const avgSample = Math.round(sampleN / DAYS_CHECK);           // 일평균 표본수
+const avgViews  = Math.round(sumViews / DAYS_CHECK);          // 일평균 조회수
+
+const minV = Math.round(Math.min(...totalViewsByDay));
+const maxV = Math.round(Math.max(...totalViewsByDay));
+
+const miss = expected > 0 ? Math.max(0, 1 - nonZero / expected) : 1;
+
+if (vEl) {
+  vEl.innerHTML = [
+    `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
+    `<span class="pill">일평균 표본수: ${avgSample.toLocaleString()}</span>`,
+    `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
+    `<span class="pill">일 조회합 범위: ${minV.toLocaleString()} ~ ${maxV.toLocaleString()}</span>`,
+    `<span class="pill">일평균 조회수: ${avgViews.toLocaleString()}</span>`,
+    `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
+    `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__ || 'sample'}</code></span>`
+  ].join(' ');
+}
+
+if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
+
+      
+      
       if(eEl) eEl.textContent = window.__LT_ENDPOINT__||'-';
     }catch(e){ console.warn('validation error', e); }
   }
