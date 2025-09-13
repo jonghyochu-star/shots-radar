@@ -1,0 +1,26 @@
+name: Test Rotator (manual)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run test-rotator
+        env:
+          # === 회전 로직이 실제로 키를 읽을 수 있게 Secrets 전달 ===
+          YT_KEY_1: ${{ secrets.YT_KEY_1 }}
+          YT_KEY_2: ${{ secrets.YT_KEY_2 }}
+          YT_KEY_3: ${{ secrets.YT_KEY_3 }}
+          YT_KEY_4: ${{ secrets.YT_KEY_4 }}
+          YT_KEY_5: ${{ secrets.YT_KEY_5 }}
+        run: node scripts/test-rotator.js
