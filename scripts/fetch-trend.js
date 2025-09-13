@@ -5,6 +5,7 @@
  * - 기존 public/kw-trend.json과 "일 단위" 병합(최대 180일 유지)
  */
 
+const { httpGet, writeKeyStatus } = require('./key-rotator');
 
 
 import fs from 'fs';
