@@ -36,14 +36,7 @@ if (!KEY_POOL.length) {
 let keyIdx = 0;
 function nextKey(){ const k = KEY_POOL[keyIdx]; keyIdx = (keyIdx+1) % KEY_POOL.length; return k; }
 
-async function httpGet(url){
-  const res = await fetch(url, { headers: { 'accept':'application/json' } });
-  if(!res.ok){
-    const t = await res.text().catch(()=> '');
-    throw new Error(`HTTP ${res.status} ${res.statusText} – ${t.slice(0,200)}`);
-  }
-  return res.json();
-}
+
 
 // YouTube API
 async function ytSearch(q, pageToken=''){
