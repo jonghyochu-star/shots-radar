@@ -3,7 +3,7 @@ name: Fetch KW Trend (hourly)
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "0 * * * *"   # 매 정시(UTC) = KST 기준 매시 정각+9분쯤 실행되는 느낌
+    - cron: '0 * * * *'  # 매 정시(UTC) -> KST 기준 매시 정각 실행
 
 permissions:
   contents: write
@@ -30,36 +30,33 @@ jobs:
         run: npm ci || npm i
 
       - name: Run fetch-trend.js
-      
         env:
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
+          # SR_DEBUG: '1'   # 디버깅 샘플 저장을 보고 싶으면 주석 해제
         run: node scripts/fetch-trend.js
 
-     - name: Commit trend artifacts
-  if: always()
-  run: |
-    set -e
-    git config user.name  "github-actions[bot]"
-    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit trend artifacts
+        if: always()
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    # 생성/갱신된 산출물 add
-    git add public/kw-trend.json public/ch-prior.json public/category-rules.json || true
-    if [ -f public/kw-debug.json ]; then
-      git add public/kw-debug.json || true
-    fi
+          # 생성/갱신된 산출물 add
+          git add public/kw-trend.json public/ch-prior.json public/category-rules.json || true
+          if [ -f public/kw-debug.json ]; then
+            git add public/kw-debug.json || true
+          fi
 
-    # 변경 없으면 커밋 생략
-    if git diff --cached --quiet; then
-      echo "No changes to commit."
-      exit 0
-    fi
+          # 변경 없으면 커밋 생략
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
 
-    git commit -m "feat: update trend artifacts (kw-trend/ch-prior/rules)"
-    git push
-          git add public/kw-trend.json
-          git diff --cached --quiet || git commit -m "chore: update kw-trend.json (hourly)"
+          git commit -m "feat: update trend artifacts (kw-trend/ch-prior/rules)"
           git push
