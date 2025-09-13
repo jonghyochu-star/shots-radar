@@ -1,12 +1,5 @@
-/**
- * scripts/key-rotator.js
- * Robust YouTube API key rotation helper for Node 18+/20+ (global fetch available).
- * - Reads YT_KEY_1..YT_KEY_5 from env (skip empties)
- * - Rewrites `key=` query param on the provided URL
- * - On 403 or any quota‑style error, immediately tries the next key (no waiting)
- * - Keeps the rotation index across calls within the same process
- * - Exports: httpGet(url, init?), writeKeyStatus(status) [no-op placeholder]
- */
+// scripts/key-rotator.js
+// ESM module
 
 const KEYS = [
   process.env.YT_KEY_1,
@@ -16,93 +9,82 @@ const KEYS = [
   process.env.YT_KEY_5,
 ].filter(Boolean);
 
-if (!Array.isArray(KEYS) || KEYS.length === 0) {
-  console.warn('[key-rotator] No YT_KEY_* provided in env.');
+// 최소 3회까지 즉시 회전 재시도 (키 개수보다 많이는 안 함)
+const MAX_ATTEMPTS = Math.min(3, KEYS.length || 0);
+
+// 현재 커서
+let cursor = 0;
+
+function nextKeyIndex() {
+  cursor = (cursor + 1) % KEYS.length;
+  return cursor;
 }
 
-let idx = 0; // current key index for this process
-
-function replaceKeyInUrl(rawUrl, apiKey) {
-  const u = new URL(rawUrl);
-  // Ensure we always carry the key we want
-  u.searchParams.set('key', apiKey);
+function withKey(url, key) {
+  const u = new URL(url);
+  // 기존 key 파라미터가 있어도 덮어씀
+  u.searchParams.set('key', key);
   return u.toString();
 }
 
-function isQuotaOr403(res, payloadText) {
-  // 403 outright
-  if (res && res.status === 403) return true;
-  // Inspect JSON payload for quota/daily/rate messages
+async function readBodySafe(res) {
   try {
-    const j = JSON.parse(payloadText || '{}');
-    const msg = (j && j.error && (j.error.message || '')) || '';
-    const reasonList = (j && j.error && Array.isArray(j.error.errors) ? j.error.errors : []);
-    const hasReason = reasonList.some(e =>
-      /quota|dailyLimitExceeded|rateLimitExceeded|quotaExceeded/i.test(
-        (e && (e.reason || e.message || '')) + ''
-      )
-    );
-    if (hasReason) return true;
-    if (/quota|exceed(ed)?|daily\s*limit/i.test(msg)) return true;
-  } catch (_) {}
-  return false;
+    return await res.text();
+  } catch {
+    return '';
+  }
 }
 
-async function httpGet(rawUrl, init = {}) {
+/**
+ * GitHub Actions 콘솔에서 상태만 찍어주는 함수
+ * (원한다면 파일로 쓰도록 바꿔도 OK)
+ */
+export async function writeKeyStatus(message) {
+  console.log(`[rotator] ${message}`);
+}
+
+/**
+ * 403/429이면 다음 키로 즉시 회전해서 재시도.
+ * 성공 시 JSON 반환. 그 외 상태코드는 즉시 throw.
+ */
+export async function httpGet(url) {
   if (!KEYS.length) {
-    throw new Error('[key-rotator] No API keys available');
+    throw new Error('No YT_KEY_* secrets configured');
   }
 
-  let attempts = 0;
   let lastErr;
 
-  // We allow at most KEYS.length attempts per request.
-  while (attempts < KEYS.length) {
-    const k = KEYS[idx];
-    const withKey = replaceKeyInUrl(rawUrl, k);
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const key = KEYS[cursor];
+    const finalUrl = withKey(url, key);
 
-    try {
-      const res = await fetch(withKey, { method: 'GET', ...init });
-      const text = await res.text();
+    await writeKeyStatus(`try #${attempt + 1} with key[${cursor + 1}]`);
 
-      if (!res.ok) {
-        if (isQuotaOr403(res, text)) {
-          // rotate and retry immediately
-          const old = idx;
-          idx = (idx + 1) % KEYS.length;
-          console.warn(`[key-rotator] 403/quota with key #${old + 1}. Switched to #${idx + 1} and retrying…`);
-          attempts++;
-          continue;
-        }
-        const err = new Error(`HTTP ${res.status}: ${text.slice(0, 300)}`);
-        err.status = res.status;
-        throw err;
-      }
+    const res = await fetch(finalUrl, {
+      headers: { accept: 'application/json' },
+    });
 
-      // Success
-      try {
-        return JSON.parse(text);
-      } catch {
-        return text;
-      }
-    } catch (e) {
-      // Network or parsing error → try the next key once, then continue
-      lastErr = e;
-      const old = idx;
-      idx = (idx + 1) % KEYS.length;
-      console.warn(`[key-rotator] network/unknown error with key #${old + 1}. Switched to #${idx + 1} and retrying…`);
-      attempts++;
+    if (res.ok) {
+      await writeKeyStatus(`OK key[${cursor + 1}]`);
+      // JSON API이므로 JSON으로 반환
+      return res.json();
+    }
+
+    const body = await readBodySafe(res);
+    const snippet = body.slice(0, 200);
+
+    // 쿼터/레이트 리밋 → 다음 키로 즉시 회전 및 재시도
+    if (res.status === 403 || res.status === 429) {
+      await writeKeyStatus(`rotate on ${res.status} (key[${cursor + 1}])`);
+      lastErr = new Error(`HTTP ${res.status} ${res.statusText} - ${snippet}`);
+      nextKeyIndex();
       continue;
     }
+
+    // 그 외 에러는 즉시 실패
+    throw new Error(`HTTP ${res.status} ${res.statusText} - ${snippet}`);
   }
 
-  // Exhausted all keys
-  throw lastErr || new Error('[key-rotator] All keys exhausted for this request.');
+  // 모든 시도 실패
+  throw lastErr ?? new Error('All keys exhausted');
 }
-
-// Optional hook – keeps compatibility with existing code that may call it
-function writeKeyStatus(/* status */) {
-  // no-op; add file/kv logging here if you want to persist status
-}
-
-module.exports = { httpGet, writeKeyStatus };
