@@ -5,7 +5,17 @@
  * - 기존 public/kw-trend.json과 "일 단위" 병합(최대 180일 유지)
  */
 
-const { httpGet, writeKeyStatus } = require('./key-rotator');
+// scripts/fetch-trend.js
+// ESM module
+
+import { httpGet, writeKeyStatus } from './key-rotator.js';
+
+// (아래 나머지 기존 코드 유지)
+// 주의: 과거에 있던 직접 fetch 호출부는 전부 httpGet으로 바꾸세요.
+//   예) const res = await fetch(url)  →  const res = await httpGet(url)
+// 또한 파일 내에 아래 함수가 남아있다면 삭제해야 합니다.
+//   async function httpGet(url) { … }
+
 
 
 import fs from 'fs';
