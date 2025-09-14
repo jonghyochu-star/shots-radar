@@ -51,7 +51,7 @@ jobs:
           ROTATE_EAGER: '1'                   # 성공 시에도 다음 키로 순환
           ROTATOR_COOLDOWN_MIN: '60'          # 반복 403/429 → 60분 쿨다운
           ROTATOR_COOLDOWN_UNTIL_RESET: '1'   # 다음 KST 16:00까지 쿨다운(상단과 병행)
-          # ROTATOR_DEBUG: '1'                # 필요 시 1회만 켜서 로그 확인
+          # ROTATOR_DEBUG: '0'                # 필요 시 1회만 켜서 로그 확인
           KEY_STATUS_PATH: 'public/key-status.json'  # 상태 기록(선택)
 
           # === API KEYS (Secrets) ===
