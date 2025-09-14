@@ -42,13 +42,13 @@ jobs:
 
       - name: Run fetch-trend.js
         env:
-        # === 한국 타겟팅 ===
-        REGION_FILTER: 'KR'
-        LANG_PREF: 'ko'
-        LANG_STRICT: '1'              # 한국어 아니면 제외
-        LANG_MIN_HANGUL_RATIO: '0.15' # 한글 비율 임계
-        CHANNEL_GEO_STRICT: '0'       # 채널 국가까지 제한하려면 '1'
-        CH_GEO_CACHE_PATH: 'public/ch-geo.json'
+           # === 한국 타겟팅 ===
+           REGION_FILTER: 'KR'
+           LANG_PREF: 'ko'
+           LANG_STRICT: '1'              # 한국어 아니면 제외
+           LANG_MIN_HANGUL_RATIO: '0.15' # 한글 비율 임계
+           CHANNEL_GEO_STRICT: '0'       # 채널 국가까지 제한하려면 '1'
+           CH_GEO_CACHE_PATH: 'public/ch-geo.json'
 
         
           # === 수집량(요청 기준) ===
