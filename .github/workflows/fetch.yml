@@ -55,7 +55,7 @@ jobs:
           MANUAL_MODE: 'soft'           # 'soft' 또는 'hard'
           MANUAL_POS_BOOST: '1.6'
           MANUAL_NEG_BOOST: '0.8'
-          SR_CH_REVIEW: '0'             # 검토용 목록 뽑을 때만 '1'
+          SR_CH_REVIEW: '1'             # 검토용 목록 뽑을 때만 '1'
 
           # === 수집량 ===
           RESULT_PAGES_PER_RUN: '2'
