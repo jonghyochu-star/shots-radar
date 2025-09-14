@@ -49,6 +49,7 @@ jobs:
 
           # === 키 로테이션 ===
           ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환
+          ROTATOR_COOLDOWN_MIN: '60'     # ← 신규: 403/429 반복 키를 60분 제외
           # ROTATOR_DEBUG: '1'           # (1회 점검 때만 잠깐 켜세요)
           # KEY_STATUS_PATH: 'public/key-status.json'  # (선택) 상태 파일 기록
 
