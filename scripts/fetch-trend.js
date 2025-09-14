@@ -466,7 +466,8 @@ async function main() {
        esc(Object.entries(r.suggest).map(([k,n])=>`${k}:${n}`).join('|')),
        esc(r.examples.join(' / '))].join(',')
     ).join('\n');
-    fs.writeFileSync(path.join(__dirname,'..','public','ch-review.csv'), csv, 'utf8');
+    fs.writeFileSync(path.join(__dirname,'..','public','ch-review.csv'), '\ufeff' + csv, 'utf8');
+
   }
 
   await writeKeyStatus({
