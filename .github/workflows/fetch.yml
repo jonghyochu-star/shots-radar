@@ -1,7 +1,7 @@
 name: Fetch KW Trend (every 2h)
 
 on:
-  workflow_dispatch:        # 수동 실행 버튼
+  workflow_dispatch:
   schedule:
     - cron: '0 */2 * * *'   # UTC 기준 2시간마다
 
@@ -47,11 +47,12 @@ jobs:
           LOOKBACK_DAYS_SEARCH: '14'
           MAX_DAYS_KEEP: '180'
 
-          # === 키 로테이션 ===
-          ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환
-          ROTATOR_COOLDOWN_MIN: '60'     # ← 신규: 403/429 반복 키를 60분 제외
-          # ROTATOR_DEBUG: '1'           # (1회 점검 때만 잠깐 켜세요)
-          # KEY_STATUS_PATH: 'public/key-status.json'  # (선택) 상태 파일 기록
+          # === 키 로테이션/쿨다운 ===
+          ROTATE_EAGER: '1'                   # 성공 시에도 다음 키로 순환
+          ROTATOR_COOLDOWN_MIN: '60'          # 반복 403/429 → 60분 쿨다운
+          ROTATOR_COOLDOWN_UNTIL_RESET: '1'   # 다음 KST 16:00까지 쿨다운(상단과 병행)
+          # ROTATOR_DEBUG: '1'                # 필요 시 1회만 켜서 로그 확인
+          KEY_STATUS_PATH: 'public/key-status.json'  # 상태 기록(선택)
 
           # === API KEYS (Secrets) ===
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
