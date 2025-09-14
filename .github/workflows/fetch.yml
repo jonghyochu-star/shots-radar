@@ -1,9 +1,9 @@
 name: Fetch KW Trend (every 2h)
 
 on:
-  workflow_dispatch:      # ← 이 줄이 있어야 'Run workflow' 버튼이 보입니다
+  workflow_dispatch:        # 수동 실행 버튼
   schedule:
-    - cron: '0 */2 * * *' # UTC 기준 2시간마다
+    - cron: '0 */2 * * *'   # UTC 기준 2시간마다
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '20'
 
-      # 키 주입 상태 점검(안전): 실패해도 다음 단계 진행
+      # 키 주입 상태 점검(실패해도 다음 단계 진행)
       - name: Sanity check keys
         continue-on-error: true
         env:
@@ -32,8 +32,7 @@ jobs:
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
         run: |
           for i in 1 2 3 4 5; do
-            var="YT_KEY_${i}"
-            val="${!var}"
+            var="YT_KEY_${i}"; val="${!var}"
             if [ -n "$val" ]; then
               echo "$i: len=${#val}, tail=${val: -4}"
             else
@@ -49,15 +48,16 @@ jobs:
           MAX_DAYS_KEEP: '180'
 
           # === 키 로테이션 ===
-          ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환(쿼터 분산)
+          ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환
+          # ROTATOR_DEBUG: '1'           # (1회 점검 때만 잠깐 켜세요)
+          # KEY_STATUS_PATH: 'public/key-status.json'  # (선택) 상태 파일 기록
 
-          # === API KEYS ===
+          # === API KEYS (Secrets) ===
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
-          KEY_STATUS_PATH: 'public/key-status.json'
         run: node scripts/fetch-trend.js
 
       - name: Commit trend artifacts
