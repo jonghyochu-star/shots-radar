@@ -60,8 +60,10 @@ export async function writeKeyStatus(data = {}) {
 }
 
 export async function httpGet(endpoint, params = {}) {
-  for (let spins = 0; spins < MAX_ATTEMPTS; spins++) {
-    const key = KEYS[idx];
+  // 요청 1회 안에서 반드시 1→2→3→4→5 순으로 시도
+  for (let spins = 0; spins < KEYS.length; spins++) {
+    const kIndex = (idx + spins) % KEYS.length; // 이번 요청의 시도 인덱스
+    const key = KEYS[kIndex];
     const url = new URL(endpoint);
     for (const [k, v] of Object.entries(params ?? {})) {
       if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
@@ -72,10 +74,10 @@ export async function httpGet(endpoint, params = {}) {
 
     if (res.status === 403 || res.status === 429) {
       const txt = await safeText(res);
-      console.log(`[rotator] rotate on ${res.status} (key#${idx + 1} ..${tail4(key)}) reason=${trim(txt, 120)}`);
-      await writeKeyStatus({ event: 'rotate', code: res.status, keyIndex: idx + 1, keyTail: tail4(key) });
-    idx = (idx + 1) % KEYS.length;  // 다음 키
-      continue;                       // 재시도
+      console.log(`[rotator] rotate on ${res.status} (key#${kIndex + 1} ..${tail4(key)}) reason=${trim(txt, 120)}`);
+      await writeKeyStatus({ event: 'rotate', code: res.status, keyIndex: kIndex + 1, keyTail: tail4(key) });
+      // 계속 다음 키로 시도 (spins 증가)
+      continue;
     }
 
     if (!res.ok) {
@@ -85,10 +87,12 @@ export async function httpGet(endpoint, params = {}) {
 
     const json = await res.json();
 
-    await writeKeyStatus({ event: 'success', code: 200, keyIndex: idx + 1, keyTail: tail4(key) });
-    if (EAGER_ROTATE) idx = (idx + 1) % KEYS.length; // 성공해도 순환
+    // 성공했으면 글로벌 포인터를 이번에 쓴 키로 이동
+    idx = (kIndex + (EAGER_ROTATE ? 1 : 0)) % KEYS.length;
+    await writeKeyStatus({ event: 'success', code: 200, keyIndex: kIndex + 1, keyTail: tail4(key) });
 
     return json;
   }
   throw new Error(`[rotator] All ${KEYS.length} keys exhausted by 403/429`);
 }
+
