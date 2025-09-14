@@ -47,6 +47,11 @@ jobs:
           LOOKBACK_DAYS_SEARCH: '14'
           MAX_DAYS_KEEP: '180'
 
+          # ↓↓↓ 이 줄만 임시 추가
+          SR_DEBUG: '1'
+          # ↑↑↑ 실행 끝나면 지우거나 '0'으로 바꾸세요
+
+
           # === 키 로테이션/쿨다운 ===
           ROTATE_EAGER: '1'                   # 성공 시에도 다음 키로 순환
           ROTATOR_COOLDOWN_MIN: '60'          # 반복 403/429 → 60분 쿨다운
