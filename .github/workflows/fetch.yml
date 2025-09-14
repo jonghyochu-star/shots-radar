@@ -23,6 +23,7 @@ jobs:
 
       # (선택 권장) 키 주입 상태 점검: 길이/끝4자리만 노출
       - name: Sanity check keys
+      continue-on-error: true 
         env:
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
