@@ -1,15 +1,17 @@
 // scripts/key-rotator.js
-// ESM. Node >= 20 (global fetch OK)
+// ESM. Node >= 20
+
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const rawKeys = [
-  // 표준 권장: YT_KEY_1..5
+  // 권장 네이밍
   process.env.YT_KEY_1,
   process.env.YT_KEY_2,
   process.env.YT_KEY_3,
   process.env.YT_KEY_4,
   process.env.YT_KEY_5,
-
-  // 호환: YT_API_KEY1..5 (과거 명명)
+  // 호환(과거 네이밍)
   process.env.YT_API_KEY1,
   process.env.YT_API_KEY2,
   process.env.YT_API_KEY3,
@@ -17,31 +19,50 @@ const rawKeys = [
   process.env.YT_API_KEY5,
 ].filter(k => typeof k === 'string' && k.trim().length > 0);
 
-// 중복 제거
-const KEYS = [...new Set(rawKeys)];
+export const KEYS = [...new Set(rawKeys)];
 if (KEYS.length === 0) {
   throw new Error('[rotator] No API keys configured. Set YT_KEY_1..5 (or YT_API_KEY1..5).');
 }
 
-// 모든 키를 최소 1회씩 시도
+// 모든 키를 최소 1번씩 시도
 const MAX_ATTEMPTS = KEYS.length;
 
-// 성공 시에도 다음 키로 순환할지 여부 (쿼터 분산용)
+// 성공 시에도 다음 키로 순환(쿼터 분산)
 const EAGER_ROTATE = process.env.ROTATE_EAGER === '1';
 
-// 모듈 스코프 인덱스(프로세스 동안 유지)
+// 모듈 스코프 인덱스
 let idx = 0;
 
-// 안전 로그용 유틸
-function tail4(k) {
-  try { return k.slice(-4); } catch { return '----'; }
+// 안전 로그 유틸
+function tail4(k) { try { return k.slice(-4); } catch { return '----'; } }
+async function safeText(res) { try { return await res.text(); } catch { return ''; } }
+function trim(s, n) { if (!s) return ''; return s.length > n ? `${s.slice(0, n)}...` : s; }
+
+/**
+ * writeKeyStatus: fetch-trend.js에서 import 하는 상태 기록 함수
+ * - 기본은 콘솔 로그만 남깁니다.
+ * - 환경변수 KEY_STATUS_PATH가 지정되면 해당 경로(JSON)로도 기록합니다.
+ *   (예: KEY_STATUS_PATH='public/key-status.json')
+ */
+export async function writeKeyStatus(data = {}) {
+  const payload = { updatedAt: new Date().toISOString(), ...data };
+  const p = process.env.KEY_STATUS_PATH; // 선택사항
+  try {
+    if (p) {
+      await fs.mkdir(path.dirname(p), { recursive: true });
+      await fs.writeFile(p, JSON.stringify(payload, null, 2), 'utf8');
+    } else {
+      console.log(`[rotator:status] ${JSON.stringify(payload)}`);
+    }
+  } catch (e) {
+    console.log(`[rotator:status] write failed: ${e.message}`);
+  }
 }
 
 export async function httpGet(endpoint, params = {}) {
   for (let spins = 0; spins < MAX_ATTEMPTS; spins++) {
     const key = KEYS[idx];
     const url = new URL(endpoint);
-    // query params
     for (const [k, v] of Object.entries(params ?? {})) {
       if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
     }
@@ -52,34 +73,22 @@ export async function httpGet(endpoint, params = {}) {
     if (res.status === 403 || res.status === 429) {
       const txt = await safeText(res);
       console.log(`[rotator] rotate on ${res.status} (key#${idx + 1} ..${tail4(key)}) reason=${trim(txt, 120)}`);
-      idx = (idx + 1) % KEYS.length;  // 다음 키로
+      await writeKeyStatus({ event: 'rotate', code: res.status, keyIndex: idx + 1, keyTail: tail4(key) });
+    idx = (idx + 1) % KEYS.length;  // 다음 키
       continue;                       // 재시도
     }
 
     if (!res.ok) {
-      // 기타 오류는 즉시 실패 (회전 X)
       const txt = await safeText(res);
       throw new Error(`[rotator] HTTP ${res.status} ${trim(txt, 200)}`);
     }
 
     const json = await res.json();
 
-    // 성공했는데도 키를 순환할지 여부 (쿼터 분산)
-    if (EAGER_ROTATE) {
-      idx = (idx + 1) % KEYS.length;
-    }
+    await writeKeyStatus({ event: 'success', code: 200, keyIndex: idx + 1, keyTail: tail4(key) });
+    if (EAGER_ROTATE) idx = (idx + 1) % KEYS.length; // 성공해도 순환
 
     return json;
   }
-
   throw new Error(`[rotator] All ${KEYS.length} keys exhausted by 403/429`);
-}
-
-// helpers
-async function safeText(res) {
-  try { return await res.text(); } catch { return ''; }
-}
-function trim(s, n) {
-  if (!s) return '';
-  return s.length > n ? `${s.slice(0, n)}...` : s;
 }
