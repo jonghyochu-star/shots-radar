@@ -50,6 +50,11 @@ jobs:
 
       - name: Run fetch-trend.js
         env:
+          # CSV 직독(엑셀에서 rules만 적어 ch-review.csv로 업로드하면 자동 반영)
+          MANUAL_FROM_REVIEW_CSV: '1'
+          CH_MANUAL_CSV_PATH: 'public/ch-manual.csv'  # (선택) 별도 관리 CSV가 있을 때 함께 읽음
+
+     
           # === 수동 라벨 ===
           CH_MANUAL_PATH: 'public/ch-manual.json'
           MANUAL_MODE: 'soft'           # 'soft' 또는 'hard'
