@@ -3,7 +3,7 @@ name: Fetch KW Trend (every 2h)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */2 * * *'   # UTC 기준 2시간마다
+    - cron: '0 */2 * * *'  # UTC 기준 2시간마다
 
 permissions:
   contents: write
@@ -12,16 +12,21 @@ concurrency:
   group: fetch_kw_trend
   cancel-in-progress: true
 
-
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      # exceljs (XLSX 생성/읽기) 설치
+      - name: Install deps (exceljs)
+        run: npm i exceljs@^4 --no-audit --no-fund
+
+      # (선택) 키 상태 점검 - 실패해도 다음 단계 진행
       - name: Sanity check keys
         shell: bash
         continue-on-error: true
@@ -33,74 +38,60 @@ jobs:
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
         run: |
           for i in 1 2 3 4 5; do
-            var="YT_KEY_${i}"
-            val="${!var}"
-            if [[ -n "$val" ]]; then
-              len=${#val}
-              if (( len >= 4 )); then
-                tail="${val:$((len-4))}"
-              else
-                tail="$val"
-              fi
-              echo "$i: len=${len}, tail=${tail}"
+            var="YT_KEY_${i}"; val="${!var}"
+            if [ -n "$val" ]; then
+              echo "$i: len=${#val}, tail=${val: -4}"
             else
               echo "$i: MISSING"
             fi
           done
 
-       - name: Install deps (exceljs)
-         run: npm i exceljs@^4 --no-audit --no-fund
-
-
       - name: Run fetch-trend.js
         env:
-          # CSV 직독(엑셀에서 rules만 적어 ch-review.csv로 업로드하면 자동 반영)
-          MANUAL_FROM_REVIEW_CSV: '1'
-          CH_MANUAL_CSV_PATH: 'public/ch-manual.csv'  # (선택) 별도 관리 CSV가 있을 때 함께 읽음
-
-     
-          # === 수동 라벨 ===
-          CH_MANUAL_PATH: 'public/ch-manual.json'
-          MANUAL_MODE: 'soft'           # 'soft' 또는 'hard'
-          MANUAL_POS_BOOST: '1.6'
-          MANUAL_NEG_BOOST: '0.8'
-          SR_CH_REVIEW: '1'             # 검토용 목록 뽑을 때만 '1'
-
-          # === 수집량 ===
+          # --- 수집량/윈도우 ---
           RESULT_PAGES_PER_RUN: '2'
           LOOKBACK_DAYS_SEARCH: '14'
           MAX_DAYS_KEEP: '180'
 
-          # === 로테이터/쿨다운 ===
-          ROTATE_EAGER: '1'
-          ROTATOR_COOLDOWN_MIN: '60'
-          ROTATOR_COOLDOWN_UNTIL_RESET: '1'
-          KEY_STATUS_PATH: 'public/key-status.json'
-
-          # === 한국 타겟팅 ===
+          # --- 한국 타겟팅 ---
           REGION_FILTER: 'KR'
           LANG_PREF: 'ko'
           LANG_STRICT: '1'
           LANG_MIN_HANGUL_RATIO: '0.15'
-          CHANNEL_GEO_STRICT: '0'
-          CH_GEO_CACHE_PATH: 'public/ch-geo.json'
+          CHANNEL_GEO_STRICT: '0'   # 채널 국가까지 제한하려면 '1'
 
-          # === API KEYS ===
+          # --- Prior ---
+          PRIOR_ALPHA: '20'
+          PRIOR_MIN_BOOST: '0.6'
+          PRIOR_MAX_BOOST: '1.4'
+          PRIOR_STRONG_THR: '0.70'
+
+          # --- 수동 라벨 (XLSX/CSV 직독) ---
+          MANUAL_FROM_REVIEW_CSV: '1'
+          CH_MANUAL_CSV_PATH: 'public/ch-manual.csv'
+          MANUAL_MODE: 'soft'         # 'soft' 또는 'hard'
+          MANUAL_POS_BOOST: '1.6'
+          MANUAL_NEG_BOOST: '0.8'
+
+          # --- 리뷰 산출물 (필요 시 1로 켬) ---
+          SR_CH_REVIEW: '0'
+
+          # --- 키 로테이터 ---
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
+          KEY_STATUS_PATH: 'public/key-status.json'
         run: node scripts/fetch-trend.js
 
       - name: Commit trend artifacts
-        if: always()
+        shell: bash
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/*.json || true
-          git add public/*.csv  || true   # <-- 이 줄 추가!
+          git add public/*.csv  || true
           git add public/*.xlsx || true
-          git commit -m "chore: trend update $(date -u +'%F %T')" || echo "Nothing to commit"
+          git commit -m "chore: trend/prior/debug artifacts" || echo "Nothing to commit"
           git push || true
-  
