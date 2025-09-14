@@ -3,7 +3,7 @@
 // - 카테고리별 검색(2 pages x 9cats)
 // - videos.list 상세 조회
 // - RULES(토큰) + 채널 Prior 보정으로 스코어링
-// - 멀티라벨 가중 합산(Δ조회수 × weight)
+// - 멀티레이블 가중 합산(Δ조회수 × weight)
 // - kw-trend.json 병합 저장 + ch-prior.json 갱신
 // - SR_DEBUG=1 시 public/kw-debug.json 으로 검증 샘플 출력
 // - 키 회전: scripts/key-rotator.js 의 httpGet 사용
@@ -39,14 +39,38 @@ const DEBUG_OUT_PATH     = path.join(__dirname, '..', 'public', 'kw-debug.json')
 // 프론트 라벨(표시 순서)
 const CATEGORIES = ['AI','게임','커뮤니티','리뷰','정치','연예','시니어','오피셜','스포츠'];
 
-// ------------------ 유틸 ------------------
-function todayYmd() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`;
+// ------------------ [KR 타겟팅 설정] ------------------
+const REGION_FILTER = process.env.REGION_FILTER || 'KR';                 // 검색 지역 편향
+const LANG_PREF = process.env.LANG_PREF || 'ko';                         // 검색 언어 편향
+const LANG_STRICT = process.env.LANG_STRICT === '1';                     // ko 판정 못 받으면 제외
+const LANG_MIN_HANGUL_RATIO = Number(process.env.LANG_MIN_HANGUL_RATIO || '0.15'); // 15%
+const CHANNEL_GEO_STRICT = process.env.CHANNEL_GEO_STRICT === '1';       // 채널 국가가 KR이 아니면 제외(정보 있을 때)
+const CH_GEO_CACHE_PATH = process.env.CH_GEO_CACHE_PATH
+  || path.join(__dirname, '..', 'public', 'ch-geo.json');
+
+// 한글 비율 판정
+const HANGUL_RE = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3]/g;
+function hangulRatio(s) {
+  if (!s) return 0;
+  const m = String(s).match(HANGUL_RE);
+  return (m ? m.length : 0) / String(s).length;
 }
+function isKoreanSnippet(snippet, tags = []) {
+  const texts = [
+    snippet?.title, snippet?.description,
+    ...(Array.isArray(tags) ? tags : []),
+  ].filter(Boolean).join(' ');
+  const ratio = hangulRatio(texts);
+  const langHints = [
+    snippet?.defaultLanguage,
+    snippet?.defaultAudioLanguage,
+    snippet?.localized?.language
+  ].filter(Boolean).map(x => String(x).toLowerCase());
+  const hintKo = langHints.some(x => x.startsWith('ko'));
+  return hintKo || ratio >= LANG_MIN_HANGUL_RATIO;
+}
+
+// 채널 국가 캐시 로드/저장 (동기)
 function readJsonSafe(p, fallback={}) {
   try {
     const raw = fs.readFileSync(p, 'utf8');
@@ -56,6 +80,32 @@ function readJsonSafe(p, fallback={}) {
 function writeJsonPretty(p, obj) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p, JSON.stringify(obj, null, 2), 'utf8');
+}
+const CH_GEO = readJsonSafe(CH_GEO_CACHE_PATH, {});
+
+// 채널 국가 일괄 조회(최대 50개/회)
+async function fetchChannelsCountry(chIds = []) {
+  if (!chIds.length) return {};
+  const out = {};
+  for (let i = 0; i < chIds.length; i += 50) {
+    const ids = chIds.slice(i, i + 50);
+    const res = await httpGet('https://www.googleapis.com/youtube/v3/channels', {
+      part: 'snippet', id: ids.join(','), maxResults: 50
+    });
+    for (const c of res.items ?? []) {
+      out[c.id] = c?.snippet?.country || null; // 없을 수 있음(null)
+    }
+  }
+  return out;
+}
+
+// ------------------ 유틸 ------------------
+function todayYmd() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
 }
 
 // ------------------ 규칙/채널 prior 로드 ------------------
@@ -145,6 +195,11 @@ async function ytSearch(q, pageToken='') {
     publishedAfter: new Date(Date.now()-LOOKBACK_DAYS_SEARCH*86400e3).toISOString(),
   });
   if (pageToken) params.set('pageToken', pageToken);
+
+  // ★ 한국 타겟팅(우선순위 편향)
+  params.set('regionCode', REGION_FILTER);     // KR 우선 노출
+  params.set('relevanceLanguage', LANG_PREF);  // ko 우선 노출
+
   const url = `https://www.googleapis.com/youtube/v3/search?${params.toString()}`;
   return httpGet(url);
 }
@@ -164,10 +219,7 @@ function priorOf(channelId, ruleKey) {
   const hits = Number(rec[ruleKey] || 0);
   const tot  = Number(rec._total || 0);
   const prior = (hits + PRIOR_ALPHA * P0) / (tot + PRIOR_ALPHA); // 0..1
-  // neutral(p0) 대비 상대값 → 1.0이 중립
   let boost = (prior / P0); // >1 선호, <1 비선호
-  // 부드럽게: 0.5 + 0.5*(prior/P0) 형태로 축소할 수도 있으나,
-  // 범위를 하한/상한으로 클램핑
   if (!Number.isFinite(boost) || boost<=0) boost = 1.0;
   boost = Math.max(PRIOR_MIN_BOOST, Math.min(PRIOR_MAX_BOOST, boost));
   return boost;
@@ -281,12 +333,28 @@ async function main() {
       const part = ids.slice(i, i+50);
       const vjs = await ytVideos(part);
       const details = vjs?.items || [];
+
+      // --- 채널 국가 캐시 보강 ---
+      const needIds = [...new Set(details.map(v => v?.snippet?.channelId))]
+        .filter(id => id && CH_GEO[id] === undefined);
+      if (needIds.length) {
+        const fetched = await fetchChannelsCountry(needIds);
+        Object.assign(CH_GEO, fetched);
+        writeJsonPretty(CH_GEO_CACHE_PATH, CH_GEO);
+      }
+
       for (const v of details) {
         const vid = v.id;
         const sn  = v.snippet || {};
         const stats = v.statistics || {};
         if (!vid || processed.has(vid)) continue;
         processed.add(vid);
+
+        // --- 한국 타겟팅(엄격 필터) ---
+        const tags = sn.tags || [];
+        if (LANG_STRICT && !isKoreanSnippet(sn, tags)) continue;
+        const chCountry = CH_GEO[sn.channelId] || null;
+        if (CHANNEL_GEO_STRICT && chCountry && chCountry !== 'KR') continue;
 
         const vc = Number(stats.viewCount || 0);
         if (!isFinite(vc) || vc <= 0) continue;
@@ -357,6 +425,7 @@ async function main() {
 
   // prior & debug 저장
   writeJsonPretty(CH_PRIOR_PATH, CHPR);
+  writeJsonPretty(CH_GEO_CACHE_PATH, CH_GEO);
   if (SR_DEBUG) writeJsonPretty(DEBUG_OUT_PATH, { ymd, sample: debugRows });
 
   await writeKeyStatus(`kw-trend.json updated (${ymd}) — mode=${out.meta.scoring}, prior: ${Object.keys(CHPR).length} ch.`);
