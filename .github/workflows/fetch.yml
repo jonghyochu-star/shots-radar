@@ -12,9 +12,9 @@ concurrency:
   group: fetch_kw_trend
   cancel-in-progress: true
 
+
 jobs:
   fetch:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,64 +22,54 @@ jobs:
         with:
           node-version: '20'
 
-      # 키 주입 상태 점검(실패해도 다음 단계 진행)
-     - name: Sanity check keys
-      shell: bash
-      continue-on-error: true
-      env:
-        YT_KEY_1: ${{ secrets.YT_KEY_1 }}
-        YT_KEY_2: ${{ secrets.YT_KEY_2 }}
-        YT_KEY_3: ${{ secrets.YT_KEY_3 }}
-        YT_KEY_4: ${{ secrets.YT_KEY_4 }}
-        YT_KEY_5: ${{ secrets.YT_KEY_5 }}
-      run: |
-        for i in 1 2 3 4 5; do
-          var="YT_KEY_${i}"
-          val="${!var}"
-          if [[ -n "$val" ]]; then
-            len=${#val}
-            # 뒤에서 4글자 안전 추출 (음수 오프셋/공백 없이)
-            if (( len >= 4 )); then
-              tail="${val:$((len-4))}"
+      - name: Sanity check keys
+        shell: bash
+        continue-on-error: true
+        env:
+          YT_KEY_1: ${{ secrets.YT_KEY_1 }}
+          YT_KEY_2: ${{ secrets.YT_KEY_2 }}
+          YT_KEY_3: ${{ secrets.YT_KEY_3 }}
+          YT_KEY_4: ${{ secrets.YT_KEY_4 }}
+          YT_KEY_5: ${{ secrets.YT_KEY_5 }}
+        run: |
+          for i in 1 2 3 4 5; do
+            var="YT_KEY_${i}"
+            val="${!var}"
+            if [[ -n "$val" ]]; then
+              len=${#val}
+              if (( len >= 4 )); then
+                tail="${val:$((len-4))}"
+              else
+                tail="$val"
+              fi
+              echo "$i: len=${len}, tail=${tail}"
             else
-              tail="$val"
+              echo "$i: MISSING"
             fi
-            echo "$i: len=${len}, tail=${tail}"
-          else
-            echo "$i: MISSING"
-          fi
-        done
-
+          done
 
       - name: Run fetch-trend.js
         env:
-           # === 한국 타겟팅 ===
-           REGION_FILTER: 'KR'
-           LANG_PREF: 'ko'
-           LANG_STRICT: '1'              # 한국어 아니면 제외
-           LANG_MIN_HANGUL_RATIO: '0.15' # 한글 비율 임계
-           CHANNEL_GEO_STRICT: '0'       # 채널 국가까지 제한하려면 '1'
-           CH_GEO_CACHE_PATH: 'public/ch-geo.json'
-
-        
-          # === 수집량(요청 기준) ===
-          RESULT_PAGES_PER_RUN: '2'     # 카테고리당 페이지 2
+          # === 수집량 ===
+          RESULT_PAGES_PER_RUN: '2'
           LOOKBACK_DAYS_SEARCH: '14'
           MAX_DAYS_KEEP: '180'
 
-          # ↓↓↓ 이 줄만 임시 추가
-          SR_DEBUG: '0'
-          # ↑↑↑ 실행 끝나면 지우거나 '0'으로 바꾸세요
+          # === 로테이터/쿨다운 ===
+          ROTATE_EAGER: '1'
+          ROTATOR_COOLDOWN_MIN: '60'
+          ROTATOR_COOLDOWN_UNTIL_RESET: '1'
+          KEY_STATUS_PATH: 'public/key-status.json'
 
+          # === 한국 타겟팅 ===
+          REGION_FILTER: 'KR'
+          LANG_PREF: 'ko'
+          LANG_STRICT: '1'
+          LANG_MIN_HANGUL_RATIO: '0.15'
+          CHANNEL_GEO_STRICT: '0'
+          CH_GEO_CACHE_PATH: 'public/ch-geo.json'
 
-          # === 키 로테이션/쿨다운 ===
-          ROTATE_EAGER: '1'                   # 성공 시에도 다음 키로 순환
-          ROTATOR_COOLDOWN_MIN: '60'          # 반복 403/429 → 60분 쿨다운
-          ROTATOR_COOLDOWN_UNTIL_RESET: '1'   # 다음 KST 16:00까지 쿨다운(상단과 병행)
-          # ROTATOR_DEBUG: '0'                # 필요 시 1회만 켜서 로그 확인
-          KEY_STATUS_PATH: 'public/key-status.json'  # 상태 기록(선택)
-
-          # === API KEYS (Secrets) ===
+          # === API KEYS ===
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
@@ -95,3 +85,4 @@ jobs:
           git add public/*.json || true
           git commit -m "chore: trend update $(date -u +'%F %T')" || echo "Nothing to commit"
           git push || true
+  
