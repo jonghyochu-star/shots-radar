@@ -1,9 +1,9 @@
 name: Fetch KW Trend (every 2h)
 
 on:
+  workflow_dispatch:      # ← 이 줄이 있어야 'Run workflow' 버튼이 보입니다
   schedule:
-    - cron: '0 */2 * * *'   # UTC 기준 2시간마다
-  workflow_dispatch:
+    - cron: '0 */2 * * *' # UTC 기준 2시간마다
 
 permissions:
   contents: write
@@ -21,9 +21,9 @@ jobs:
         with:
           node-version: '20'
 
-      # (선택 권장) 키 주입 상태 점검: 길이/끝4자리만 노출
+      # 키 주입 상태 점검(안전): 실패해도 다음 단계 진행
       - name: Sanity check keys
-      continue-on-error: true 
+        continue-on-error: true
         env:
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
@@ -31,19 +31,27 @@ jobs:
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
         run: |
-          node -e "const ks=[1,2,3,4,5].map(i=>process.env['YT_KEY_'+i]); console.log(ks.map((k,i)=>`${i+1}: ${k?('len='+k.length+', tail='+k.slice(-4)):'MISSING'}`).join('\n'))"
+          for i in 1 2 3 4 5; do
+            var="YT_KEY_${i}"
+            val="${!var}"
+            if [ -n "$val" ]; then
+              echo "$i: len=${#val}, tail=${val: -4}"
+            else
+              echo "$i: MISSING"
+            fi
+          done
 
       - name: Run fetch-trend.js
         env:
           # === 수집량(요청 기준) ===
           RESULT_PAGES_PER_RUN: '2'     # 카테고리당 페이지 2
-          LOOKBACK_DAYS_SEARCH: '14'    # 필요 시 조정 가능
+          LOOKBACK_DAYS_SEARCH: '14'
           MAX_DAYS_KEEP: '180'
 
           # === 키 로테이션 ===
           ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환(쿼터 분산)
 
-          # === API KEYS (Secrets) ===
+          # === API KEYS ===
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
