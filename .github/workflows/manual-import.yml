@@ -1,0 +1,30 @@
+name: Import Manual Labels (CSV -> JSON)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Convert CSV to JSON
+        env:
+          MANUAL_CSV_PATH:  'public/ch-manual.csv'   # 엑셀에서 저장/업로드할 파일
+          MANUAL_JSON_PATH: 'public/ch-manual.json'  # 결과 JSON
+        run: node scripts/manual-import.js
+
+      - name: Commit manual JSON
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/ch-manual.json || true
+          git commit -m "chore: import manual labels from CSV" || echo "Nothing to commit"
+          git push || true
