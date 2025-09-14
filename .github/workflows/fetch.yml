@@ -57,6 +57,7 @@ jobs:
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
+          KEY_STATUS_PATH: 'public/key-status.json'
         run: node scripts/fetch-trend.js
 
       - name: Commit trend artifacts
