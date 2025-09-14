@@ -74,7 +74,7 @@ jobs:
           MANUAL_NEG_BOOST: '0.8'
 
           # --- 리뷰 산출물 (필요 시 1로 켬) ---
-          SR_CH_REVIEW: '1'
+          SR_CH_REVIEW: '0'
 
           # --- 키 로테이터 ---
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
