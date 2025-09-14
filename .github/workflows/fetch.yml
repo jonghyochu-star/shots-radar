@@ -1,62 +1,60 @@
-name: Fetch KW Trend (hourly)
+name: Fetch KW Trend (every 2h)
 
 on:
-  workflow_dispatch: {}
   schedule:
-    - cron: '0 * * * *'  # 매 정시(UTC) -> KST 기준 매시 정각 실행
+    - cron: '0 */2 * * *'   # UTC 기준 2시간마다
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: fetch-kw-trend
-  cancel-in-progress: false
+  group: fetch_kw_trend
+  cancel-in-progress: true
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
 
-      - name: Install deps
-        run: npm ci || npm i
-
-      - name: Run fetch-trend.js
+      # (선택 권장) 키 주입 상태 점검: 길이/끝4자리만 노출
+      - name: Sanity check keys
         env:
           YT_KEY_1: ${{ secrets.YT_KEY_1 }}
           YT_KEY_2: ${{ secrets.YT_KEY_2 }}
           YT_KEY_3: ${{ secrets.YT_KEY_3 }}
           YT_KEY_4: ${{ secrets.YT_KEY_4 }}
           YT_KEY_5: ${{ secrets.YT_KEY_5 }}
-          # SR_DEBUG: '1'   # 디버깅 샘플 저장을 보고 싶으면 주석 해제
+        run: |
+          node -e "const ks=[1,2,3,4,5].map(i=>process.env['YT_KEY_'+i]); console.log(ks.map((k,i)=>`${i+1}: ${k?('len='+k.length+', tail='+k.slice(-4)):'MISSING'}`).join('\n'))"
+
+      - name: Run fetch-trend.js
+        env:
+          # === 수집량(요청 기준) ===
+          RESULT_PAGES_PER_RUN: '2'     # 카테고리당 페이지 2
+          LOOKBACK_DAYS_SEARCH: '14'    # 필요 시 조정 가능
+          MAX_DAYS_KEEP: '180'
+
+          # === 키 로테이션 ===
+          ROTATE_EAGER: '1'             # 성공 시에도 다음 키로 순환(쿼터 분산)
+
+          # === API KEYS (Secrets) ===
+          YT_KEY_1: ${{ secrets.YT_KEY_1 }}
+          YT_KEY_2: ${{ secrets.YT_KEY_2 }}
+          YT_KEY_3: ${{ secrets.YT_KEY_3 }}
+          YT_KEY_4: ${{ secrets.YT_KEY_4 }}
+          YT_KEY_5: ${{ secrets.YT_KEY_5 }}
         run: node scripts/fetch-trend.js
 
       - name: Commit trend artifacts
         if: always()
         run: |
-          set -e
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # 생성/갱신된 산출물 add
-          git add public/kw-trend.json public/ch-prior.json public/category-rules.json || true
-          if [ -f public/kw-debug.json ]; then
-            git add public/kw-debug.json || true
-          fi
-
-          # 변경 없으면 커밋 생략
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "feat: update trend artifacts (kw-trend/ch-prior/rules)"
-          git push
+          git add public/*.json || true
+          git commit -m "chore: trend update $(date -u +'%F %T')" || echo "Nothing to commit"
+          git push || true
