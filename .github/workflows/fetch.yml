@@ -48,6 +48,10 @@ jobs:
             fi
           done
 
+       - name: Install deps (exceljs)
+         run: npm i exceljs@^4 --no-audit --no-fund
+
+
       - name: Run fetch-trend.js
         env:
           # CSV 직독(엑셀에서 rules만 적어 ch-review.csv로 업로드하면 자동 반영)
