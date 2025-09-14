@@ -1,25 +1,12 @@
 {
-  "updatedAt": "2025-09-14T17:35:54.832Z",
+  "updatedAt": "2025-09-14T18:20:09.514Z",
   "rows": [
-    {
-      "channelId": "UCGKOArAW9aFccrU4jtNB9nw",
-      "channelTitle": "드림봇",
-      "country": "KR",
-      "videos": 1,
-      "views": 3043377,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "Huntrix Figure v2 by AI. 케데헌 헌트릭스 AI 피규어 #kpopdemonhunters"
-      ]
-    },
     {
       "channelId": "UC9_093tAK3bXyZfT84efbvg",
       "channelTitle": "esports KBS",
       "country": "KR",
       "videos": 1,
-      "views": 2231367,
+      "views": 2243966,
       "suggest": {
         "ai": 1
       },
@@ -32,7 +19,7 @@
       "channelTitle": "LCK",
       "country": "KR",
       "videos": 7,
-      "views": 1525086,
+      "views": 1527107,
       "suggest": {
         "game": 7
       },
@@ -47,7 +34,7 @@
       "channelTitle": "쿠팡플레이 스포츠",
       "country": "KR",
       "videos": 4,
-      "views": 1150098,
+      "views": 1156931,
       "suggest": {
         "sports": 4
       },
@@ -58,24 +45,11 @@
       ]
     },
     {
-      "channelId": "UCXql5C57vS4ogUt6CPEWWHA",
-      "channelTitle": "김지윤의 지식Play",
-      "country": "KR",
-      "videos": 1,
-      "views": 1013348,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "조지아 한국인 구금 사태, 그 뒷면에는 미국의 정치 싸움이 있다? | 미국, 조지아, 한국인"
-      ]
-    },
-    {
       "channelId": "UCgE1p_FgUHXw1eGoz4glSrQ",
       "channelTitle": "무비챕터",
       "country": null,
       "videos": 1,
-      "views": 792350,
+      "views": 800907,
       "suggest": {
         "entertainment": 1
       },
@@ -84,11 +58,27 @@
       ]
     },
     {
+      "channelId": "UCf3dyXI8Q67jkUSsX4MD6CQ",
+      "channelTitle": "대흥민 갤러리",
+      "country": null,
+      "videos": 6,
+      "views": 739169,
+      "suggest": {
+        "official": 4,
+        "sports": 2
+      },
+      "examples": [
+        "[오피셜] 아모림 감독 리그 31-31 달성 ㄷㄷ",
+        "[오피셜] 아이콘매치 피레스 대체발탁 ㄷㄷ",
+        "[오피셜] 대한민국의 어머니 ㄷㄷ"
+      ]
+    },
+    {
       "channelId": "UC8CIM3d3zDYMk-3T5aAz0yw",
       "channelTitle": "혜안",
       "country": "KR",
       "videos": 2,
-      "views": 599645,
+      "views": 603609,
       "suggest": {
         "entertainment": 1,
         "ai": 1
@@ -103,7 +93,7 @@
       "channelTitle": "호기심대장 김몽몽  𝐦𝐨𝐧𝐠𝐦𝐨𝐧𝐠",
       "country": null,
       "videos": 1,
-      "views": 594633,
+      "views": 601376,
       "suggest": {
         "review": 1
       },
@@ -116,7 +106,7 @@
       "channelTitle": "연예BOX",
       "country": "KR",
       "videos": 1,
-      "views": 564827,
+      "views": 576120,
       "suggest": {
         "entertainment": 1
       },
@@ -129,7 +119,7 @@
       "channelTitle": "tvN SPORTS",
       "country": null,
       "videos": 1,
-      "views": 538115,
+      "views": 545025,
       "suggest": {
         "sports": 1
       },
@@ -142,7 +132,7 @@
       "channelTitle": "자취리뷰",
       "country": "KR",
       "videos": 2,
-      "views": 526524,
+      "views": 530167,
       "suggest": {
         "review": 2
       },
@@ -152,55 +142,11 @@
       ]
     },
     {
-      "channelId": "UC4MtqJifnWAS0G2Iq02reMQ",
-      "channelTitle": "만물선생",
-      "country": null,
-      "videos": 1,
-      "views": 512030,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "신동욱의 진심어린 조언 -강한 국민의힘-"
-      ]
-    },
-    {
-      "channelId": "UCf3dyXI8Q67jkUSsX4MD6CQ",
-      "channelTitle": "대흥민 갤러리",
-      "country": null,
-      "videos": 4,
-      "views": 476276,
-      "suggest": {
-        "sports": 1,
-        "official": 3
-      },
-      "examples": [
-        "[오피셜] 아이콘매치 피레스 대체발탁 ㄷㄷ",
-        "[오피셜] 대한민국의 어머니 ㄷㄷ",
-        "[오피셜] 노팅엄, 포스테코글루 감독 선임"
-      ]
-    },
-    {
-      "channelId": "UCKIQ3xPOi9tyJzcCMS5Uq3Q",
-      "channelTitle": "시니어의 보는 라디오",
-      "country": "KR",
-      "videos": 4,
-      "views": 435332,
-      "suggest": {
-        "senior": 4
-      },
-      "examples": [
-        "[최종 확정]  2차 소비쿠폰 '내일부터' 시작｜#시니어 #2차민생지원금 #민생지원금 #민생지원금2차 #민생회복쿠폰 #소비쿠폰 #시니어복지 #정",
-        "[긴급속보] 민생지원금 ,  '무조건 30만원' 확정!!｜#시니어 #2차민생지원금 #민생지원금 #정부정책 #정부지원금 #민생지원금 #시니어정책",
-        "[긴급속보] 민생회복 소비쿠폰, 오늘 까지 신청마감 !!!｜#시니어 #민생지원금2차 #2차민생지원금 #민생지원금 #민생회복쿠폰 #소비쿠폰 #시니"
-      ]
-    },
-    {
       "channelId": "UCyHvSKT_bLDYpkv1JjjsLAg",
       "channelTitle": "풍월량",
       "country": "KR",
       "videos": 1,
-      "views": 425091,
+      "views": 428150,
       "suggest": {
         "review": 1
       },
@@ -213,7 +159,7 @@
       "channelTitle": "일타이슈",
       "country": null,
       "videos": 2,
-      "views": 425060,
+      "views": 426768,
       "suggest": {
         "politics": 2
       },
@@ -226,30 +172,45 @@
       "channelId": "UCHF8lPYCii6Wdhe3scftx0Q",
       "channelTitle": "공감입니다",
       "country": "KR",
-      "videos": 9,
-      "views": 395503,
+      "videos": 10,
+      "views": 398542,
       "suggest": {
-        "official": 6,
+        "official": 7,
         "sports": 3
       },
       "examples": [
+        "[오피셜] 아모림 감독 리그 31-31 달성",
         "[오피셜] 우리형",
-        "[오피셜] 토트넘 리그 4경기 3클린시트",
-        "[오피셜] 토트넘 vs 웨스트햄 라인업"
+        "[오피셜] 토트넘 리그 4경기 3클린시트"
       ]
     },
     {
-      "channelId": "UCUbOogiD-4PKDqaJfSOTC0g",
-      "channelTitle": "테스터훈 TesterHoon",
+      "channelId": "UC5T4b53jVkm07JbYoyYiu7A",
+      "channelTitle": "흑백리뷰",
       "country": "KR",
       "videos": 2,
-      "views": 361338,
+      "views": 383668,
       "suggest": {
-        "game": 2
+        "review": 2
       },
       "examples": [
-        "아이큐 200 이상만 깰 수 있는 디펜스 게임, 이걸 깬다고요..? 명일방주 하비 장인초대석 [테스터훈]",
-        "클리어까지 300시간 걸리는 게임을 20번 깼다는 사람, 레드데드리뎀션2 비루TV 장인초대석 [테스터훈]"
+        "치킨 신상 와삭칸? 매운 후라이드 1티어라고?",
+        "농심빵 팩폭리뷰"
+      ]
+    },
+    {
+      "channelId": "UCKIQ3xPOi9tyJzcCMS5Uq3Q",
+      "channelTitle": "시니어의 보는 라디오",
+      "country": "KR",
+      "videos": 3,
+      "views": 364910,
+      "suggest": {
+        "senior": 3
+      },
+      "examples": [
+        "[최종 확정]  2차 소비쿠폰 '내일부터' 시작｜#시니어 #2차민생지원금 #민생지원금 #민생지원금2차 #민생회복쿠폰 #소비쿠폰 #시니어복지 #정",
+        "[긴급속보] 민생지원금 ,  '무조건 30만원' 확정!!｜#시니어 #2차민생지원금 #민생지원금 #정부정책 #정부지원금 #민생지원금 #시니어정책",
+        "[긴급속보] 민생회복 소비쿠폰, 오늘 까지 신청마감 !!!｜#시니어 #민생지원금2차 #2차민생지원금 #민생지원금 #민생회복쿠폰 #소비쿠폰 #시니"
       ]
     },
     {
@@ -257,7 +218,7 @@
       "channelTitle": "지존조세",
       "country": "KR",
       "videos": 1,
-      "views": 316432,
+      "views": 319725,
       "suggest": {
         "review": 1
       },
@@ -266,11 +227,24 @@
       ]
     },
     {
+      "channelId": "UCUbOogiD-4PKDqaJfSOTC0g",
+      "channelTitle": "테스터훈 TesterHoon",
+      "country": "KR",
+      "videos": 1,
+      "views": 307500,
+      "suggest": {
+        "game": 1
+      },
+      "examples": [
+        "클리어까지 300시간 걸리는 게임을 20번 깼다는 사람, 레드데드리뎀션2 비루TV 장인초대석 [테스터훈]"
+      ]
+    },
+    {
       "channelId": "UC4xuSNZx7DqcjkEMJgJiBIw",
       "channelTitle": "매거진 시크",
       "country": "KR",
       "videos": 2,
-      "views": 298492,
+      "views": 299423,
       "suggest": {
         "ai": 2
       },
@@ -284,7 +258,7 @@
       "channelTitle": "EA SPORTS FC 온라인",
       "country": "KR",
       "videos": 1,
-      "views": 294754,
+      "views": 297150,
       "suggest": {
         "sports": 1
       },
@@ -297,7 +271,7 @@
       "channelTitle": "롤숭배",
       "country": null,
       "videos": 1,
-      "views": 289780,
+      "views": 290054,
       "suggest": {
         "game": 1
       },
@@ -310,7 +284,7 @@
       "channelTitle": "무비띵크_Movie Think",
       "country": "KR",
       "videos": 1,
-      "views": 285304,
+      "views": 286862,
       "suggest": {
         "official": 1
       },
@@ -319,29 +293,16 @@
       ]
     },
     {
-      "channelId": "UC8JtQf77wqhVpOQ8Cze8JjA",
-      "channelTitle": "TVING SPORTS",
+      "channelId": "UCBM4rRGFLWnj6-7tizr2p-w",
+      "channelTitle": "1분 뚝딱 랭킹",
       "country": "KR",
       "videos": 1,
-      "views": 280696,
+      "views": 248357,
       "suggest": {
-        "sports": 1
+        "entertainment": 1
       },
       "examples": [
-        "[키움 vs 한화] 9/13 경기 I 2025 신한 SOL뱅크 KBO 리그 I 하이라이트 I TVING"
-      ]
-    },
-    {
-      "channelId": "UCvqdSTuGXEUQPeEJPQHy9yA",
-      "channelTitle": "양뷰",
-      "country": "KR",
-      "videos": 1,
-      "views": 277303,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "롬앤 9주년 신상 리뷰🎀 #롬앤 #romand"
+        "이영자와 결혼 직전 파혼한 스포츠 선수의 정체"
       ]
     },
     {
@@ -349,7 +310,7 @@
       "channelTitle": "리뷰엉이: Owl's Review",
       "country": "KR",
       "videos": 1,
-      "views": 243212,
+      "views": 245648,
       "suggest": {
         "official": 1
       },
@@ -362,7 +323,7 @@
       "channelTitle": "연예 뒤통령이진호",
       "country": "KR",
       "videos": 2,
-      "views": 242756,
+      "views": 243242,
       "suggest": {
         "community": 1,
         "entertainment": 1
@@ -377,7 +338,7 @@
       "channelTitle": "김초운",
       "country": null,
       "videos": 2,
-      "views": 238197,
+      "views": 238201,
       "suggest": {
         "official": 2
       },
@@ -391,7 +352,7 @@
       "channelTitle": "세상의 모든 지혜",
       "country": "KR",
       "videos": 1,
-      "views": 228237,
+      "views": 229943,
       "suggest": {
         "senior": 1
       },
@@ -404,7 +365,7 @@
       "channelTitle": "롤뻔뻔",
       "country": "KR",
       "videos": 2,
-      "views": 228114,
+      "views": 229597,
       "suggest": {
         "official": 2
       },
@@ -414,53 +375,11 @@
       ]
     },
     {
-      "channelId": "UCfEtgFjik5x1Qp0rsaNT2tA",
-      "channelTitle": "복지 중개사(복지 채널TV)",
-      "country": null,
-      "videos": 4,
-      "views": 225593,
-      "suggest": {
-        "senior": 4
-      },
-      "examples": [
-        "이재명 정부 ‘이런 사람’은 기초연금 못받습니다! #기초연금 #시니어 #복지",
-        "10월부터 어르신 의료비 전액지원! 빨리 신청하세요! #복지 #시니어 #지원금",
-        "기초연금 받는 분들, 3가지 지원금! 오늘부터 꼭 챙기세요! #기초연금 #시니어​​ #수급자 #복지"
-      ]
-    },
-    {
-      "channelId": "UCv1tOT645xHOJrwdGlzjMaA",
-      "channelTitle": "발로란트 챔피언스 투어",
-      "country": null,
-      "videos": 1,
-      "views": 225080,
-      "suggest": {
-        "ai": 1
-      },
-      "examples": [
-        "G2 vs TH — 챔피언스 파리 — 그룹 스테이지 — 3일차"
-      ]
-    },
-    {
-      "channelId": "UCdG9FuZwjgz1tDv7TzvYbpg",
-      "channelTitle": "랭킹쇼츠",
-      "country": "KR",
-      "videos": 2,
-      "views": 214674,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "이수만에게 손절당하고 방송에서 사라진 유명 연예인",
-        "합의금만 수억 원 논란이 된 연예인 TOP4"
-      ]
-    },
-    {
       "channelId": "UCpr2S3SBmyjvrx9Q4pLUZHw",
       "channelTitle": "movie trip 무비트립",
       "country": "KR",
       "videos": 2,
-      "views": 207291,
+      "views": 212488,
       "suggest": {
         "entertainment": 2
       },
@@ -470,24 +389,11 @@
       ]
     },
     {
-      "channelId": "UCDQqIkmzmljnkMDyWxMX7Ig",
-      "channelTitle": "이해불가 | 연예계 이슈",
-      "country": "KR",
-      "videos": 1,
-      "views": 199506,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "홍콩 원조 여신들, 충격적인 현재 모습!"
-      ]
-    },
-    {
       "channelId": "UCEV9-3sqX_Foy6CCemQHveg",
       "channelTitle": "이투데이TV",
       "country": "KR",
       "videos": 1,
-      "views": 190608,
+      "views": 191162,
       "suggest": {
         "politics": 1
       },
@@ -500,7 +406,7 @@
       "channelTitle": "뉴스TVCHOSUN",
       "country": "KR",
       "videos": 12,
-      "views": 183919,
+      "views": 176137,
       "suggest": {
         "politics": 10,
         "community": 2
@@ -508,7 +414,7 @@
       "examples": [
         "[시사쇼 정치다] 조국당 제명 당한 김보협 \"성추행 없었다\"… 입장문 전문 살펴보니?",
         "[풀버전] 9월 14일 (일) #시사쇼 #정치다 - 내일부터 대정부질문…격돌 예고 / \"성추행 없었다\"…혼돈의 조국당 / 野, '아스팔트 우파'",
-        "[시사쇼 정치다] '합의 파기' 여진 계속···野 \"협치 파괴\" 장외투쟁"
+        "[시사쇼 정치다] '내란특별재판부' 위헌 논란 격화···\"사법 독립 보장돼야\""
       ]
     },
     {
@@ -516,7 +422,7 @@
       "channelTitle": "정치브리프",
       "country": "KR",
       "videos": 1,
-      "views": 172949,
+      "views": 173151,
       "suggest": {
         "politics": 1
       },
@@ -529,7 +435,7 @@
       "channelTitle": "장마군",
       "country": "KR",
       "videos": 1,
-      "views": 165189,
+      "views": 166144,
       "suggest": {
         "community": 1
       },
@@ -542,7 +448,7 @@
       "channelTitle": "닥터만물",
       "country": "KR",
       "videos": 6,
-      "views": 159647,
+      "views": 161151,
       "suggest": {
         "entertainment": 6
       },
@@ -553,11 +459,26 @@
       ]
     },
     {
+      "channelId": "UCfEtgFjik5x1Qp0rsaNT2tA",
+      "channelTitle": "복지 중개사(복지 채널TV)",
+      "country": null,
+      "videos": 3,
+      "views": 159671,
+      "suggest": {
+        "senior": 3
+      },
+      "examples": [
+        "이재명 정부 ‘이런 사람’은 기초연금 못받습니다! #기초연금 #시니어 #복지",
+        "10월부터 어르신 의료비 전액지원! 빨리 신청하세요! #복지 #시니어 #지원금",
+        "기초연금 받는 분들, 3가지 지원금! 오늘부터 꼭 챙기세요! #기초연금 #시니어​​ #수급자 #복지"
+      ]
+    },
+    {
       "channelId": "UCwfbSsZ7_sccxcibe60mWlQ",
       "channelTitle": "파동TV",
       "country": "KR",
       "videos": 1,
-      "views": 157768,
+      "views": 158332,
       "suggest": {
         "game": 1
       },
@@ -566,11 +487,24 @@
       ]
     },
     {
+      "channelId": "UCdG9FuZwjgz1tDv7TzvYbpg",
+      "channelTitle": "랭킹쇼츠",
+      "country": "KR",
+      "videos": 1,
+      "views": 158127,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "이수만에게 손절당하고 방송에서 사라진 유명 연예인"
+      ]
+    },
+    {
       "channelId": "UCGrraKQiTF-ml0KqPQ8mrUA",
       "channelTitle": "매일신문",
       "country": "KR",
       "videos": 1,
-      "views": 155988,
+      "views": 155997,
       "suggest": {
         "politics": 1
       },
@@ -583,7 +517,7 @@
       "channelTitle": "김단군",
       "country": "KR",
       "videos": 1,
-      "views": 141076,
+      "views": 141772,
       "suggest": {
         "entertainment": 1
       },
@@ -592,25 +526,11 @@
       ]
     },
     {
-      "channelId": "UCnj0yVadEmXKcUN5ztUY4uw",
-      "channelTitle": "백운기의 정어리TV",
-      "country": "KR",
-      "videos": 2,
-      "views": 136291,
-      "suggest": {
-        "politics": 2
-      },
-      "examples": [
-        "정청래 대표 손길도 거절한 김병기 원내대표.. 아직도 당심 파악이 잘?",
-        "[백운기의 정치1번지] 대표들 간의 오해? 사실관계 표명 좀 부탁드립니다 .."
-      ]
-    },
-    {
       "channelId": "UCgFpu39npNickX5FIzYxbkg",
       "channelTitle": "박영식의 정치야시장",
       "country": "KR",
       "videos": 5,
-      "views": 136134,
+      "views": 136966,
       "suggest": {
         "politics": 5
       },
@@ -621,16 +541,29 @@
       ]
     },
     {
-      "channelId": "UCRZujhqKhcRLgux1h71erFg",
-      "channelTitle": "정치넘버원",
+      "channelId": "UCSvNA8cFUjgCRDOfyZfdiuQ",
+      "channelTitle": "연예반장",
       "country": "KR",
       "videos": 1,
-      "views": 124237,
+      "views": 132104,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "이용식 손녀 원이엘, 목사 친할아버지 축복기도에 모두 울컥한 이유"
+      ]
+    },
+    {
+      "channelId": "UCnj0yVadEmXKcUN5ztUY4uw",
+      "channelTitle": "백운기의 정어리TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 129707,
       "suggest": {
         "politics": 1
       },
       "examples": [
-        "박은정 \"조희대가 정치를 하고있어요\" #박은정 #김용민 #최욱 #곽수산"
+        "정청래 대표 손길도 거절한 김병기 원내대표.. 아직도 당심 파악이 잘?"
       ]
     },
     {
@@ -638,7 +571,7 @@
       "channelTitle": "킴성태TV",
       "country": "KR",
       "videos": 1,
-      "views": 123713,
+      "views": 123848,
       "suggest": {
         "game": 1
       },
@@ -647,24 +580,11 @@
       ]
     },
     {
-      "channelId": "UC5T4b53jVkm07JbYoyYiu7A",
-      "channelTitle": "흑백리뷰",
-      "country": "KR",
-      "videos": 1,
-      "views": 123145,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "농심빵 팩폭리뷰"
-      ]
-    },
-    {
       "channelId": "UCZx4PZGDS5IHHoxrFTOCQYQ",
       "channelTitle": "샘웨",
       "country": null,
       "videos": 1,
-      "views": 122582,
+      "views": 122868,
       "suggest": {
         "official": 1
       },
@@ -673,11 +593,24 @@
       ]
     },
     {
+      "channelId": "UCMT_VeB81D7MzL9uip60TVw",
+      "channelTitle": "순이한판",
+      "country": "KR",
+      "videos": 1,
+      "views": 122075,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "대통령 건드렸다가 출연정지 당한 연예인 TOP10"
+      ]
+    },
+    {
       "channelId": "UCvnSYN1HwFAd1FRGF8KEdLA",
       "channelTitle": "시니어행복TV",
       "country": "KR",
       "videos": 1,
-      "views": 121450,
+      "views": 121968,
       "suggest": {
         "senior": 1
       },
@@ -690,7 +623,7 @@
       "channelTitle": "빵끗시니어",
       "country": "KR",
       "videos": 1,
-      "views": 120628,
+      "views": 120934,
       "suggest": {
         "senior": 1
       },
@@ -699,24 +632,11 @@
       ]
     },
     {
-      "channelId": "UCMT_VeB81D7MzL9uip60TVw",
-      "channelTitle": "순이한판",
-      "country": "KR",
-      "videos": 1,
-      "views": 117853,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "대통령 건드렸다가 출연정지 당한 연예인 TOP10"
-      ]
-    },
-    {
       "channelId": "UCCs1YZHxUTIbLZd-xrvvMCw",
       "channelTitle": "청원이",
       "country": "KR",
       "videos": 1,
-      "views": 113307,
+      "views": 113875,
       "suggest": {
         "ai": 1
       },
@@ -725,39 +645,11 @@
       ]
     },
     {
-      "channelId": "UCgeOlLcX6PReHdWImEnUVTg",
-      "channelTitle": "스픽스",
-      "country": "KR",
-      "videos": 3,
-      "views": 113153,
-      "suggest": {
-        "politics": 3
-      },
-      "examples": [
-        "[정치본색] 김병기 수렁 속으로! ○○○ 배후설 터졌다! 어젯밤 충격 장면, 김병주 최고위원 직접 공개",
-        "[정치본색] 법원장들이 이재명 대통령 재판 논의한다고? 조희대 지시, 천대엽 ‘반란 계획’ 가동",
-        "[정치본색] 통일교 지금 ‘국가전복’을 준비한다고? 고발사주 조성은 작가의 소름 돋는 분석"
-      ]
-    },
-    {
-      "channelId": "UCcgkgKhXT6QwdGj9Nr8PBcg",
-      "channelTitle": "게임대장봉준",
-      "country": "KR",
-      "videos": 1,
-      "views": 112364,
-      "suggest": {
-        "game": 1
-      },
-      "examples": [
-        "대회 패배 후 서로 폭로하며 찐텐 싸움난 코봉게이밍즈.."
-      ]
-    },
-    {
       "channelId": "UCb0eyf03Jz8Q5j2q65TzCoA",
       "channelTitle": "쉐어TV",
       "country": null,
       "videos": 1,
-      "views": 112061,
+      "views": 112081,
       "suggest": {
         "official": 1
       },
@@ -766,11 +658,24 @@
       ]
     },
     {
+      "channelId": "UCBM86JVoHLqg9irpR2XKvGw",
+      "channelTitle": "달란트투자",
+      "country": "KR",
+      "videos": 1,
+      "views": 109043,
+      "suggest": {
+        "ai": 1
+      },
+      "examples": [
+        "“우크라 게임체인저 등장” 초토화 된 크림반도 상황, 푸틴은 정말 미칠 지경이다 | 김대영 군사평론가 1부"
+      ]
+    },
+    {
       "channelId": "UC3gXb7zUmM6SlOLjlXGMSXA",
       "channelTitle": "신비한 동물세계",
       "country": "KR",
       "videos": 2,
-      "views": 106066,
+      "views": 106866,
       "suggest": {
         "ai": 2
       },
@@ -784,7 +689,7 @@
       "channelTitle": "이상그이상",
       "country": "KR",
       "videos": 1,
-      "views": 101187,
+      "views": 101665,
       "suggest": {
         "sports": 1
       },
@@ -797,7 +702,7 @@
       "channelTitle": "DaeHyun",
       "country": "KR",
       "videos": 1,
-      "views": 100688,
+      "views": 101348,
       "suggest": {
         "game": 1
       },
@@ -810,7 +715,7 @@
       "channelTitle": "BOYS II PLANET",
       "country": null,
       "videos": 1,
-      "views": 99339,
+      "views": 99474,
       "suggest": {
         "official": 1
       },
@@ -819,26 +724,11 @@
       ]
     },
     {
-      "channelId": "UCt4bWJILlEo1hvsR224ASyA",
-      "channelTitle": "스포츠클래식 SportsClassic",
-      "country": "KR",
-      "videos": 6,
-      "views": 98332,
-      "suggest": {
-        "sports": 6
-      },
-      "examples": [
-        "[스포츠클래식 LIVE] 2025 KBO리그 데일리 야구 리뷰 [삼성 양창섭, 3연패 탈출 위한 인생투 / 키움-한화 핵전쟁, 13-10으로 키",
-        "[스포츠클래식 LIVE] 2025 KBO리그 키움 히어로즈 : 한화 이글스 (대전 한화생명 볼파크) / 2025.09.14 경기",
-        "[스포츠클래식 LIVE] 2025 KBO리그 데일리 야구 리뷰 [롯데 김민성 끝내기 안타, 끝까지 간다 / 폰세 17연승, 한화 선두 추격 시동"
-      ]
-    },
-    {
       "channelId": "UCULRVjf5z_WoR106msn8HoA",
       "channelTitle": "리섭 LeeSeob",
       "country": "KR",
       "videos": 1,
-      "views": 94259,
+      "views": 94756,
       "suggest": {
         "review": 1
       },
@@ -851,7 +741,7 @@
       "channelTitle": "시니어정보나라",
       "country": "KR",
       "videos": 2,
-      "views": 86219,
+      "views": 86580,
       "suggest": {
         "senior": 2
       },
@@ -865,7 +755,7 @@
       "channelTitle": "짤명수",
       "country": "KR",
       "videos": 1,
-      "views": 82284,
+      "views": 82673,
       "suggest": {
         "entertainment": 1
       },
@@ -874,26 +764,11 @@
       ]
     },
     {
-      "channelId": "UChTEEOe7vrwNNH9-ElUeOEQ",
-      "channelTitle": "쎈축용쓰TV",
-      "country": "KR",
-      "videos": 3,
-      "views": 78249,
-      "suggest": {
-        "review": 3
-      },
-      "examples": [
-        "최저가 미쳤다!!!🔥 플스 가을 어드벤처 세일! 갓성비 대박 할인 게임 추천",
-        "무료게임 4개 떴다!!!🔥 스팀 9월 새로운 할인 총정리!! 갓띵작 게임 추천 BEST",
-        "드디어 떴다!!!🎮 플스 9월 카탈로그 추가 라인업+만료 게임까지 총정리!!"
-      ]
-    },
-    {
       "channelId": "UCDOp1hmK713peNqi-PeFsFQ",
       "channelTitle": "시니어 다이어리",
       "country": "KR",
       "videos": 1,
-      "views": 77250,
+      "views": 77431,
       "suggest": {
         "senior": 1
       },
@@ -902,16 +777,18 @@
       ]
     },
     {
-      "channelId": "UC1AbNPOrkzCxtiPP4v712Vg",
-      "channelTitle": "승빠",
+      "channelId": "UCt4bWJILlEo1hvsR224ASyA",
+      "channelTitle": "스포츠클래식 SportsClassic",
       "country": "KR",
-      "videos": 1,
-      "views": 76048,
+      "videos": 5,
+      "views": 76694,
       "suggest": {
-        "review": 1
+        "sports": 5
       },
       "examples": [
-        "달지않고 맛있는 중화요리 강동원 리뷰"
+        "[스포츠클래식 LIVE] 2025 KBO리그 데일리 야구 리뷰 [삼성 양창섭, 3연패 탈출 위한 인생투 / 키움-한화 핵전쟁, 13-10으로 키",
+        "[스포츠클래식 LIVE] 2025 KBO리그 키움 히어로즈 : 한화 이글스 (대전 한화생명 볼파크) / 2025.09.14 경기",
+        "[스포츠클래식 LIVE] 2025 KBO리그 데일리 야구 리뷰 [롯데 김민성 끝내기 안타, 끝까지 간다 / 폰세 17연승, 한화 선두 추격 시동"
       ]
     },
     {
@@ -919,7 +796,7 @@
       "channelTitle": "동희",
       "country": "KR",
       "videos": 1,
-      "views": 71633,
+      "views": 71792,
       "suggest": {
         "sports": 1
       },
@@ -932,7 +809,7 @@
       "channelTitle": "푸린",
       "country": "KR",
       "videos": 1,
-      "views": 70894,
+      "views": 71265,
       "suggest": {
         "game": 1
       },
@@ -945,7 +822,7 @@
       "channelTitle": "진리의 영화",
       "country": "KR",
       "videos": 1,
-      "views": 67516,
+      "views": 68870,
       "suggest": {
         "review": 1
       },
@@ -954,11 +831,25 @@
       ]
     },
     {
+      "channelId": "UCTnafh2iyIWh7MhcGBmGU0g",
+      "channelTitle": "놀라운 토요일 Amazing Saturday",
+      "country": "KR",
+      "videos": 2,
+      "views": 67580,
+      "suggest": {
+        "entertainment": 2
+      },
+      "examples": [
+        "[#간식게임] 먹을테야테야, 코요태 당근 케이크 꼭 먹을테야🥕 #highlight#놀라운토요일 | amazingsaturday EP.383",
+        "간식 게임도 1등, 음악 방송도 1등🥇 키 눈물의 축하 현장💦#놀라운토요일 | amazingsaturday EP.383 | tvN 25091"
+      ]
+    },
+    {
       "channelId": "UCw-kJ9LREUdv8iWI08Tnyig",
       "channelTitle": "장난귤",
       "country": "KR",
       "videos": 1,
-      "views": 67228,
+      "views": 67310,
       "suggest": {
         "review": 1
       },
@@ -971,7 +862,7 @@
       "channelTitle": "정치대장",
       "country": "KR",
       "videos": 1,
-      "views": 64838,
+      "views": 64903,
       "suggest": {
         "politics": 1
       },
@@ -984,7 +875,7 @@
       "channelTitle": "저널리스트",
       "country": "KR",
       "videos": 1,
-      "views": 64718,
+      "views": 64748,
       "suggest": {
         "politics": 1
       },
@@ -997,7 +888,7 @@
       "channelTitle": "직카 코믹스",
       "country": "KR",
       "videos": 3,
-      "views": 64216,
+      "views": 64284,
       "suggest": {
         "senior": 3
       },
@@ -1008,26 +899,11 @@
       ]
     },
     {
-      "channelId": "UC7Qyo3ko7FXVPZKcHZjsMaQ",
-      "channelTitle": "스타시대",
-      "country": "KR",
-      "videos": 3,
-      "views": 63979,
-      "suggest": {
-        "entertainment": 3
-      },
-      "examples": [
-        "가을사랑. 신계행. 가을이면 생각나는 노래. #7080가요 #시니어 #시니어음악",
-        "낯설은 아쉬움. 진시몬.의 감성 히트곡 #7080가요 #시니어 #8090가요",
-        "난 아직도 널. 작품하나. '1987년의 추억 #7080가요 #시니어 #시니어음악"
-      ]
-    },
-    {
       "channelId": "UCDbUeK0YqR8GZrmvzMs94mA",
       "channelTitle": "씨무비",
       "country": "KR",
       "videos": 1,
-      "views": 62212,
+      "views": 63768,
       "suggest": {
         "entertainment": 1
       },
@@ -1040,7 +916,7 @@
       "channelTitle": "무비잽",
       "country": "KR",
       "videos": 3,
-      "views": 62173,
+      "views": 63502,
       "suggest": {
         "entertainment": 3
       },
@@ -1055,7 +931,7 @@
       "channelTitle": "김시선",
       "country": "KR",
       "videos": 1,
-      "views": 61463,
+      "views": 61580,
       "suggest": {
         "entertainment": 1
       },
@@ -1068,7 +944,7 @@
       "channelTitle": "원용석의 진실정치",
       "country": null,
       "videos": 1,
-      "views": 61402,
+      "views": 61411,
       "suggest": {
         "ai": 1
       },
@@ -1077,11 +953,24 @@
       ]
     },
     {
+      "channelId": "UCY3qNbCdxhfEIjSBpC24X6g",
+      "channelTitle": "아투TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 61332,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "[🔴아투 LIVE] 국힘, 대통령실 앞 집결! ···정치보복 불법특검 규탄대회_250912"
+      ]
+    },
+    {
       "channelId": "UCKPbw2aFXXZtarxwq0wuQlA",
       "channelTitle": "정동원586",
       "country": "KR",
       "videos": 2,
-      "views": 60243,
+      "views": 60745,
       "suggest": {
         "politics": 2
       },
@@ -1091,16 +980,16 @@
       ]
     },
     {
-      "channelId": "UC47nZ90It99CYPq7wT5lfhg",
-      "channelTitle": "김정민 국제전략연구소",
-      "country": "KR",
+      "channelId": "UC3gIkc0tr8c3PDhvHRCJ3jQ",
+      "channelTitle": "이웃집피디들",
+      "country": null,
       "videos": 1,
-      "views": 58367,
+      "views": 59415,
       "suggest": {
-        "sports": 1
+        "senior": 1
       },
       "examples": [
-        "[김정민의 그레이트게임] 소설: 트럼프가 북한과 평화협정 맺을 수 있는 방법 #김정민박사#김정민#몽골박사#곽티르#곽지영#몽르메이슨#몽르#역사#천"
+        "넌센스퀴즈 #이웃집피디들 #청주유튜버 #시니어유튜버 #넌센스문제"
       ]
     },
     {
@@ -1108,7 +997,7 @@
       "channelTitle": "머빈의 콘텐츠리뷰 ",
       "country": "KR",
       "videos": 1,
-      "views": 56731,
+      "views": 57473,
       "suggest": {
         "review": 1
       },
@@ -1117,30 +1006,43 @@
       ]
     },
     {
-      "channelId": "UCYF4ZvKcLBGOmNcW2oJdCJQ",
-      "channelTitle": "갔다온탁형",
+      "channelId": "UC6LLMkdyses2ugPRNEXutMQ",
+      "channelTitle": "호감게임티비",
       "country": "KR",
       "videos": 2,
-      "views": 55907,
+      "views": 57173,
       "suggest": {
-        "review": 2
+        "game": 2
       },
       "examples": [
-        "[지볶행 리뷰] 아무것도 안하겠다고 하면서 결국 타지마할에 안가버린 무당 4정숙",
-        "돌싱글즈7 최종선택 리뷰 (응원하기 힘든 동건 명은 커플)"
+        "오락실 소년들이라면 누구나 다 알았던 비기 [슬랩파이트]#고전게임원코인 #shorts",
+        "승룡권을 사용하는 케릭터들 [게임속 승룡권] #고전게임원코인 #shorts"
       ]
     },
     {
-      "channelId": "UCz9owiXUt0UoSRfhdz8-FYw",
-      "channelTitle": "스포츠마니아TV",
+      "channelId": "UCTTmtS2ljy1vyl_s-d_LEHQ",
+      "channelTitle": "MBC 라디오 시사",
       "country": "KR",
       "videos": 1,
-      "views": 54877,
+      "views": 56404,
       "suggest": {
-        "sports": 1
+        "politics": 1
       },
       "examples": [
-        "롯데자이언츠(벨라스케즈) vs  SSG랜더스(김광현) / 9월 13일 / 롯데편파중계 [ 염종석 해설위원 & 김동현 캐스터] 2025.09.13"
+        "[찐텐 정치] 당정대 고위급 만찬 회동, 여당 투톱 갈등 봉합될까 | MBC 250914 방송"
+      ]
+    },
+    {
+      "channelId": "UCM5qo9osuWYv_5jycVslxeA",
+      "channelTitle": "시네마톡",
+      "country": "KR",
+      "videos": 1,
+      "views": 55782,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "가족 휴가 중인 《최정상급 킬러》의 딸을 겁도 없이 때린 25년 최신 액션영화! [영화리뷰/결말포함]"
       ]
     },
     {
@@ -1148,7 +1050,7 @@
       "channelTitle": "한국대학교 익명게시판",
       "country": null,
       "videos": 1,
-      "views": 53890,
+      "views": 54954,
       "suggest": {
         "review": 1
       },
@@ -1160,10 +1062,10 @@
       "channelId": "UCynSOK9S5HuUlrbpkiYgm5Q",
       "channelTitle": "iMBC연예",
       "country": "KR",
-      "videos": 6,
-      "views": 52908,
+      "videos": 5,
+      "views": 54836,
       "suggest": {
-        "entertainment": 6
+        "entertainment": 5
       },
       "examples": [
         "못 말리는 변영주 감독의 고현정 사랑🫰🏻",
@@ -1172,16 +1074,31 @@
       ]
     },
     {
-      "channelId": "UC1r112Pr9Ngcg2NtcE946HQ",
-      "channelTitle": "맛상무",
-      "country": "KR",
-      "videos": 1,
-      "views": 51190,
+      "channelId": "UCQADnOfZo748epEm-PVgtLg",
+      "channelTitle": "웅짱TVうんちゃんTV",
+      "country": "JP",
+      "videos": 2,
+      "views": 53042,
       "suggest": {
-        "review": 1
+        "review": 2
       },
       "examples": [
-        "일본우동, 틱톡 떡젤리~ GS25 신제품 리뷰"
+        "'킹덤 시즌2' 5~6화까지 일본 친구들과 리뷰 #리액션편",
+        "'킹덤 시즌2' 3~4화까지 일본 친구들과 리뷰 #리액션편"
+      ]
+    },
+    {
+      "channelId": "UChTEEOe7vrwNNH9-ElUeOEQ",
+      "channelTitle": "쎈축용쓰TV",
+      "country": "KR",
+      "videos": 2,
+      "views": 52946,
+      "suggest": {
+        "review": 2
+      },
+      "examples": [
+        "최저가 미쳤다!!!🔥 플스 가을 어드벤처 세일! 갓성비 대박 할인 게임 추천",
+        "무료게임 4개 떴다!!!🔥 스팀 9월 새로운 할인 총정리!! 갓띵작 게임 추천 BEST"
       ]
     },
     {
@@ -1189,7 +1106,7 @@
       "channelTitle": "서정욱TV",
       "country": "KR",
       "videos": 1,
-      "views": 50757,
+      "views": 50818,
       "suggest": {
         "politics": 1
       },
@@ -1202,7 +1119,7 @@
       "channelTitle": "JTV뉴스",
       "country": "KR",
       "videos": 1,
-      "views": 50686,
+      "views": 50705,
       "suggest": {
         "community": 1
       },
@@ -1215,7 +1132,7 @@
       "channelTitle": "당당스토리",
       "country": "KR",
       "videos": 1,
-      "views": 50140,
+      "views": 50335,
       "suggest": {
         "senior": 1
       },
@@ -1224,11 +1141,24 @@
       ]
     },
     {
+      "channelId": "UCySo3PTNz3eVSGa_rzplFkA",
+      "channelTitle": "네오수트",
+      "country": "KR",
+      "videos": 1,
+      "views": 50117,
+      "suggest": {
+        "sports": 1
+      },
+      "examples": [
+        "워트의시체 삥뜯기 골드 적용 될까? #디아블로2 #삥바바"
+      ]
+    },
+    {
       "channelId": "UCLDgNOiXvgi28nsxLOsPnsQ",
       "channelTitle": "옳은손TV",
       "country": null,
       "videos": 1,
-      "views": 48710,
+      "views": 49081,
       "suggest": {
         "politics": 1
       },
@@ -1241,7 +1171,7 @@
       "channelTitle": "5080 생활백서",
       "country": "KR",
       "videos": 1,
-      "views": 46800,
+      "views": 46924,
       "suggest": {
         "senior": 1
       },
@@ -1250,58 +1180,29 @@
       ]
     },
     {
-      "channelId": "UCF4Wxdo3inmxP-Y59wXDsFw",
-      "channelTitle": "MBCNEWS",
+      "channelId": "UCgeOlLcX6PReHdWImEnUVTg",
+      "channelTitle": "스픽스",
       "country": "KR",
-      "videos": 6,
-      "views": 46197,
+      "videos": 1,
+      "views": 42327,
       "suggest": {
-        "entertainment": 5,
-        "sports": 1
+        "politics": 1
       },
       "examples": [
-        "[문화연예 플러스] 보아·동방신기, 일본 드라마 OST 불러 (2025.09.12/뉴스투데이/MBC)",
-        "[문화연예 플러스] 임영웅, 신곡 무대 최초 공개 (2025.09.12/뉴스투데이/MBC)",
-        "[문화연예 플러스] 조수미, 이집트서 수교 30주년 공연 (2025.09.12/뉴스투데이/MBC)"
+        "[정치본색] 법원장들이 이재명 대통령 재판 논의한다고? 조희대 지시, 천대엽 ‘반란 계획’ 가동"
       ]
     },
     {
-      "channelId": "UCiwQRG2sCcfjKkgxMEdJGPg",
-      "channelTitle": "엠뚜루마뚜루 : MBC 공식 종합 채널",
+      "channelId": "UCYF4ZvKcLBGOmNcW2oJdCJQ",
+      "channelTitle": "갔다온탁형",
       "country": "KR",
       "videos": 1,
-      "views": 45522,
+      "views": 42112,
       "suggest": {
-        "official": 1
+        "review": 1
       },
       "examples": [
-        "[나혼자산다] 이런데 로맨스가 아니라고요?! 게임하고 사진 찍고 생일 축하 파티하는 주승X우희의 우정 데이트🕹️ | #이주승 #천우희 MBC2"
-      ]
-    },
-    {
-      "channelId": "UCeNhtzGpCtCrKIR7OJS-kVA",
-      "channelTitle": "연예세계톡톡",
-      "country": "KR",
-      "videos": 1,
-      "views": 42740,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "폭셰 팬들의 귀여운 가상엔딩"
-      ]
-    },
-    {
-      "channelId": "UC44QE3DVUuDrhUC5yp4zRYQ",
-      "channelTitle": "라디유",
-      "country": null,
-      "videos": 1,
-      "views": 42056,
-      "suggest": {
-        "ai": 1
-      },
-      "examples": [
-        "스팀평가 '매우긍정적' 수영복 입은 당신의 어머니 게임"
+        "[지볶행 리뷰] 아무것도 안하겠다고 하면서 결국 타지마할에 안가버린 무당 4정숙"
       ]
     },
     {
@@ -1309,7 +1210,7 @@
       "channelTitle": "엔마ENMA",
       "country": "KR",
       "videos": 1,
-      "views": 39663,
+      "views": 39856,
       "suggest": {
         "game": 1
       },
@@ -1318,11 +1219,42 @@
       ]
     },
     {
+      "channelId": "UC7Qyo3ko7FXVPZKcHZjsMaQ",
+      "channelTitle": "스타시대",
+      "country": "KR",
+      "videos": 2,
+      "views": 39707,
+      "suggest": {
+        "entertainment": 2
+      },
+      "examples": [
+        "가을사랑. 신계행. 가을이면 생각나는 노래. #7080가요 #시니어 #시니어음악",
+        "낯설은 아쉬움. 진시몬.의 감성 히트곡 #7080가요 #시니어 #8090가요"
+      ]
+    },
+    {
+      "channelId": "UChlgI3UHCOnwUGzWzbJ3H5w",
+      "channelTitle": " YTN",
+      "country": "KR",
+      "videos": 6,
+      "views": 38992,
+      "suggest": {
+        "ai": 1,
+        "review": 1,
+        "politics": 4
+      },
+      "examples": [
+        "광주 드라이빙 시뮬레이터 첫 공개...생활 전반 AI 기술 도입 기대 / YTN",
+        "[9월 14일 시청자 비평 플러스] 뉴스 리뷰Y / YTN",
+        "'유튜브가 정치 권력?'…강경파에 휘둘리는 '여의도' [뉴스START] 다시보기 2025년 09월 14일  / YTN"
+      ]
+    },
+    {
       "channelId": "UC4GITWyqdtM7aEAo79AfQng",
       "channelTitle": "777쎄븐쎄븐쎄븐",
       "country": "KR",
       "videos": 1,
-      "views": 38848,
+      "views": 38849,
       "suggest": {
         "senior": 1
       },
@@ -1331,24 +1263,11 @@
       ]
     },
     {
-      "channelId": "UC6LLMkdyses2ugPRNEXutMQ",
-      "channelTitle": "호감게임티비",
-      "country": "KR",
-      "videos": 1,
-      "views": 38218,
-      "suggest": {
-        "game": 1
-      },
-      "examples": [
-        "오락실 소년들이라면 누구나 다 알았던 비기 [슬랩파이트]#고전게임원코인 #shorts"
-      ]
-    },
-    {
       "channelId": "UC9bicYGdrx2YllCCg5H81Cw",
       "channelTitle": "주둥이방송 게임",
       "country": "KR",
       "videos": 1,
-      "views": 37785,
+      "views": 37817,
       "suggest": {
         "entertainment": 1
       },
@@ -1357,11 +1276,26 @@
       ]
     },
     {
+      "channelId": "UCDQ2sRc97VRo0DZcsMgf4fg",
+      "channelTitle": "그레이스요가 GraceYoga 모든 존재가 편안하기를",
+      "country": "KR",
+      "videos": 3,
+      "views": 37503,
+      "suggest": {
+        "senior": 3
+      },
+      "examples": [
+        "늙지않는 3분운동#3분운동 #시니어운동#분당시니어운동#분당시니어요가#실버요가#분당운동#정자동요가#그레이스요가",
+        "30회 가능하신가요 #시니어요가 #시니어운동 #실버요가 #중년홈트 #분당요가 #정자동요가 #분당시니어 #그레이스요가 #직장인요가",
+        "앉아서 혹은 누워서 발끝치기 2분 #시니어요가 #분당요가 #직장인요가 #그레이스요가 #정자동요가 #건강한중년 #시니어운동 #실버요가 #중년홈트"
+      ]
+    },
+    {
       "channelId": "UCF3UEVPt5zZTlBVJwDG317g",
       "channelTitle": "JTBC Voyage",
       "country": "KR",
       "videos": 1,
-      "views": 37062,
+      "views": 37423,
       "suggest": {
         "sports": 1
       },
@@ -1370,11 +1304,24 @@
       ]
     },
     {
+      "channelId": "UCJkdI8Q231GkTrmQ8HfzgHg",
+      "channelTitle": "청년정치매거진",
+      "country": null,
+      "videos": 1,
+      "views": 35519,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "셀트리온 서정진 회장의 겸손 이재명 대통령의 사이다 한마디 #청년정치매거진 #이재명대통령 #서정진 #대한민국 #기업"
+      ]
+    },
+    {
       "channelId": "UCkinYTS9IHqOEwR1Sze2JTw",
       "channelTitle": "SBS 뉴스",
       "country": "KR",
       "videos": 4,
-      "views": 35372,
+      "views": 35420,
       "suggest": {
         "community": 1,
         "politics": 1,
@@ -1387,32 +1334,17 @@
       ]
     },
     {
-      "channelId": "UChlgI3UHCOnwUGzWzbJ3H5w",
-      "channelTitle": " YTN",
-      "country": "KR",
-      "videos": 4,
-      "views": 35324,
-      "suggest": {
-        "review": 1,
-        "politics": 3
-      },
-      "examples": [
-        "[9월 14일 시청자 비평 플러스] 뉴스 리뷰Y / YTN",
-        "'유튜브가 정치 권력?'…강경파에 휘둘리는 '여의도' [뉴스START] 다시보기 2025년 09월 14일  / YTN",
-        "'유튜브가 정치 권력?'...강경파에 휘둘리는 '여의도' / YTN"
-      ]
-    },
-    {
-      "channelId": "UCJkdI8Q231GkTrmQ8HfzgHg",
-      "channelTitle": "청년정치매거진",
+      "channelId": "UC4NImiQA2ZNmlafvhJFZGlQ",
+      "channelTitle": "플랜카드TV",
       "country": null,
-      "videos": 1,
-      "views": 35048,
+      "videos": 2,
+      "views": 33651,
       "suggest": {
-        "politics": 1
+        "politics": 2
       },
       "examples": [
-        "셀트리온 서정진 회장의 겸손 이재명 대통령의 사이다 한마디 #청년정치매거진 #이재명대통령 #서정진 #대한민국 #기업"
+        "임이자 국회의원 장외투쟁 야당탄압 독재정치  정치보복  규탄대회 모이자 국회로 국민의힘 당대표 장동혁 국회의사당 앞 중앙계단 2025년 9월12",
+        "중앙대학생위원장 김채수 야당말살  야당탄압 독재정치  정치보복  규탄대회 모이자 국회로 국민의힘 당대표 장동혁 국회의사당 앞 중앙계단 2025년"
       ]
     },
     {
@@ -1420,7 +1352,7 @@
       "channelTitle": "신차정보 연못구름",
       "country": "KR",
       "videos": 1,
-      "views": 32879,
+      "views": 33057,
       "suggest": {
         "community": 1
       },
@@ -1429,11 +1361,24 @@
       ]
     },
     {
+      "channelId": "UCkvz_CZlthtVo7E2sGa43cg",
+      "channelTitle": "대타맨",
+      "country": "KR",
+      "videos": 1,
+      "views": 32650,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "폐선박에서 다시 시작된 죽음의 밀실게임 [검은방 2]"
+      ]
+    },
+    {
       "channelId": "UCG9aFJTZ-lMCHAiO1KJsirg",
       "channelTitle": "MBN News",
       "country": "KR",
       "videos": 2,
-      "views": 31517,
+      "views": 31625,
       "suggest": {
         "politics": 2
       },
@@ -1447,7 +1392,7 @@
       "channelTitle": "성창힐_Growth.Creative.Healing",
       "country": "KR",
       "videos": 2,
-      "views": 31086,
+      "views": 31100,
       "suggest": {
         "entertainment": 2
       },
@@ -1461,7 +1406,7 @@
       "channelTitle": "건강한 생활",
       "country": "KR",
       "videos": 1,
-      "views": 30715,
+      "views": 30919,
       "suggest": {
         "senior": 1
       },
@@ -1474,7 +1419,7 @@
       "channelTitle": "위대한 이슈",
       "country": "KR",
       "videos": 1,
-      "views": 30615,
+      "views": 30715,
       "suggest": {
         "politics": 1
       },
@@ -1483,42 +1428,11 @@
       ]
     },
     {
-      "channelId": "UCsU-I-vHLiaMfV_ceaYz5rQ",
-      "channelTitle": "JTBC News",
-      "country": "KR",
-      "videos": 4,
-      "views": 30589,
-      "suggest": {
-        "ai": 2,
-        "politics": 2
-      },
-      "examples": [
-        "AI만 117번 외쳤다...배경훈 \"해외도 쓰는 '모두의 AI' 만들겠다\"｜지금 이 장면",
-        "미국은 '비자' 중국은 '특권'…한국 'AI 인재' 빠져나간다 / JTBC 뉴스룸",
-        "'찰리 커크' 총격범은 22세 타일러 로빈슨…\"최근 정치성향 강해져\"｜지금 이 뉴스"
-      ]
-    },
-    {
-      "channelId": "UCCHDXeSnxeqnttqeoCQ2G3A",
-      "channelTitle": "뉴스장터",
-      "country": "KR",
-      "videos": 4,
-      "views": 30193,
-      "suggest": {
-        "entertainment": 4
-      },
-      "examples": [
-        "[연예팟빵] 개그맨 장동민 돈방석! 특허 아이디어가 뭐길래? '원터치 라벨'",
-        "[연예팟빵] 정동원 무면허, 팬들 분노 폭발한 이유? 5억 협박범 충격 정체? 팬덤의 새로운 규칙?",
-        "[연예팟빵] 올 연말 미스트롯4 마스터 12명, 그리고 유명 도전자는?"
-      ]
-    },
-    {
       "channelId": "UChZozC32gEo65Y7hnTwC6ug",
       "channelTitle": "놓지마정신줄 나작가 맞음",
       "country": "KR",
       "videos": 1,
-      "views": 30179,
+      "views": 30239,
       "suggest": {
         "entertainment": 1
       },
@@ -1527,31 +1441,16 @@
       ]
     },
     {
-      "channelId": "UCvecmfA61gqueNxNx7Ti0gQ",
-      "channelTitle": "연예1분뉴스",
-      "country": "KR",
-      "videos": 3,
-      "views": 29303,
-      "suggest": {
-        "entertainment": 3
-      },
-      "examples": [
-        "아내 한달 카드값 2천만원 #연예인 #연예이슈 #이슈 #아이돌 #장성규 #카드값 #연예인쇼핑",
-        "짠돌이 차태현 19년전 축의금 받은 액수 확인  #영화 #이슈 #드라마 #차태현 #김종국결혼 #미운오리새끼 #연예이슈 #연예인 #연예뉴스",
-        "가수 정동원 무면허운전 논란  #이슈 #뉴스 #연예인 #연예이슈 #아이돌 #정동원 #정동원콘서트 #무면허운전"
-      ]
-    },
-    {
-      "channelId": "UC2C5aghpz2Ee0z7jLq34Pjw",
-      "channelTitle": "건강 박사의 인생보감",
-      "country": "KR",
+      "channelId": "UC5x1WCEaSpKtXAkywV0PqlQ",
+      "channelTitle": "딥앤핫",
+      "country": null,
       "videos": 1,
-      "views": 28543,
+      "views": 29073,
       "suggest": {
-        "senior": 1
+        "entertainment": 1
       },
       "examples": [
-        "요거트에 '이것'만 넣으면 기미, 검버섯 싹 사라집니다 #시니어 #피부관리  #시니어건강 #백세습관 #노년생활 #건강루틴 #건강비결 #검버섯 #"
+        "송하윤 학폭 증인이 너무 많은데 과연 진실은? #연예뉴스 #숏츠 #송하윤"
       ]
     },
     {
@@ -1559,7 +1458,7 @@
       "channelTitle": "[청청][成成][ChengCheng]",
       "country": "KR",
       "videos": 1,
-      "views": 28439,
+      "views": 28850,
       "suggest": {
         "entertainment": 1
       },
@@ -1568,16 +1467,16 @@
       ]
     },
     {
-      "channelId": "UC5x1WCEaSpKtXAkywV0PqlQ",
-      "channelTitle": "딥앤핫",
-      "country": null,
+      "channelId": "UC2C5aghpz2Ee0z7jLq34Pjw",
+      "channelTitle": "건강 박사의 인생보감",
+      "country": "KR",
       "videos": 1,
-      "views": 28332,
+      "views": 28681,
       "suggest": {
-        "entertainment": 1
+        "senior": 1
       },
       "examples": [
-        "송하윤 학폭 증인이 너무 많은데 과연 진실은? #연예뉴스 #숏츠 #송하윤"
+        "요거트에 '이것'만 넣으면 기미, 검버섯 싹 사라집니다 #시니어 #피부관리  #시니어건강 #백세습관 #노년생활 #건강루틴 #건강비결 #검버섯 #"
       ]
     },
     {
@@ -1594,30 +1493,16 @@
       ]
     },
     {
-      "channelId": "UCTHCOPwqNfZ0uiKOvFyhGwg",
-      "channelTitle": "연합뉴스TV",
+      "channelId": "UCADcjt-8Vz_bahKgGO8x_pg",
+      "channelTitle": "영화와 이야기",
       "country": "KR",
-      "videos": 2,
-      "views": 28038,
-      "suggest": {
-        "politics": 2
-      },
-      "examples": [
-        "트럼프 \"찰리 커크 암살 용의자 사형해야\"｜'SNS 정치' 익숙한 美 Z세대 충격…표현의 자유 옹호 공감대 확산 [뉴스와] / 연합뉴스TV(Yo",
-        "[뉴스쏙] 대입시험 상위 1%였던 암살범…\"최근 정치 성향 강해져\"｜유타주립대 입학 후 1학기 만에 중퇴…총탄에 파시스트 반대 문구  / 연합뉴"
-      ]
-    },
-    {
-      "channelId": "UCQ_4HujrqC2kgrMfUuuMDLw",
-      "channelTitle": "차사노바 : 자동차의 모든 것",
-      "country": null,
       "videos": 1,
-      "views": 27997,
+      "views": 28136,
       "suggest": {
-        "review": 1
+        "entertainment": 1
       },
       "examples": [
-        "[국내 최초공개] KGM 렉스턴 스포츠 풀체인지 Q300, 실물공개🔥출시임박한 최고의 가성비 픽업트럭!"
+        "『탁류』드라마 리뷰 (로운, 신예은, 박서함, 박지환)"
       ]
     },
     {
@@ -1634,11 +1519,37 @@
       ]
     },
     {
+      "channelId": "UCovqkt9CC5WoSdDUxql0MTg",
+      "channelTitle": "첼루키",
+      "country": "KR",
+      "videos": 1,
+      "views": 27617,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "🤬지금 기튼스가 개빡치는 이유ㅣ브포 vs 첼시 리뷰 🔵"
+      ]
+    },
+    {
+      "channelId": "UCQhRXcgKO-ZW94PWA_67pQQ",
+      "channelTitle": "신나면",
+      "country": "KR",
+      "videos": 1,
+      "views": 27233,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "리뷰 이벤트를 절대 할 수 없는 가게"
+      ]
+    },
+    {
       "channelId": "UC1P1pSjj0D_4bX2RteQLyuA",
       "channelTitle": "렌",
       "country": "KR",
       "videos": 1,
-      "views": 27085,
+      "views": 27087,
       "suggest": {
         "official": 1
       },
@@ -1647,16 +1558,17 @@
       ]
     },
     {
-      "channelId": "UCQhRXcgKO-ZW94PWA_67pQQ",
-      "channelTitle": "신나면",
-      "country": "KR",
-      "videos": 1,
-      "views": 27081,
+      "channelId": "UCye0iCKULF8XsnkC12bW37A",
+      "channelTitle": "정치공방",
+      "country": null,
+      "videos": 2,
+      "views": 27069,
       "suggest": {
-        "review": 1
+        "politics": 2
       },
       "examples": [
-        "리뷰 이벤트를 절대 할 수 없는 가게"
+        "대본 없으면 말을 못하는 꿀먹은 벙어리 #정치뉴스 #윤석열",
+        "홍시훈기자의 새로운 아젠다는? #정치뉴스 #정치 #정치이슈 #검찰 #김어준의_겸손은힘들다_뉴스공장 #홍사훈"
       ]
     },
     {
@@ -1673,29 +1585,29 @@
       ]
     },
     {
-      "channelId": "UCovqkt9CC5WoSdDUxql0MTg",
-      "channelTitle": "첼루키",
-      "country": "KR",
-      "videos": 1,
-      "views": 26976,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "🤬지금 기튼스가 개빡치는 이유ㅣ브포 vs 첼시 리뷰 🔵"
-      ]
-    },
-    {
       "channelId": "UCSCDuAk2anY738M9VcnpexA",
       "channelTitle": "하루한줄지혜",
       "country": "KR",
       "videos": 1,
-      "views": 26556,
+      "views": 26599,
       "suggest": {
         "senior": 1
       },
       "examples": [
         "시니어 건강에 좋은 차 10가지.①            #시니어 #건강 #장수 #차 #건강차"
+      ]
+    },
+    {
+      "channelId": "UCkQCwnkQfgSuPTTnw_Y7v7w",
+      "channelTitle": "장지수",
+      "country": "KR",
+      "videos": 1,
+      "views": 26304,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "스포츠 선수 재산 순위"
       ]
     },
     {
@@ -1712,51 +1624,11 @@
       ]
     },
     {
-      "channelId": "UCDQ2sRc97VRo0DZcsMgf4fg",
-      "channelTitle": "그레이스요가 GraceYoga 모든 존재가 편안하기를",
-      "country": "KR",
-      "videos": 2,
-      "views": 26042,
-      "suggest": {
-        "senior": 2
-      },
-      "examples": [
-        "30회 가능하신가요 #시니어요가 #시니어운동 #실버요가 #중년홈트 #분당요가 #정자동요가 #분당시니어 #그레이스요가 #직장인요가",
-        "앉아서 혹은 누워서 발끝치기 2분 #시니어요가 #분당요가 #직장인요가 #그레이스요가 #정자동요가 #건강한중년 #시니어운동 #실버요가 #중년홈트"
-      ]
-    },
-    {
-      "channelId": "UCQADnOfZo748epEm-PVgtLg",
-      "channelTitle": "웅짱TVうんちゃんTV",
-      "country": "JP",
-      "videos": 1,
-      "views": 26020,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "'킹덤 시즌2' 5~6화까지 일본 친구들과 리뷰 #리액션편"
-      ]
-    },
-    {
-      "channelId": "UCkQCwnkQfgSuPTTnw_Y7v7w",
-      "channelTitle": "장지수",
-      "country": "KR",
-      "videos": 1,
-      "views": 25947,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "스포츠 선수 재산 순위"
-      ]
-    },
-    {
       "channelId": "UCR4UIcZYJkr-YEqWMH1an6g",
       "channelTitle": "톡톡정보TV",
       "country": "KR",
       "videos": 1,
-      "views": 25596,
+      "views": 25791,
       "suggest": {
         "entertainment": 1
       },
@@ -1769,7 +1641,7 @@
       "channelTitle": "땅우양",
       "country": "KR",
       "videos": 1,
-      "views": 25392,
+      "views": 25565,
       "suggest": {
         "review": 1
       },
@@ -1782,7 +1654,7 @@
       "channelTitle": "한준TV HANJUNE TV",
       "country": "KR",
       "videos": 1,
-      "views": 25269,
+      "views": 25293,
       "suggest": {
         "sports": 1
       },
@@ -1795,7 +1667,7 @@
       "channelTitle": "짤막쇼츠",
       "country": "KR",
       "videos": 1,
-      "views": 24969,
+      "views": 25055,
       "suggest": {
         "politics": 1
       },
@@ -1808,7 +1680,7 @@
       "channelTitle": "시니어 1분 라이프",
       "country": "KR",
       "videos": 1,
-      "views": 24794,
+      "views": 25011,
       "suggest": {
         "senior": 1
       },
@@ -1821,7 +1693,7 @@
       "channelTitle": "AMAN SHORTS",
       "country": "KR",
       "videos": 1,
-      "views": 24459,
+      "views": 24870,
       "suggest": {
         "community": 1
       },
@@ -1834,7 +1706,7 @@
       "channelTitle": "무지개머리",
       "country": "KR",
       "videos": 1,
-      "views": 24451,
+      "views": 24496,
       "suggest": {
         "review": 1
       },
@@ -1843,24 +1715,11 @@
       ]
     },
     {
-      "channelId": "UCztUGsOtx32J2qfwJV12wyw",
-      "channelTitle": "체크포인트",
-      "country": null,
-      "videos": 1,
-      "views": 23837,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "구글에 숨겨진 고퀄리티 무료 게임 TOP3"
-      ]
-    },
-    {
       "channelId": "UC2t_spdIjcNACeYILs7BGEw",
       "channelTitle": "호형팬",
       "country": "KR",
       "videos": 1,
-      "views": 23764,
+      "views": 23859,
       "suggest": {
         "review": 1
       },
@@ -1873,7 +1732,7 @@
       "channelTitle": "썰 모아보기",
       "country": "KR",
       "videos": 1,
-      "views": 23720,
+      "views": 23746,
       "suggest": {
         "community": 1
       },
@@ -1882,24 +1741,11 @@
       ]
     },
     {
-      "channelId": "UCeP2KA8In02VGZ-xkYOrLHQ",
-      "channelTitle": "쓴소리TV",
-      "country": "KR",
-      "videos": 1,
-      "views": 23565,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "한동훈 “특검이 정치 선동, 강제구인 할테면 하라!”💥💥"
-      ]
-    },
-    {
       "channelId": "UC4_NSnVcoJ6KyeLnlLw1heA",
       "channelTitle": "연예톱텐",
       "country": "KR",
       "videos": 1,
-      "views": 23562,
+      "views": 23746,
       "suggest": {
         "entertainment": 1
       },
@@ -1908,11 +1754,51 @@
       ]
     },
     {
+      "channelId": "UCeP2KA8In02VGZ-xkYOrLHQ",
+      "channelTitle": "쓴소리TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 23716,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "한동훈 “특검이 정치 선동, 강제구인 할테면 하라!”💥💥"
+      ]
+    },
+    {
+      "channelId": "UCztUGsOtx32J2qfwJV12wyw",
+      "channelTitle": "체크포인트",
+      "country": null,
+      "videos": 1,
+      "views": 23591,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "구글에 숨겨진 고퀄리티 무료 게임 TOP3"
+      ]
+    },
+    {
+      "channelId": "UCvecmfA61gqueNxNx7Ti0gQ",
+      "channelTitle": "연예1분뉴스",
+      "country": "KR",
+      "videos": 2,
+      "views": 23120,
+      "suggest": {
+        "entertainment": 2
+      },
+      "examples": [
+        "아내 한달 카드값 2천만원 #연예인 #연예이슈 #이슈 #아이돌 #장성규 #카드값 #연예인쇼핑",
+        "짠돌이 차태현 19년전 축의금 받은 액수 확인  #영화 #이슈 #드라마 #차태현 #김종국결혼 #미운오리새끼 #연예이슈 #연예인 #연예뉴스"
+      ]
+    },
+    {
       "channelId": "UC2Y1XCA-GTwx6nFvI58WbIg",
       "channelTitle": "알파카 특파원",
       "country": null,
       "videos": 1,
-      "views": 22558,
+      "views": 22642,
       "suggest": {
         "entertainment": 1
       },
@@ -1925,7 +1811,7 @@
       "channelTitle": "다기",
       "country": null,
       "videos": 1,
-      "views": 21989,
+      "views": 22087,
       "suggest": {
         "senior": 1
       },
@@ -1938,7 +1824,7 @@
       "channelTitle": "60인사이트",
       "country": "KR",
       "videos": 1,
-      "views": 21455,
+      "views": 21852,
       "suggest": {
         "politics": 1
       },
@@ -1951,7 +1837,7 @@
       "channelTitle": "이꾸소",
       "country": null,
       "videos": 1,
-      "views": 21330,
+      "views": 21570,
       "suggest": {
         "review": 1
       },
@@ -1960,11 +1846,24 @@
       ]
     },
     {
+      "channelId": "UCmZeuRfHYowZhf6odtoaNdg",
+      "channelTitle": "집마 홀릭",
+      "country": "KR",
+      "videos": 1,
+      "views": 21511,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "맨날 비슷한 게임만 나와서 지쳤다? 그럼 이거 한 번 해보세요 '미스트폴 헌터' 리뷰"
+      ]
+    },
+    {
       "channelId": "UCZ7ohstRmclOXCuEbXcRV3Q",
       "channelTitle": "호빗tv",
       "country": "KR",
       "videos": 1,
-      "views": 21148,
+      "views": 21151,
       "suggest": {
         "politics": 1
       },
@@ -1990,7 +1889,7 @@
       "channelTitle": "빅비",
       "country": "KR",
       "videos": 1,
-      "views": 20313,
+      "views": 20389,
       "suggest": {
         "review": 1
       },
@@ -1999,24 +1898,11 @@
       ]
     },
     {
-      "channelId": "UCcTvRHNflxRQkgXJ0Wc6KpA",
-      "channelTitle": "맨가십",
-      "country": null,
-      "videos": 1,
-      "views": 20225,
-      "suggest": {
-        "official": 1
-      },
-      "examples": [
-        "포스테코글루, PL 복귀 오피셜 / 누누 자르고 포스텍 이거 맞나..?"
-      ]
-    },
-    {
       "channelId": "UCwHEfIBpENvQp9Z9PJWChfg",
       "channelTitle": "민주당 엠티비MTV ",
       "country": "KR",
       "videos": 3,
-      "views": 19989,
+      "views": 20319,
       "suggest": {
         "politics": 3
       },
@@ -2027,11 +1913,24 @@
       ]
     },
     {
+      "channelId": "UCcTvRHNflxRQkgXJ0Wc6KpA",
+      "channelTitle": "맨가십",
+      "country": null,
+      "videos": 1,
+      "views": 20224,
+      "suggest": {
+        "official": 1
+      },
+      "examples": [
+        "포스테코글루, PL 복귀 오피셜 / 누누 자르고 포스텍 이거 맞나..?"
+      ]
+    },
+    {
       "channelId": "UCSk39dbbcPeDEU-URESpGNA",
       "channelTitle": "당근픽",
       "country": "KR",
       "videos": 1,
-      "views": 19790,
+      "views": 19842,
       "suggest": {
         "review": 1
       },
@@ -2040,16 +1939,31 @@
       ]
     },
     {
-      "channelId": "UCcc-PxxNMuQn5ObIrhm63_Q",
-      "channelTitle": "RE365",
+      "channelId": "UCAVVxLmPDFkSTROPue8ZrRA",
+      "channelTitle": "장윤선의 취재편의점",
       "country": "KR",
       "videos": 1,
-      "views": 19171,
+      "views": 19507,
       "suggest": {
-        "review": 1
+        "politics": 1
       },
       "examples": [
-        "아냐 사과하기 대작전! #애니리뷰 #스파이패밀리"
+        "이재명 달변과 진심에 빠져든다!-尹 '좁쌀 정치' 얼마나 창피했나 #화제의코너_모음.ZIP"
+      ]
+    },
+    {
+      "channelId": "UCCHDXeSnxeqnttqeoCQ2G3A",
+      "channelTitle": "뉴스장터",
+      "country": "KR",
+      "videos": 3,
+      "views": 19330,
+      "suggest": {
+        "entertainment": 3
+      },
+      "examples": [
+        "[연예팟빵] 개그맨 장동민 돈방석! 특허 아이디어가 뭐길래? '원터치 라벨'",
+        "[연예팟빵] 정동원 무면허, 팬들 분노 폭발한 이유? 5억 협박범 충격 정체? 팬덤의 새로운 규칙?",
+        "[연예팟빵] 올 연말 미스트롯4 마스터 12명, 그리고 유명 도전자는?"
       ]
     },
     {
@@ -2057,12 +1971,25 @@
       "channelTitle": "지식쇼츠 연예",
       "country": null,
       "videos": 1,
-      "views": 19097,
+      "views": 19208,
       "suggest": {
         "entertainment": 1
       },
       "examples": [
         "군면제 연예인 1탄, 그 사유는 충격적이다 #군면제스타 #연예계논란 #지식쇼츠"
+      ]
+    },
+    {
+      "channelId": "UCcc-PxxNMuQn5ObIrhm63_Q",
+      "channelTitle": "RE365",
+      "country": "KR",
+      "videos": 1,
+      "views": 19200,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "아냐 사과하기 대작전! #애니리뷰 #스파이패밀리"
       ]
     },
     {
@@ -2079,25 +2006,11 @@
       ]
     },
     {
-      "channelId": "UC2IURsqchss1kXACH7XajVg",
-      "channelTitle": "김퀴즈",
-      "country": "KR",
-      "videos": 2,
-      "views": 19071,
-      "suggest": {
-        "politics": 2
-      },
-      "examples": [
-        "정청래도 깜짝 놀라게 한 이재명 자녀 결혼식 손님 #이재명 #정청래 #정치 #정치퀴즈 #쇼츠 #shorts",
-        "정청래의 세력강화 충격발언 관상가 이것 때문 #정치 #정치퀴즈 #정청래 #쇼츠 #shorts"
-      ]
-    },
-    {
       "channelId": "UCB_-HyztMPk2p4AeYf8D36A",
       "channelTitle": "\b딥그린",
       "country": "KR",
       "videos": 1,
-      "views": 18877,
+      "views": 19002,
       "suggest": {
         "review": 1
       },
@@ -2106,11 +2019,24 @@
       ]
     },
     {
+      "channelId": "UCMEbRpvuwTbXxGiyDb1mT8w",
+      "channelTitle": "비디오머그 - VIDEOMUG",
+      "country": "KR",
+      "videos": 1,
+      "views": 18933,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "”권력 행사 없어요, 출연하면 동시 접속이 30만!“ #정치스토브리그 #박지원 #shorts"
+      ]
+    },
+    {
       "channelId": "UCNqMxTHYUlMOMGMD8FycLjw",
       "channelTitle": "종겜플",
       "country": "KR",
       "videos": 1,
-      "views": 18871,
+      "views": 18864,
       "suggest": {
         "official": 1
       },
@@ -2119,30 +2045,55 @@
       ]
     },
     {
-      "channelId": "UC4NImiQA2ZNmlafvhJFZGlQ",
-      "channelTitle": "플랜카드TV",
-      "country": null,
-      "videos": 2,
-      "views": 18328,
+      "channelId": "UCBWcVfU47wW-YLJ0ppyLRGQ",
+      "channelTitle": "트롯마니또",
+      "country": "KR",
+      "videos": 1,
+      "views": 18425,
       "suggest": {
-        "politics": 2
+        "entertainment": 1
       },
       "examples": [
-        "임이자 국회의원 장외투쟁 야당탄압 독재정치  정치보복  규탄대회 모이자 국회로 국민의힘 당대표 장동혁 국회의사당 앞 중앙계단 2025년 9월12",
-        "야당탄압 독재정치 규탄대회 구호제창 국민의힘 당대표 장동혁 대규모 총출동 장외투쟁 국회의사당 본관 앞 중앙계단 2025.9.12 2시 s10 G"
+        "김용빈 예능감 보고, 바로 인정해줬다는 연예 대부의 정체? #김용빈"
       ]
     },
     {
-      "channelId": "UCAVVxLmPDFkSTROPue8ZrRA",
-      "channelTitle": "장윤선의 취재편의점",
+      "channelId": "UC5rZJy3Neujs6jQPtZdFZlQ",
+      "channelTitle": "1분 마뫄",
       "country": "KR",
       "videos": 1,
-      "views": 18288,
+      "views": 18132,
+      "suggest": {
+        "official": 1
+      },
+      "examples": [
+        "이 게임은 위험한 게임입니다"
+      ]
+    },
+    {
+      "channelId": "UCfouwHk41xag206xGMFCvwg",
+      "channelTitle": "웬디 Wendy",
+      "country": "KR",
+      "videos": 1,
+      "views": 18129,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "올영 3대장 선스틱 솔직리뷰 #제품제공포함 #선스틱 #올리브영"
+      ]
+    },
+    {
+      "channelId": "UCfLlJjUQy4gDW3Fk1OiHBeg",
+      "channelTitle": "묻고 따지는 청년",
+      "country": "KR",
+      "videos": 1,
+      "views": 18015,
       "suggest": {
         "politics": 1
       },
       "examples": [
-        "이재명 달변과 진심에 빠져든다!-尹 '좁쌀 정치' 얼마나 창피했나 #화제의코너_모음.ZIP"
+        "조희대 대법원장 입장발표 손떨림 떠는 것 청문회 임기 성향#정치 #더불어민주당"
       ]
     },
     {
@@ -2159,50 +2110,11 @@
       ]
     },
     {
-      "channelId": "UCfouwHk41xag206xGMFCvwg",
-      "channelTitle": "웬디 Wendy",
-      "country": "KR",
-      "videos": 1,
-      "views": 17986,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "올영 3대장 선스틱 솔직리뷰 #제품제공포함 #선스틱 #올리브영"
-      ]
-    },
-    {
-      "channelId": "UCfLlJjUQy4gDW3Fk1OiHBeg",
-      "channelTitle": "묻고 따지는 청년",
-      "country": "KR",
-      "videos": 1,
-      "views": 17982,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "조희대 대법원장 입장발표 손떨림 떠는 것 청문회 임기 성향#정치 #더불어민주당"
-      ]
-    },
-    {
-      "channelId": "UCQa1HxjmHgksQy_qxO92P2A",
-      "channelTitle": "복주머니",
-      "country": null,
-      "videos": 1,
-      "views": 17900,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "돈 없어 힘든 진짜 이유, 가난 부르는 나쁜 습관 10가지 #시니어채널 #인생의지혜 #건강 #삶의지혜 #명언 #오디오북 #노년의지혜 #인생지혜 "
-      ]
-    },
-    {
       "channelId": "UCBt8rol1ip5ukhvz73aXFxg",
       "channelTitle": "장아나",
       "country": "KR",
       "videos": 1,
-      "views": 17879,
+      "views": 17871,
       "suggest": {
         "review": 1
       },
@@ -2211,16 +2123,16 @@
       ]
     },
     {
-      "channelId": "UCBWcVfU47wW-YLJ0ppyLRGQ",
-      "channelTitle": "트롯마니또",
-      "country": "KR",
+      "channelId": "UCQa1HxjmHgksQy_qxO92P2A",
+      "channelTitle": "복주머니",
+      "country": null,
       "videos": 1,
-      "views": 17837,
+      "views": 17852,
       "suggest": {
-        "entertainment": 1
+        "senior": 1
       },
       "examples": [
-        "김용빈 예능감 보고, 바로 인정해줬다는 연예 대부의 정체? #김용빈"
+        "돈 없어 힘든 진짜 이유, 가난 부르는 나쁜 습관 10가지 #시니어채널 #인생의지혜 #건강 #삶의지혜 #명언 #오디오북 #노년의지혜 #인생지혜 "
       ]
     },
     {
@@ -2228,7 +2140,7 @@
       "channelTitle": "늘지식",
       "country": "KR",
       "videos": 1,
-      "views": 17563,
+      "views": 17579,
       "suggest": {
         "sports": 1
       },
@@ -2241,7 +2153,7 @@
       "channelTitle": "정치 오피셜",
       "country": "KR",
       "videos": 1,
-      "views": 17499,
+      "views": 17510,
       "suggest": {
         "official": 1
       },
@@ -2263,24 +2175,11 @@
       ]
     },
     {
-      "channelId": "UC43OUqdMtA72sbzjBUyTvCw",
-      "channelTitle": "엘군의시선",
-      "country": "KR",
-      "videos": 1,
-      "views": 17025,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "[나는솔로 28기] 네... 흔치 않은 분 같긴하네요... 28기 분량주인공 영수 리뷰"
-      ]
-    },
-    {
       "channelId": "UCPWPtlUtozxpP_Fiotzih_w",
       "channelTitle": "핏- 코디",
       "country": "KR",
       "videos": 1,
-      "views": 16880,
+      "views": 16910,
       "suggest": {
         "senior": 1
       },
@@ -2289,11 +2188,24 @@
       ]
     },
     {
+      "channelId": "UC51D0k6MZ7Ou9cbC5iAq5aw",
+      "channelTitle": "영화에취한다",
+      "country": "KR",
+      "videos": 1,
+      "views": 16853,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "베스퍼 #영화리뷰#디스토피아#지구멸망"
+      ]
+    },
+    {
       "channelId": "UCBNENPr3CJbX6OJvs73h9kA",
       "channelTitle": "유목민 - We want you!",
       "country": "KR",
       "videos": 1,
-      "views": 16792,
+      "views": 16828,
       "suggest": {
         "official": 1
       },
@@ -2319,7 +2231,7 @@
       "channelTitle": "쩝쩝툰",
       "country": null,
       "videos": 1,
-      "views": 16488,
+      "views": 16547,
       "suggest": {
         "review": 1
       },
@@ -2328,43 +2240,45 @@
       ]
     },
     {
-      "channelId": "UC51D0k6MZ7Ou9cbC5iAq5aw",
-      "channelTitle": "영화에취한다",
+      "channelId": "UCsU-I-vHLiaMfV_ceaYz5rQ",
+      "channelTitle": "JTBC News",
       "country": "KR",
-      "videos": 1,
-      "views": 16418,
+      "videos": 3,
+      "views": 16076,
       "suggest": {
-        "entertainment": 1
+        "ai": 1,
+        "politics": 2
       },
       "examples": [
-        "베스퍼 #영화리뷰#디스토피아#지구멸망"
+        "AI만 117번 외쳤다...배경훈 \"해외도 쓰는 '모두의 AI' 만들겠다\"｜지금 이 장면",
+        "'찰리 커크' 총격범은 22세 타일러 로빈슨…\"최근 정치성향 강해져\"｜지금 이 뉴스",
+        "권성동, 16일 오후 2시 구속영장심사…정치자금법 위반 혐의 [이슈PLAY] / JTBC News"
       ]
     },
     {
-      "channelId": "UCIuDkThCxewhsYfuvjuuQOw",
-      "channelTitle": "NowSeoulKorea",
-      "country": "KR",
-      "videos": 2,
-      "views": 16002,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "전직 아이돌의 앙상해진 팔과 다리 #이슈 #연예 #kpop #동방신기 #믹키유천 #박유천",
-        "구준엽 6개월째 아내 묘지 지키는 중 #이슈 #연예 #클론 #구준엽 #서희원 #근황"
-      ]
-    },
-    {
-      "channelId": "UCGDGw1dMotpPPWXC6ee_cZA",
-      "channelTitle": "RUNUP TV / 런업TV",
+      "channelId": "UCK_4dhuuChRz7ozliMjGQbQ",
+      "channelTitle": "키다리짬뽕아저씨",
       "country": "KR",
       "videos": 1,
-      "views": 15583,
+      "views": 15920,
       "suggest": {
         "review": 1
       },
       "examples": [
-        "아식스 메가블라스트 (MEGABLAST) 리뷰 | 러닝기어 리뷰"
+        "188 신흥관 (부산 해운대) 중식맛집 짬뽕맛집 리뷰 by 키다리짬뽕아저씨"
+      ]
+    },
+    {
+      "channelId": "UCF4Wxdo3inmxP-Y59wXDsFw",
+      "channelTitle": "MBCNEWS",
+      "country": "KR",
+      "videos": 1,
+      "views": 15568,
+      "suggest": {
+        "sports": 1
+      },
+      "examples": [
+        "[스포츠 영상] 기성용, 포항 이적 후 첫 공격 포인트‥코너킥으로 도움 (2025.09.13/뉴스데스크/MBC)"
       ]
     },
     {
@@ -2372,7 +2286,7 @@
       "channelTitle": "찬원대학",
       "country": null,
       "videos": 1,
-      "views": 15518,
+      "views": 15563,
       "suggest": {
         "entertainment": 1
       },
@@ -2381,24 +2295,11 @@
       ]
     },
     {
-      "channelId": "UCggh84Wxw6yTuCu9Yl8BQGw",
-      "channelTitle": "뭐해윤지",
-      "country": null,
-      "videos": 1,
-      "views": 15165,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "퀄리티도, 가격도 장난 아닌, 지수 하이라이터 등장⁉️#메이크업 #리뷰 #디올"
-      ]
-    },
-    {
       "channelId": "UCvcLFg6oSKm4lhPUEcHk13Q",
       "channelTitle": "양양이",
       "country": "KR",
       "videos": 1,
-      "views": 15105,
+      "views": 15386,
       "suggest": {
         "review": 1
       },
@@ -2407,11 +2308,24 @@
       ]
     },
     {
+      "channelId": "UCggh84Wxw6yTuCu9Yl8BQGw",
+      "channelTitle": "뭐해윤지",
+      "country": null,
+      "videos": 1,
+      "views": 15253,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "퀄리티도, 가격도 장난 아닌, 지수 하이라이터 등장⁉️#메이크업 #리뷰 #디올"
+      ]
+    },
+    {
       "channelId": "UC_kyhuCGhgbur6g7NJ_Nrqw",
       "channelTitle": "바둑TV BADUK TV",
       "country": "KR",
       "videos": 1,
-      "views": 15011,
+      "views": 15216,
       "suggest": {
         "senior": 1
       },
@@ -2424,7 +2338,7 @@
       "channelTitle": "StreetVideoTV",
       "country": null,
       "videos": 3,
-      "views": 14858,
+      "views": 14930,
       "suggest": {
         "sports": 3
       },
@@ -2435,11 +2349,24 @@
       ]
     },
     {
+      "channelId": "UCdRTsHBhceHVkFkkt-05rIw",
+      "channelTitle": "연예스팟라이트",
+      "country": "KR",
+      "videos": 1,
+      "views": 14657,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "에스파 GMA 첫 무대 반응이?!"
+      ]
+    },
+    {
       "channelId": "UC5Xy07jY1sa8kFQWtFYukoA",
       "channelTitle": "브버지VAR",
       "country": null,
       "videos": 1,
-      "views": 14566,
+      "views": 14564,
       "suggest": {
         "official": 1
       },
@@ -2452,7 +2379,7 @@
       "channelTitle": "인생쉼표",
       "country": "KR",
       "videos": 1,
-      "views": 14500,
+      "views": 14441,
       "suggest": {
         "senior": 1
       },
@@ -2465,7 +2392,7 @@
       "channelTitle": "TVCHOSUN - TV조선",
       "country": "KR",
       "videos": 1,
-      "views": 14211,
+      "views": 14358,
       "suggest": {
         "politics": 1
       },
@@ -2474,16 +2401,16 @@
       ]
     },
     {
-      "channelId": "UCdRTsHBhceHVkFkkt-05rIw",
-      "channelTitle": "연예스팟라이트",
+      "channelId": "UCpRaQM3pIDlUzxcw-DhfeQw",
+      "channelTitle": "정치한스푼",
       "country": "KR",
       "videos": 1,
-      "views": 14058,
+      "views": 14220,
       "suggest": {
-        "entertainment": 1
+        "politics": 1
       },
       "examples": [
-        "에스파 GMA 첫 무대 반응이?!"
+        "통일교 여왕 한학자의 충격실체"
       ]
     },
     {
@@ -2491,7 +2418,7 @@
       "channelTitle": "보삼이",
       "country": "KR",
       "videos": 1,
-      "views": 13920,
+      "views": 14010,
       "suggest": {
         "game": 1
       },
@@ -2504,7 +2431,7 @@
       "channelTitle": "유투브온에어",
       "country": "KR",
       "videos": 2,
-      "views": 13701,
+      "views": 13937,
       "suggest": {
         "politics": 2
       },
@@ -2514,24 +2441,11 @@
       ]
     },
     {
-      "channelId": "UCar6_Vhr4glFlRgJVmbS-5A",
-      "channelTitle": "꽃피는황혼",
-      "country": "KR",
-      "videos": 1,
-      "views": 13573,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "나이 들어도 삶을 즐겁게 사는 방법 7가지 #행복한노후 #시니어라이프 #삶의지혜"
-      ]
-    },
-    {
       "channelId": "UCckFoj5_q4FfO_knQvz5HDg",
       "channelTitle": "카페인",
       "country": "KR",
       "videos": 1,
-      "views": 13569,
+      "views": 13808,
       "suggest": {
         "sports": 1
       },
@@ -2540,16 +2454,16 @@
       ]
     },
     {
-      "channelId": "UCjseqv83urpRnK88hy5kMgg",
-      "channelTitle": "먹스포츠TV",
+      "channelId": "UCar6_Vhr4glFlRgJVmbS-5A",
+      "channelTitle": "꽃피는황혼",
       "country": "KR",
       "videos": 1,
-      "views": 13567,
+      "views": 13669,
       "suggest": {
-        "sports": 1
+        "senior": 1
       },
       "examples": [
-        "LA 전역에 퍼지는 손흥민 클라스 !! #스포츠#손흥민#축구#농구#야구#김민재#프리미어리그#해축#k리그"
+        "나이 들어도 삶을 즐겁게 사는 방법 7가지 #행복한노후 #시니어라이프 #삶의지혜"
       ]
     },
     {
@@ -2557,7 +2471,7 @@
       "channelTitle": "노인건강 정보연구소",
       "country": "KR",
       "videos": 6,
-      "views": 13461,
+      "views": 13629,
       "suggest": {
         "senior": 6
       },
@@ -2568,29 +2482,16 @@
       ]
     },
     {
-      "channelId": "UCUzgcVDj2BFB3T7TCDlMhRw",
-      "channelTitle": "G띠",
+      "channelId": "UCjseqv83urpRnK88hy5kMgg",
+      "channelTitle": "먹스포츠TV",
       "country": "KR",
       "videos": 1,
-      "views": 13396,
+      "views": 13608,
       "suggest": {
-        "review": 1
+        "sports": 1
       },
       "examples": [
-        "솔찍 찐팬 시각으로 까발려봅니다! 보더랜드 4 첫인상 리뷰 후기"
-      ]
-    },
-    {
-      "channelId": "UC3sSFJjUJm_JWNrA3_V1ofw",
-      "channelTitle": "려진 ryeobanggu",
-      "country": null,
-      "videos": 1,
-      "views": 13383,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "오늘은 용산으로 다녀왔어요 근데 요가를 곁들인.. #햄버거리뷰 #햄버거맛집 #숙대입구맛집"
+        "LA 전역에 퍼지는 손흥민 클라스 !! #스포츠#손흥민#축구#농구#야구#김민재#프리미어리그#해축#k리그"
       ]
     },
     {
@@ -2598,7 +2499,7 @@
       "channelTitle": "삐로",
       "country": "KR",
       "videos": 1,
-      "views": 13350,
+      "views": 13502,
       "suggest": {
         "review": 1
       },
@@ -2607,16 +2508,42 @@
       ]
     },
     {
-      "channelId": "UC1uaex7VbfngExRXYpIwUXQ",
-      "channelTitle": "TOP랭킹연구소 ",
-      "country": "KR",
+      "channelId": "UC3sSFJjUJm_JWNrA3_V1ofw",
+      "channelTitle": "려진 ryeobanggu",
+      "country": null,
       "videos": 1,
-      "views": 12647,
+      "views": 13420,
       "suggest": {
         "review": 1
       },
       "examples": [
-        "\"잘 지내는 줄 알았는데 한참 전에 이혼했던 남자 연예인 TOP5\""
+        "오늘은 용산으로 다녀왔어요 근데 요가를 곁들인.. #햄버거리뷰 #햄버거맛집 #숙대입구맛집"
+      ]
+    },
+    {
+      "channelId": "UCUzgcVDj2BFB3T7TCDlMhRw",
+      "channelTitle": "G띠",
+      "country": "KR",
+      "videos": 1,
+      "views": 13394,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "솔찍 찐팬 시각으로 까발려봅니다! 보더랜드 4 첫인상 리뷰 후기"
+      ]
+    },
+    {
+      "channelId": "UC2IURsqchss1kXACH7XajVg",
+      "channelTitle": "김퀴즈",
+      "country": "KR",
+      "videos": 1,
+      "views": 13185,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "정청래의 세력강화 충격발언 관상가 이것 때문 #정치 #정치퀴즈 #정청래 #쇼츠 #shorts"
       ]
     },
     {
@@ -2624,7 +2551,7 @@
       "channelTitle": "톡스톡",
       "country": "KR",
       "videos": 1,
-      "views": 12603,
+      "views": 12597,
       "suggest": {
         "senior": 1
       },
@@ -2633,25 +2560,11 @@
       ]
     },
     {
-      "channelId": "UCsIwornylKNmlJ7B070HDvQ",
-      "channelTitle": "NEW K-POP도감 [ 케이팝도감 ]",
-      "country": "KR",
-      "videos": 2,
-      "views": 12591,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "역대급으로 귀여운 트리오 HUNTR/X  영국 오피셜차트에서 1위 트로피 받았다 #kpopdemonhunters",
-        "영국 오피셜 싱글 차트 1,2,3위 '케데헌' OST 싹쓸이 / '케이팝 데몬 헌터스'를 주제로 한 '서울 헌터스 페스티벌' 열린다 #kpopd"
-      ]
-    },
-    {
       "channelId": "UCpR5z40UDu0w0G-voyGuRxQ",
       "channelTitle": "삼미노_삼성라이온즈 이야기",
       "country": null,
       "videos": 1,
-      "views": 12578,
+      "views": 12589,
       "suggest": {
         "sports": 1
       },
@@ -2660,24 +2573,11 @@
       ]
     },
     {
-      "channelId": "UCppzytu6X5dboPADDVXPq2g",
-      "channelTitle": "유투브품앗이",
-      "country": "KR",
-      "videos": 1,
-      "views": 12266,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "야당탄압 독재정치 규탄대회 구호제창 국민의힘 당대표 장동혁 대규모 총출동 장외투쟁 국회의사당 본관 앞 중앙계단 2025.9.12 2시 s10 G"
-      ]
-    },
-    {
       "channelId": "UC7lG91w53rPx98OypbOilzg",
       "channelTitle": "슬기로운 시니어 톡",
       "country": "KR",
       "videos": 2,
-      "views": 12182,
+      "views": 12489,
       "suggest": {
         "senior": 2
       },
@@ -2691,7 +2591,7 @@
       "channelTitle": "성장팩트 GFACT",
       "country": "KR",
       "videos": 1,
-      "views": 12138,
+      "views": 12169,
       "suggest": {
         "ai": 1
       },
@@ -2700,29 +2600,29 @@
       ]
     },
     {
-      "channelId": "UCs18sMwqTCMBmTqX0b2-w6A",
-      "channelTitle": "유재일",
-      "country": "KR",
-      "videos": 1,
-      "views": 11725,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "[주말라이브] 일주일 정치 이슈 수다. & 조국혁신당 삽질로 시작해서 권성동, 한동훈 강제 구인 압박까지 & 등등"
-      ]
-    },
-    {
       "channelId": "UCiOWYRzOTiUYi9pJ-kscIKw",
       "channelTitle": "발없는새",
       "country": "KR",
       "videos": 1,
-      "views": 11723,
+      "views": 11920,
       "suggest": {
         "review": 1
       },
       "examples": [
         "북극성 선발대 리뷰 – 자그마치 700억을 투자했는데 왜 이렇게 촌스러운 거야!?"
+      ]
+    },
+    {
+      "channelId": "UCs18sMwqTCMBmTqX0b2-w6A",
+      "channelTitle": "유재일",
+      "country": "KR",
+      "videos": 1,
+      "views": 11743,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "[주말라이브] 일주일 정치 이슈 수다. & 조국혁신당 삽질로 시작해서 권성동, 한동훈 강제 구인 압박까지 & 등등"
       ]
     },
     {
@@ -2739,24 +2639,11 @@
       ]
     },
     {
-      "channelId": "UCqqOJp6scEt_sAlIi-Fp8Ow",
-      "channelTitle": "이송원TV",
-      "country": "KR",
-      "videos": 1,
-      "views": 11573,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "정청래 양아치 정치를 멈춰라!!!"
-      ]
-    },
-    {
       "channelId": "UC0Gnpb9kAcvFwaX2r0560Vw",
       "channelTitle": "유진씨",
       "country": "KR",
       "videos": 1,
-      "views": 11563,
+      "views": 11635,
       "suggest": {
         "community": 1
       },
@@ -2769,7 +2656,7 @@
       "channelTitle": "이구역의 듀공",
       "country": "KR",
       "videos": 2,
-      "views": 11446,
+      "views": 11608,
       "suggest": {
         "review": 2
       },
@@ -2779,11 +2666,24 @@
       ]
     },
     {
+      "channelId": "UCqqOJp6scEt_sAlIi-Fp8Ow",
+      "channelTitle": "이송원TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 11587,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "정청래 양아치 정치를 멈춰라!!!"
+      ]
+    },
+    {
       "channelId": "UCoPUzNXUVM3U2gfMoFvhvDg",
       "channelTitle": "알고있숏",
       "country": null,
       "videos": 1,
-      "views": 11100,
+      "views": 11127,
       "suggest": {
         "entertainment": 1
       },
@@ -2796,7 +2696,7 @@
       "channelTitle": "스고이아저씨",
       "country": "KR",
       "videos": 1,
-      "views": 10989,
+      "views": 11087,
       "suggest": {
         "community": 1
       },
@@ -2805,11 +2705,24 @@
       ]
     },
     {
+      "channelId": "UCFATlFiC7UgXNyXjYAhYJ7Q",
+      "channelTitle": "검정무빗",
+      "country": null,
+      "videos": 1,
+      "views": 10994,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "왕에게 족발당수 처맞는 세자 #movie #영화 #영화리뷰 #영화명장면 #명장면 #드라마 #영화 #넷플릭스"
+      ]
+    },
+    {
       "channelId": "UCvCiLcvZ0LVarsIQ69LenTA",
       "channelTitle": "우아한 시니어",
       "country": "KR",
       "videos": 3,
-      "views": 10922,
+      "views": 10951,
       "suggest": {
         "senior": 3
       },
@@ -2833,16 +2746,16 @@
       ]
     },
     {
-      "channelId": "UCFATlFiC7UgXNyXjYAhYJ7Q",
-      "channelTitle": "검정무빗",
-      "country": null,
+      "channelId": "UCsrBsdxYfo3OeczUGmAwVeg",
+      "channelTitle": "political life",
+      "country": "KR",
       "videos": 1,
-      "views": 10826,
+      "views": 10471,
       "suggest": {
-        "entertainment": 1
+        "politics": 1
       },
       "examples": [
-        "왕에게 족발당수 처맞는 세자 #movie #영화 #영화리뷰 #영화명장면 #명장면 #드라마 #영화 #넷플릭스"
+        "노영희\"대법관 증원 반대?\" #정치라이프"
       ]
     },
     {
@@ -2850,7 +2763,7 @@
       "channelTitle": "지캐TV",
       "country": null,
       "videos": 1,
-      "views": 10430,
+      "views": 10467,
       "suggest": {
         "review": 1
       },
@@ -2863,7 +2776,7 @@
       "channelTitle": "우리들 이야기",
       "country": "KR",
       "videos": 1,
-      "views": 10349,
+      "views": 10460,
       "suggest": {
         "entertainment": 1
       },
@@ -2872,37 +2785,11 @@
       ]
     },
     {
-      "channelId": "UCsrBsdxYfo3OeczUGmAwVeg",
-      "channelTitle": "political life",
-      "country": "KR",
-      "videos": 1,
-      "views": 10277,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "노영희\"대법관 증원 반대?\" #정치라이프"
-      ]
-    },
-    {
-      "channelId": "UCA1oIfQcwNS4jzzfJpN7Y4A",
-      "channelTitle": "zoonakoo",
-      "country": "KR",
-      "videos": 1,
-      "views": 10171,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "대학교순위! 대한민국의 이슈 속보 뉴스 연예 엔터 지역 정치 건강 스포츠 축구 게임 #이슈 #속보 #뉴스 #연예 #엔터 #지역 #정치 #건강 #"
-      ]
-    },
-    {
       "channelId": "UC3Fi4neFJ9epS4241PHNuRg",
       "channelTitle": "로스바드",
       "country": "KR",
       "videos": 1,
-      "views": 10104,
+      "views": 10214,
       "suggest": {
         "politics": 1
       },
@@ -2915,7 +2802,7 @@
       "channelTitle": "TenTenTokTok",
       "country": "CA",
       "videos": 1,
-      "views": 10052,
+      "views": 10184,
       "suggest": {
         "senior": 1
       },
@@ -2924,11 +2811,24 @@
       ]
     },
     {
+      "channelId": "UCA1oIfQcwNS4jzzfJpN7Y4A",
+      "channelTitle": "zoonakoo",
+      "country": "KR",
+      "videos": 1,
+      "views": 10177,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "대학교순위! 대한민국의 이슈 속보 뉴스 연예 엔터 지역 정치 건강 스포츠 축구 게임 #이슈 #속보 #뉴스 #연예 #엔터 #지역 #정치 #건강 #"
+      ]
+    },
+    {
       "channelId": "UCOiIqb7QPJaN7Fr3gzJa09w",
       "channelTitle": "센터필드 CenterField",
       "country": "KR",
       "videos": 1,
-      "views": 9925,
+      "views": 9984,
       "suggest": {
         "politics": 1
       },
@@ -2950,38 +2850,11 @@
       ]
     },
     {
-      "channelId": "UCm6DJzDbULepAlByJP5Pyvg",
-      "channelTitle": "악어오름🐊",
-      "country": "KR",
-      "videos": 1,
-      "views": 9794,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "강평업 독서 리뷰 -💪수능 역전 가능세계👍"
-      ]
-    },
-    {
-      "channelId": "UCuqWX5br33IbjtKHgJFZAIw",
-      "channelTitle": "이슈왔슈다",
-      "country": "KR",
-      "videos": 2,
-      "views": 9787,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "대세 배우의 숨겨진 진짜 이야기 TOP3  #연예#이슈#연예뉴스#연예인",
-        "오히려 좋아!!! 주연 교체가 신의 한수!  #연예 #연예인 #연예뉴스 #드라마 #이슈"
-      ]
-    },
-    {
       "channelId": "UCz8-X2UwRp5AcnjNMSANj8A",
       "channelTitle": "다인 Dain",
       "country": null,
       "videos": 1,
-      "views": 9581,
+      "views": 9659,
       "suggest": {
         "review": 1
       },
@@ -2990,11 +2863,24 @@
       ]
     },
     {
+      "channelId": "UCBbt8VsXtyb0XS4V7t-DV3Q",
+      "channelTitle": "엔무드-영화 & 드라마 예고 & 리뷰",
+      "country": "KR",
+      "videos": 1,
+      "views": 9585,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "《얼굴》 결말포함 내용요약 및 해석 (스포有 리뷰)"
+      ]
+    },
+    {
       "channelId": "UCYIGTVUE89CbQ07y_bQGvJg",
       "channelTitle": "미래원 지식공장",
       "country": null,
       "videos": 1,
-      "views": 9451,
+      "views": 9533,
       "suggest": {
         "community": 1
       },
@@ -3007,7 +2893,7 @@
       "channelTitle": "아재에진심",
       "country": "KR",
       "videos": 1,
-      "views": 9448,
+      "views": 9501,
       "suggest": {
         "community": 1
       },
@@ -3016,16 +2902,16 @@
       ]
     },
     {
-      "channelId": "UCBbt8VsXtyb0XS4V7t-DV3Q",
-      "channelTitle": "엔무드-영화 & 드라마 예고 & 리뷰",
+      "channelId": "UCHXoQnhqg9MQNr8xh3FkvpA",
+      "channelTitle": "스포츠중계 챔스티비",
       "country": "KR",
       "videos": 1,
-      "views": 9403,
+      "views": 9398,
       "suggest": {
-        "review": 1
+        "sports": 1
       },
       "examples": [
-        "《얼굴》 결말포함 내용요약 및 해석 (스포有 리뷰)"
+        "#스포츠중계 MLB 포수가 타자를 삼진 시켜버리네요 !! 센스 만점"
       ]
     },
     {
@@ -3033,7 +2919,7 @@
       "channelTitle": "스환 Ch. Project Moon",
       "country": null,
       "videos": 1,
-      "views": 9325,
+      "views": 9328,
       "suggest": {
         "entertainment": 1
       },
@@ -3046,7 +2932,7 @@
       "channelTitle": "도파민아재",
       "country": "KR",
       "videos": 1,
-      "views": 9257,
+      "views": 9312,
       "suggest": {
         "entertainment": 1
       },
@@ -3055,24 +2941,11 @@
       ]
     },
     {
-      "channelId": "UCHXoQnhqg9MQNr8xh3FkvpA",
-      "channelTitle": "스포츠중계 챔스티비",
-      "country": "KR",
-      "videos": 1,
-      "views": 9064,
-      "suggest": {
-        "sports": 1
-      },
-      "examples": [
-        "#스포츠중계 MLB 포수가 타자를 삼진 시켜버리네요 !! 센스 만점"
-      ]
-    },
-    {
       "channelId": "UCP7AXCEWqft1Aa6GBN2kNbQ",
       "channelTitle": "SooHye-SH",
       "country": null,
       "videos": 2,
-      "views": 8781,
+      "views": 8851,
       "suggest": {
         "community": 2
       },
@@ -3086,7 +2959,7 @@
       "channelTitle": "궁금로그",
       "country": "KR",
       "videos": 1,
-      "views": 8699,
+      "views": 8765,
       "suggest": {
         "politics": 1
       },
@@ -3095,11 +2968,24 @@
       ]
     },
     {
+      "channelId": "UC9KecILceVHSH9Xdvg_MDOw",
+      "channelTitle": "뻑끄미",
+      "country": "KR",
+      "videos": 1,
+      "views": 8617,
+      "suggest": {
+        "game": 1
+      },
+      "examples": [
+        "구독은 공짜, 웃음은 서비스! ^_^ #게임 #롤 #롤병맛더빙 #롤개그 #탈론"
+      ]
+    },
+    {
       "channelId": "UCxQuFBGlj8xm4H6OemPFJ8A",
       "channelTitle": "구현하다",
       "country": "KR",
       "videos": 1,
-      "views": 8570,
+      "views": 8601,
       "suggest": {
         "senior": 1
       },
@@ -3112,7 +2998,7 @@
       "channelTitle": "대한민국 독도시인 미랑 이수정",
       "country": null,
       "videos": 1,
-      "views": 8522,
+      "views": 8552,
       "suggest": {
         "politics": 1
       },
@@ -3121,24 +3007,11 @@
       ]
     },
     {
-      "channelId": "UC9KecILceVHSH9Xdvg_MDOw",
-      "channelTitle": "뻑끄미",
-      "country": "KR",
-      "videos": 1,
-      "views": 8515,
-      "suggest": {
-        "game": 1
-      },
-      "examples": [
-        "구독은 공짜, 웃음은 서비스! ^_^ #게임 #롤 #롤병맛더빙 #롤개그 #탈론"
-      ]
-    },
-    {
       "channelId": "UCOEpgbZxedA73SrvWwFWPrg",
       "channelTitle": "백세를 위한 길",
       "country": "KR",
       "videos": 1,
-      "views": 8381,
+      "views": 8426,
       "suggest": {
         "senior": 1
       },
@@ -3151,7 +3024,7 @@
       "channelTitle": "크보오프너",
       "country": "KR",
       "videos": 1,
-      "views": 8172,
+      "views": 8175,
       "suggest": {
         "review": 1
       },
@@ -3160,24 +3033,11 @@
       ]
     },
     {
-      "channelId": "UC6fNdqCLHOvY5wKQGlZlgfg",
-      "channelTitle": "살림스팟",
-      "country": "KR",
-      "videos": 1,
-      "views": 7836,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "작은 침실의 구세주! 이동식 사이드 테이블 리뷰🛋️"
-      ]
-    },
-    {
       "channelId": "UC19lqG86KdRkmUtHV4HjVEA",
       "channelTitle": "리뷰다락방",
       "country": "KR",
       "videos": 3,
-      "views": 7692,
+      "views": 8040,
       "suggest": {
         "review": 3
       },
@@ -3185,6 +3045,19 @@
         "나만 어려보이는 꿀팁#리뷰#추천",
         "내 남친 애교장인 만들기#리뷰#추천",
         "엄마도 인정한 갓성비 주방템 Top 2#리뷰#추천"
+      ]
+    },
+    {
+      "channelId": "UC6fNdqCLHOvY5wKQGlZlgfg",
+      "channelTitle": "살림스팟",
+      "country": "KR",
+      "videos": 1,
+      "views": 7868,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "작은 침실의 구세주! 이동식 사이드 테이블 리뷰🛋️"
       ]
     },
     {
@@ -3232,7 +3105,7 @@
       "channelTitle": "사직인생",
       "country": "KR",
       "videos": 1,
-      "views": 7328,
+      "views": 7382,
       "suggest": {
         "entertainment": 1
       },
@@ -3241,11 +3114,41 @@
       ]
     },
     {
+      "channelId": "UCYwPiiSiEfyyfX97xqJ6HTA",
+      "channelTitle": "연예냥이",
+      "country": null,
+      "videos": 6,
+      "views": 7325,
+      "suggest": {
+        "entertainment": 6
+      },
+      "examples": [
+        "카리나 SM 군기짤 해명 #연예 #이슈 #연예인 #kpop #아이돌 #가수 #카리나 #에스파",
+        "카리나 SM 처음 왔을때 후기 #연예 #이슈 #연예인 #kpop #아이돌 #가수 #카리나 #에스파",
+        "이효리 요가원 대박침 #연예 #이슈 #연예인 #가수 #아이돌 #kpop #결혼 #이효리 #요가"
+      ]
+    },
+    {
+      "channelId": "UCLGGk4zN-8HaKQiYHI3g1SA",
+      "channelTitle": "정치한사발",
+      "country": "KR",
+      "videos": 6,
+      "views": 7273,
+      "suggest": {
+        "politics": 6
+      },
+      "examples": [
+        "[정치한사발]⚔️송언석, 경북도지사 노리고 의도적 ‘국회 망언’…경북도민이 우습나?",
+        "[정치한사발]🗞\"가끔 싸워야 된다?\" 김병기 농담에 웃는 민주당…국민은 속터진다",
+        "[정치한사발]🗞윤석열 키운 문재인, 김문수 지지한 이낙연…박장대소 회동?"
+      ]
+    },
+    {
       "channelId": "UC_ZOC5qA7iLoesI8csJ6HPw",
       "channelTitle": "김벌새",
       "country": "KR",
       "videos": 1,
-      "views": 7026,
+      "views": 7101,
       "suggest": {
         "game": 1
       },
@@ -3254,42 +3157,16 @@
       ]
     },
     {
-      "channelId": "UCEcRvF_6IRSux8FO-ogFZug",
-      "channelTitle": "사회인 게임클럽",
-      "country": null,
-      "videos": 1,
-      "views": 6915,
-      "suggest": {
-        "ai": 1
-      },
-      "examples": [
-        "250914 고난, 역경 그리고 시련이 끝이 나지 않는 [Hollow Knight]"
-      ]
-    },
-    {
-      "channelId": "UCYUGo6ZfQZCTMrK9rMDijNQ",
-      "channelTitle": "뉴스토마토",
+      "channelId": "UCTHCOPwqNfZ0uiKOvFyhGwg",
+      "channelTitle": "연합뉴스TV",
       "country": "KR",
       "videos": 1,
-      "views": 6907,
+      "views": 7038,
       "suggest": {
         "politics": 1
       },
       "examples": [
-        "김건희특검, '권성동 체포안' 법원 제출 [앵커리포트_정치_0912] #김건희특검 #권성동 #체포안 #법원제출 #통일교"
-      ]
-    },
-    {
-      "channelId": "UCXQ6CrVhikQ9xhi-7uRELag",
-      "channelTitle": "리뷰하규",
-      "country": "KR",
-      "videos": 1,
-      "views": 6782,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "티니핑신상🩷 초롱핑 사각애플🍎 패스츄리 리뷰✨#티니핑 #티니핑카드 #티니핑계 #Short #unboxing #bread #초롱핑#슈팅스타캐치"
+        "[뉴스쏙] 대입시험 상위 1%였던 암살범…\"최근 정치 성향 강해져\"｜유타주립대 입학 후 1학기 만에 중퇴…총탄에 파시스트 반대 문구  / 연합뉴"
       ]
     },
     {
@@ -3306,11 +3183,26 @@
       ]
     },
     {
+      "channelId": "UC2CJ9VcQUNFqPriKB9t7qXg",
+      "channelTitle": "라튜브",
+      "country": "KR",
+      "videos": 4,
+      "views": 6687,
+      "suggest": {
+        "sports": 4
+      },
+      "examples": [
+        "[라다의 9월15일 MLB + 농구 스포츠분석] [前와이즈분석위원]",
+        "[라다의 9월14일 오후경기 스포츠분석] [前와이즈분석위원]",
+        "[라다의 9월14일 MLB 스포츠분석] [前와이즈분석위원]"
+      ]
+    },
+    {
       "channelId": "UCTYox3oTtIeWC4_n9FazGug",
       "channelTitle": "충남콘텐츠진흥원 Chungnam Content Agency",
       "country": "KR",
       "videos": 2,
-      "views": 6615,
+      "views": 6627,
       "suggest": {
         "official": 2
       },
@@ -3324,7 +3216,7 @@
       "channelTitle": "Letartes com Leticia Moreira",
       "country": "BR",
       "videos": 1,
-      "views": 6577,
+      "views": 6558,
       "suggest": {
         "politics": 1
       },
@@ -3333,11 +3225,24 @@
       ]
     },
     {
+      "channelId": "UCrtOIgKB9BjJGpkuVzdsIcA",
+      "channelTitle": "러스키튜브",
+      "country": "KR",
+      "videos": 1,
+      "views": 6538,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "넷플릭스 애니메이션 케이팝 데몬 헌터스! 여기서 나온 OST ‘골든’이 무려 영국 오피셜 차트 6주 연속 1위! 🇬🇧🎶"
+      ]
+    },
+    {
       "channelId": "UCPANVh5Dp13xM3-9_S5aVkA",
       "channelTitle": "열풍TV",
       "country": "KR",
       "videos": 1,
-      "views": 6448,
+      "views": 6455,
       "suggest": {
         "community": 1
       },
@@ -3346,18 +3251,45 @@
       ]
     },
     {
-      "channelId": "UCLGGk4zN-8HaKQiYHI3g1SA",
-      "channelTitle": "정치한사발",
+      "channelId": "UCAjwTaPREbYE38Ql8OOnzIw",
+      "channelTitle": "잰휘파파",
       "country": "KR",
-      "videos": 6,
-      "views": 6427,
+      "videos": 1,
+      "views": 6359,
       "suggest": {
-        "politics": 6
+        "politics": 1
       },
       "examples": [
-        "[정치한사발]⚔️송언석, 경북도지사 노리고 의도적 ‘국회 망언’…경북도민이 우습나?",
-        "[정치한사발]🗞\"가끔 싸워야 된다?\" 김병기 농담에 웃는 민주당…국민은 속터진다",
-        "[정치한사발]🗞윤석열 키운 문재인, 김문수 지지한 이낙연…박장대소 회동?"
+        "김병기 sns에 \"심려끼쳐 죄송\" #뉴스 #정치 #이슈 #정청래 #김병기 #민주당"
+      ]
+    },
+    {
+      "channelId": "UCtxq_d_3hFqAWaX3U5KDoBw",
+      "channelTitle": "10초 뉴스",
+      "country": "KR",
+      "videos": 1,
+      "views": 6328,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "특검 vs 한동훈 정면충돌, 마지막 카드의 정체는 #정치 #국회 #속보 #핫이슈 #시사쇼츠 #한동훈 #특검 #강제구인 #국민의힘"
+      ]
+    },
+    {
+      "channelId": "UC68Y4Lv-_kBWy_62mwoHiwg",
+      "channelTitle": "재기소장",
+      "country": "KR",
+      "videos": 8,
+      "views": 6325,
+      "suggest": {
+        "community": 4,
+        "sports": 4
+      },
+      "examples": [
+        "#청담르엘 사전점검  커뮤니티 수영장 이런느낌 알아보세요 하이부동산 재기소장",
+        "#청담르엘 사전점검 커뮤니티 단지 정원둘러보기  커뮤니티 수영장 사우나 골프 이런느낌 알아보세요 하이부동산 재기소장",
+        "#청담르엘 사전점검 커뮤니티 단지 둘러보기 사우나 이런느낌 알아보세요 하이부동산 재기소장"
       ]
     },
     {
@@ -3365,7 +3297,7 @@
       "channelTitle": "민댄스TV",
       "country": "KR",
       "videos": 3,
-      "views": 6272,
+      "views": 6273,
       "suggest": {
         "senior": 3
       },
@@ -3376,16 +3308,16 @@
       ]
     },
     {
-      "channelId": "UCrtOIgKB9BjJGpkuVzdsIcA",
-      "channelTitle": "러스키튜브",
+      "channelId": "UC4Ju_gXwWuwX0oPWpUfwoWg",
+      "channelTitle": "아재의 게임생활",
       "country": "KR",
       "videos": 1,
-      "views": 6268,
+      "views": 6204,
       "suggest": {
-        "entertainment": 1
+        "review": 1
       },
       "examples": [
-        "넷플릭스 애니메이션 케이팝 데몬 헌터스! 여기서 나온 OST ‘골든’이 무려 영국 오피셜 차트 6주 연속 1위! 🇬🇧🎶"
+        "보더랜드 4 리뷰 -  완벽한 한글과, 로딩 없는 오픈월드, 향상된 전투 그러나 최적화와 가격은..."
       ]
     },
     {
@@ -3402,37 +3334,11 @@
       ]
     },
     {
-      "channelId": "UCN8dU-zpTAPF41_dAofIRWQ",
-      "channelTitle": "zzalsooni",
-      "country": null,
-      "videos": 1,
-      "views": 6053,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "정동원 무면허 운전 논란 #정동원 #무면허운전 #트로트가수 #국민손자 #연예이슈 #자숙"
-      ]
-    },
-    {
-      "channelId": "UC4Ju_gXwWuwX0oPWpUfwoWg",
-      "channelTitle": "아재의 게임생활",
-      "country": "KR",
-      "videos": 1,
-      "views": 5989,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "보더랜드 4 리뷰 -  완벽한 한글과, 로딩 없는 오픈월드, 향상된 전투 그러나 최적화와 가격은..."
-      ]
-    },
-    {
       "channelId": "UCe9JFTNl3pIKfeMzphAUOPQ",
       "channelTitle": "월간 모터바이크Motorbikezine",
       "country": "KR",
       "videos": 1,
-      "views": 5960,
+      "views": 6064,
       "suggest": {
         "review": 1
       },
@@ -3441,11 +3347,24 @@
       ]
     },
     {
+      "channelId": "UCN8dU-zpTAPF41_dAofIRWQ",
+      "channelTitle": "zzalsooni",
+      "country": null,
+      "videos": 1,
+      "views": 6049,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "정동원 무면허 운전 논란 #정동원 #무면허운전 #트로트가수 #국민손자 #연예이슈 #자숙"
+      ]
+    },
+    {
       "channelId": "UCbOQsQiwMx3l9quiALkuCQw",
       "channelTitle": "생활 드리마",
       "country": "KR",
       "videos": 1,
-      "views": 5917,
+      "views": 5943,
       "suggest": {
         "senior": 1
       },
@@ -3454,27 +3373,11 @@
       ]
     },
     {
-      "channelId": "UC68Y4Lv-_kBWy_62mwoHiwg",
-      "channelTitle": "재기소장",
-      "country": "KR",
-      "videos": 7,
-      "views": 5870,
-      "suggest": {
-        "community": 3,
-        "sports": 4
-      },
-      "examples": [
-        "#청담르엘 사전점검  커뮤니티 수영장 이런느낌 알아보세요 하이부동산 재기소장",
-        "#청담르엘 사전점검 커뮤니티 단지 정원둘러보기  커뮤니티 수영장 사우나 골프 이런느낌 알아보세요 하이부동산 재기소장",
-        "#청담르엘 사전점검 커뮤니티 단지 둘러보기 사우나 이런느낌 알아보세요 하이부동산 재기소장"
-      ]
-    },
-    {
       "channelId": "UCy9SxV8Bg4D6Ic85OVrAdqQ",
       "channelTitle": "최소한의지식",
       "country": null,
       "videos": 1,
-      "views": 5826,
+      "views": 5876,
       "suggest": {
         "review": 1
       },
@@ -3483,18 +3386,16 @@
       ]
     },
     {
-      "channelId": "UC2CJ9VcQUNFqPriKB9t7qXg",
-      "channelTitle": "라튜브",
+      "channelId": "UCsIwornylKNmlJ7B070HDvQ",
+      "channelTitle": "NEW K-POP도감 [ 케이팝도감 ]",
       "country": "KR",
-      "videos": 3,
-      "views": 5806,
+      "videos": 1,
+      "views": 5710,
       "suggest": {
-        "sports": 3
+        "entertainment": 1
       },
       "examples": [
-        "[라다의 9월14일 오후경기 스포츠분석] [前와이즈분석위원]",
-        "[라다의 9월14일 MLB 스포츠분석] [前와이즈분석위원]",
-        "[라다의 9월13일 오후경기 스포츠분석] [前와이즈분석위원]"
+        "역대급으로 귀여운 트리오 HUNTR/X  영국 오피셜차트에서 1위 트로피 받았다 #kpopdemonhunters"
       ]
     },
     {
@@ -3502,7 +3403,7 @@
       "channelTitle": "심쿵조조",
       "country": "KR",
       "videos": 1,
-      "views": 5683,
+      "views": 5659,
       "suggest": {
         "senior": 1
       },
@@ -3511,24 +3412,11 @@
       ]
     },
     {
-      "channelId": "UChOxwneu5IL8aBZwfqHqKPQ",
-      "channelTitle": "세상잇슈",
-      "country": "KR",
-      "videos": 1,
-      "views": 5577,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "어린 애가 벌써부터..!! #연예인 #이슈 #연예소식 #핫이슈"
-      ]
-    },
-    {
       "channelId": "UCZhW_N3GGyCaokvisnh9YUg",
       "channelTitle": "시니어 황금기",
       "country": "KR",
       "videos": 1,
-      "views": 5510,
+      "views": 5514,
       "suggest": {
         "senior": 1
       },
@@ -3541,7 +3429,7 @@
       "channelTitle": "연예햄찌",
       "country": null,
       "videos": 5,
-      "views": 5479,
+      "views": 5478,
       "suggest": {
         "entertainment": 5
       },
@@ -3552,33 +3440,16 @@
       ]
     },
     {
-      "channelId": "UCYwPiiSiEfyyfX97xqJ6HTA",
-      "channelTitle": "연예냥이",
-      "country": null,
-      "videos": 4,
-      "views": 5460,
-      "suggest": {
-        "entertainment": 4
-      },
-      "examples": [
-        "카리나 SM 군기짤 해명 #연예 #이슈 #연예인 #kpop #아이돌 #가수 #카리나 #에스파",
-        "카리나 SM 처음 왔을때 후기 #연예 #이슈 #연예인 #kpop #아이돌 #가수 #카리나 #에스파",
-        "일본사는척 사람들 기만한 도쿄규쨩 #연예 #이슈 #유튜버 #도쿄규짱 #사기 #사기꾼 #기만"
-      ]
-    },
-    {
-      "channelId": "UC4i5bxUyVRIgnwYFYZqhCGw",
-      "channelTitle": "크립토월드 [CRYPTO_WORLD]",
+      "channelId": "UC6qSGjvZ7rg2iS6GQGzDHKw",
+      "channelTitle": "ShutUp Fit 닥치고운동",
       "country": "KR",
-      "videos": 5,
-      "views": 5443,
+      "videos": 1,
+      "views": 5360,
       "suggest": {
-        "official": 5
+        "senior": 1
       },
       "examples": [
-        "[오피셜트럼프 전망] 긴급 입수! 드디어 \"재단 스케줄\" 최종 발표! 내일 OO 매수가 옵니다!",
-        "[오피셜트럼프  코인] 속보! 하필 토요일에 뜬 악재 '여기서' 전부 파세요",
-        "[오피셜트럼프 전망]🚨재단 긴급 발표 예정🚨오피셜트럼프 목표가는 여기까지 보세요!! #오피셜트럼프"
+        "[70대운동] 스쿼트 도전!!!!!  #shutupfit #닥치고운동 #시니어운동 #70대여성 #노인운동 #노인건강 #노인체육 #스쿼트 #스쿼트"
       ]
     },
     {
@@ -3586,7 +3457,7 @@
       "channelTitle": "생활연구소플러스",
       "country": "KR",
       "videos": 1,
-      "views": 5237,
+      "views": 5243,
       "suggest": {
         "senior": 1
       },
@@ -3599,7 +3470,7 @@
       "channelTitle": "시니어.생활.건강",
       "country": "KR",
       "videos": 1,
-      "views": 5180,
+      "views": 5194,
       "suggest": {
         "senior": 1
       },
@@ -3608,24 +3479,11 @@
       ]
     },
     {
-      "channelId": "UC6qSGjvZ7rg2iS6GQGzDHKw",
-      "channelTitle": "ShutUp Fit 닥치고운동",
-      "country": "KR",
-      "videos": 1,
-      "views": 5139,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "[70대운동] 스쿼트 도전!!!!!  #shutupfit #닥치고운동 #시니어운동 #70대여성 #노인운동 #노인건강 #노인체육 #스쿼트 #스쿼트"
-      ]
-    },
-    {
       "channelId": "UCuH91QvYRFtpyoBGJxdd4jA",
       "channelTitle": "유유 극장 YUYU",
       "country": "KR",
       "videos": 1,
-      "views": 5036,
+      "views": 5073,
       "suggest": {
         "ai": 1
       },
@@ -3638,7 +3496,7 @@
       "channelTitle": "석",
       "country": null,
       "videos": 2,
-      "views": 5008,
+      "views": 5066,
       "suggest": {
         "community": 2
       },
@@ -3652,7 +3510,7 @@
       "channelTitle": "JP이야기",
       "country": "KR",
       "videos": 2,
-      "views": 4946,
+      "views": 5031,
       "suggest": {
         "sports": 1,
         "community": 1
@@ -3667,7 +3525,7 @@
       "channelTitle": "이슈엔",
       "country": "KR",
       "videos": 1,
-      "views": 4946,
+      "views": 5006,
       "suggest": {
         "entertainment": 1
       },
@@ -3691,11 +3549,25 @@
       ]
     },
     {
+      "channelId": "UCx5dEsD6xW54wSx7_TEihAA",
+      "channelTitle": "도성TV",
+      "country": "KR",
+      "videos": 2,
+      "views": 4828,
+      "suggest": {
+        "entertainment": 2
+      },
+      "examples": [
+        "이옷 연예대상때 빌려주면 안되요 선물할께",
+        "살림남 박서진, 2025‘연예대상’ 대상·최우수상·우수상 셋 중 하나 어색한 워킹대상 야망!"
+      ]
+    },
+    {
       "channelId": "UCQc7cDQF0hUbFl9E96mtFsQ",
       "channelTitle": "예능한스푼",
       "country": "KR",
       "videos": 1,
-      "views": 4704,
+      "views": 4789,
       "suggest": {
         "entertainment": 1
       },
@@ -3708,7 +3580,7 @@
       "channelTitle": "라이프큐브(LifeCube)",
       "country": "KR",
       "videos": 1,
-      "views": 4642,
+      "views": 4673,
       "suggest": {
         "senior": 1
       },
@@ -3721,7 +3593,7 @@
       "channelTitle": "역사담",
       "country": "KR",
       "videos": 1,
-      "views": 4631,
+      "views": 4660,
       "suggest": {
         "entertainment": 1
       },
@@ -3730,11 +3602,24 @@
       ]
     },
     {
+      "channelId": "UCNQZ9VEf1lJkzwcLGR_Xsrg",
+      "channelTitle": "건강스냅컷",
+      "country": "KR",
+      "videos": 1,
+      "views": 4568,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "세탁할 때 이거 하나면 먼지가 싹 사라집니다. #시니어라이프 #시니어정보 #생활꿀팁 #꿀팁 #건강한중년 #세탁팁 #청소팁 #건강관리 #건강쇼츠"
+      ]
+    },
+    {
       "channelId": "UC1RVnfq1yet28kGOLeqsqqw",
       "channelTitle": "광화문 코인",
       "country": "KR",
       "videos": 4,
-      "views": 4524,
+      "views": 4531,
       "suggest": {
         "official": 4
       },
@@ -3745,11 +3630,24 @@
       ]
     },
     {
+      "channelId": "UC-5Ti8d6z2IDMBv4lmi8dRg",
+      "channelTitle": "엔터썰라운드",
+      "country": "KR",
+      "videos": 1,
+      "views": 4453,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "#모모랜드 #주이 #낸시 #컬투쇼 #RODEO #걸그룹컴백 #연예뉴스 #유튜브썰 #유재석 #강남건물 #부동산투자 #연예뉴스 #77억대출 #국민M"
+      ]
+    },
+    {
       "channelId": "UCkI-dplBpToT4grI4QdAGcg",
       "channelTitle": "아하플러스",
       "country": null,
       "videos": 1,
-      "views": 4520,
+      "views": 4425,
       "suggest": {
         "community": 1
       },
@@ -3758,24 +3656,11 @@
       ]
     },
     {
-      "channelId": "UCNQZ9VEf1lJkzwcLGR_Xsrg",
-      "channelTitle": "건강스냅컷",
-      "country": "KR",
-      "videos": 1,
-      "views": 4512,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "세탁할 때 이거 하나면 먼지가 싹 사라집니다. #시니어라이프 #시니어정보 #생활꿀팁 #꿀팁 #건강한중년 #세탁팁 #청소팁 #건강관리 #건강쇼츠"
-      ]
-    },
-    {
       "channelId": "UCCu7BCdADOLbGAsTNoVgOBA",
       "channelTitle": "니칸 스포츠분석",
       "country": "KR",
       "videos": 2,
-      "views": 4381,
+      "views": 4393,
       "suggest": {
         "sports": 2
       },
@@ -3785,24 +3670,11 @@
       ]
     },
     {
-      "channelId": "UC-5Ti8d6z2IDMBv4lmi8dRg",
-      "channelTitle": "엔터썰라운드",
-      "country": "KR",
-      "videos": 1,
-      "views": 4272,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "#모모랜드 #주이 #낸시 #컬투쇼 #RODEO #걸그룹컴백 #연예뉴스 #유튜브썰 #유재석 #강남건물 #부동산투자 #연예뉴스 #77억대출 #국민M"
-      ]
-    },
-    {
       "channelId": "UCV3e3da9kyz9LLZL8BSs5PQ",
       "channelTitle": "공감속으로",
       "country": "KR",
       "videos": 1,
-      "views": 4153,
+      "views": 4170,
       "suggest": {
         "senior": 1
       },
@@ -3815,7 +3687,7 @@
       "channelTitle": "시사쇼 정치다",
       "country": null,
       "videos": 1,
-      "views": 4046,
+      "views": 4084,
       "suggest": {
         "politics": 1
       },
@@ -3828,7 +3700,7 @@
       "channelTitle": "연예가데스크",
       "country": "KR",
       "videos": 1,
-      "views": 3969,
+      "views": 4037,
       "suggest": {
         "entertainment": 1
       },
@@ -3841,7 +3713,7 @@
       "channelTitle": "도시의멜로디",
       "country": "KR",
       "videos": 1,
-      "views": 3778,
+      "views": 3809,
       "suggest": {
         "entertainment": 1
       },
@@ -3850,11 +3722,26 @@
       ]
     },
     {
+      "channelId": "UC4i5bxUyVRIgnwYFYZqhCGw",
+      "channelTitle": "크립토월드 [CRYPTO_WORLD]",
+      "country": "KR",
+      "videos": 5,
+      "views": 3758,
+      "suggest": {
+        "official": 5
+      },
+      "examples": [
+        "[오피셜트럼프 전망] 긴급 입수! 드디어 \"재단 스케줄\" 최종 발표! 내일 OO 매수가 옵니다!",
+        "[오피셜트럼프  코인] 속보! 하필 토요일에 뜬 악재 '여기서' 전부 파세요",
+        "[오피셜트럼프 전망]🚨재단 긴급 발표 예정🚨오피셜트럼프 목표가는 여기까지 보세요!! #오피셜트럼프"
+      ]
+    },
+    {
       "channelId": "UCt_ct7lb6NqcxBaxIIs8TDg",
       "channelTitle": "이현",
       "country": null,
       "videos": 1,
-      "views": 3690,
+      "views": 3717,
       "suggest": {
         "review": 1
       },
@@ -3863,16 +3750,16 @@
       ]
     },
     {
-      "channelId": "UCi8fe6P0_tLeZ1r31wOydvw",
-      "channelTitle": "돌아온붕어형 - 고전게임 공략 채널",
-      "country": null,
+      "channelId": "UCIuDkThCxewhsYfuvjuuQOw",
+      "channelTitle": "NowSeoulKorea",
+      "country": "KR",
       "videos": 1,
-      "views": 3641,
+      "views": 3617,
       "suggest": {
-        "ai": 1
+        "entertainment": 1
       },
       "examples": [
-        "2025-09-15 (생)돌아온붕어형 고전게임 l 각종 미션 환영 l 유튜브 숏폼ㅣRTERO GAME ㅣ 1CC ㅣ LIVE"
+        "전직 아이돌의 앙상해진 팔과 다리 #이슈 #연예 #kpop #동방신기 #믹키유천 #박유천"
       ]
     },
     {
@@ -3880,7 +3767,7 @@
       "channelTitle": "돈벌쥐",
       "country": "KR",
       "videos": 1,
-      "views": 3435,
+      "views": 3382,
       "suggest": {
         "community": 1
       },
@@ -3893,7 +3780,7 @@
       "channelTitle": "공감살롱",
       "country": "KR",
       "videos": 1,
-      "views": 3386,
+      "views": 3374,
       "suggest": {
         "senior": 1
       },
@@ -3935,7 +3822,7 @@
       "channelTitle": "tvN Joy",
       "country": null,
       "videos": 2,
-      "views": 3255,
+      "views": 3276,
       "suggest": {
         "entertainment": 2
       },
@@ -3945,24 +3832,11 @@
       ]
     },
     {
-      "channelId": "UCxFyWOd9ESHDWmVOi1-9PBg",
-      "channelTitle": "브리프뉴스",
-      "country": "KR",
-      "videos": 1,
-      "views": 3122,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "[급상승]강미정 전 대변인 조국 권유 거절, 책임은 가해자 부터"
-      ]
-    },
-    {
       "channelId": "UC8mDyKllnk9XAzNooUUjDdA",
       "channelTitle": "AITEAMSPORTS",
       "country": null,
       "videos": 1,
-      "views": 3101,
+      "views": 3157,
       "suggest": {
         "sports": 1
       },
@@ -3975,12 +3849,25 @@
       "channelTitle": "SOARA 소아라 ",
       "country": null,
       "videos": 1,
-      "views": 3079,
+      "views": 3155,
       "suggest": {
         "sports": 1
       },
       "examples": [
         "완전히 젖은 채로, 진짜 스포츠의 끝판왕! #수영 #금메달 #소아라 #美女 #충격고백 #끝판왕 #스포츠실화 #올림픽레전드#Shorts"
+      ]
+    },
+    {
+      "channelId": "UCKRzvNMudg0lZQ41lafuahg",
+      "channelTitle": "OBS TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 3085,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "생얼은 그정도 아니다? 연예인들도 화장빨일까? #shorts #진실과구라 #속설 #농담 #OBS #예능 #최진실 #김구라 #연예계 #최환희 #최"
       ]
     },
     {
@@ -3997,24 +3884,11 @@
       ]
     },
     {
-      "channelId": "UCye0iCKULF8XsnkC12bW37A",
-      "channelTitle": "정치공방",
-      "country": null,
-      "videos": 1,
-      "views": 3011,
-      "suggest": {
-        "politics": 1
-      },
-      "examples": [
-        "홍시훈기자의 새로운 아젠다는? #정치뉴스 #정치 #정치이슈 #검찰 #김어준의_겸손은힘들다_뉴스공장 #홍사훈"
-      ]
-    },
-    {
       "channelId": "UCJA6fQGjW6cdv4h-LrMhR8Q",
       "channelTitle": "시니어의건강한하루",
       "country": "KR",
       "videos": 2,
-      "views": 3005,
+      "views": 3000,
       "suggest": {
         "senior": 2
       },
@@ -4024,25 +3898,11 @@
       ]
     },
     {
-      "channelId": "UCsTv-SWuoRC431aHNuQ29FQ",
-      "channelTitle": "정읍신바람명품장구예술단_김은정",
-      "country": null,
-      "videos": 2,
-      "views": 2948,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "#강원도아리랑#01050222592 #정읍연예예술인협회실버순회공연#25.9.11",
-        "#25.9.11#대한노인대학#실버순회공연#정읍연예예술인협회정읍시지부#01050222592"
-      ]
-    },
-    {
       "channelId": "UC96xuaT-9Ayl2L-CBt_-wgQ",
       "channelTitle": "오늘의 매치업",
       "country": "KR",
       "videos": 2,
-      "views": 2948,
+      "views": 2945,
       "suggest": {
         "sports": 2
       },
@@ -4052,16 +3912,17 @@
       ]
     },
     {
-      "channelId": "UCyNvqw6Xo4cAJmuWP84CIow",
-      "channelTitle": "iTOP21sports",
-      "country": "KR",
-      "videos": 1,
-      "views": 2899,
+      "channelId": "UCsTv-SWuoRC431aHNuQ29FQ",
+      "channelTitle": "정읍신바람명품장구예술단_김은정",
+      "country": null,
+      "videos": 2,
+      "views": 2942,
       "suggest": {
-        "sports": 1
+        "entertainment": 2
       },
       "examples": [
-        "2025 수영ㅣ제 20회 구리시장배 생활체육 수영대회ㅣ오후 경기ㅣ25.09.13ㅣ구리멀티스포츠센터 수영장"
+        "#강원도아리랑#01050222592 #정읍연예예술인협회실버순회공연#25.9.11",
+        "#25.9.11#대한노인대학#실버순회공연#정읍연예예술인협회정읍시지부#01050222592"
       ]
     },
     {
@@ -4069,7 +3930,7 @@
       "channelTitle": "토토홈즈",
       "country": "KR",
       "videos": 1,
-      "views": 2878,
+      "views": 2876,
       "suggest": {
         "sports": 1
       },
@@ -4078,18 +3939,16 @@
       ]
     },
     {
-      "channelId": "UC6R7kQvqSmqsp1tbW16mhOg",
-      "channelTitle": "영어친구 영어회화 ",
+      "channelId": "UCyNvqw6Xo4cAJmuWP84CIow",
+      "channelTitle": "iTOP21sports",
       "country": "KR",
-      "videos": 3,
-      "views": 2826,
+      "videos": 1,
+      "views": 2861,
       "suggest": {
-        "entertainment": 3
+        "sports": 1
       },
       "examples": [
-        "3분영어 #1245 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어",
-        "3분영어 #1244 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어",
-        "3분영어 #1234 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어"
+        "2025 수영ㅣ제 20회 구리시장배 생활체육 수영대회ㅣ오후 경기ㅣ25.09.13ㅣ구리멀티스포츠센터 수영장"
       ]
     },
     {
@@ -4097,12 +3956,27 @@
       "channelTitle": " TOP COMMENT DIGEST",
       "country": "KR",
       "videos": 1,
-      "views": 2788,
+      "views": 2857,
       "suggest": {
         "community": 1
       },
       "examples": [
         "이재명 대통령은 끊임없이 커뮤니티를 살피는 것 같다  #이재명 #김어준 #박구용 #뉴스공장"
+      ]
+    },
+    {
+      "channelId": "UC6R7kQvqSmqsp1tbW16mhOg",
+      "channelTitle": "영어친구 영어회화 ",
+      "country": "KR",
+      "videos": 3,
+      "views": 2827,
+      "suggest": {
+        "entertainment": 3
+      },
+      "examples": [
+        "3분영어 #1245 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어",
+        "3분영어 #1244 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어",
+        "3분영어 #1234 l #쉬운영어공부 #여행영어 #시니어영어 #왕초보영어 #일상 영어 #영어발음연습 #영어 표현 #기초영어"
       ]
     },
     {
@@ -4119,16 +3993,16 @@
       ]
     },
     {
-      "channelId": "UCOBV-wy7DdRjrWMTMmU70og",
-      "channelTitle": "마음빛 글",
+      "channelId": "UC5JE---hV3JMHSIPWKn6YqQ",
+      "channelTitle": "K-ai video",
       "country": null,
       "videos": 1,
-      "views": 2743,
+      "views": 2732,
       "suggest": {
         "ai": 1
       },
       "examples": [
-        "99%는 모르는 인생 치트키 책. 인생은 게임이다."
+        "댄스스포츠 세계 선수권 1위팀 무대 ダンススポーツ世界選手権1位チームのステージ 💞👀 #dance #sports #ai"
       ]
     },
     {
@@ -4145,24 +4019,11 @@
       ]
     },
     {
-      "channelId": "UC5JE---hV3JMHSIPWKn6YqQ",
-      "channelTitle": "K-ai video",
-      "country": null,
-      "videos": 1,
-      "views": 2618,
-      "suggest": {
-        "ai": 1
-      },
-      "examples": [
-        "댄스스포츠 세계 선수권 1위팀 무대 ダンススポーツ世界選手権1位チームのステージ 💞👀 #dance #sports #ai"
-      ]
-    },
-    {
       "channelId": "UCjcranhoZ63DYVc0Wu5M23A",
       "channelTitle": "낮달 톡톡",
       "country": "KR",
       "videos": 1,
-      "views": 2568,
+      "views": 2677,
       "suggest": {
         "senior": 1
       },
@@ -4171,29 +4032,29 @@
       ]
     },
     {
-      "channelId": "UCqbeULJcuIuN-KJGxdzBIdQ",
-      "channelTitle": "라냥히",
-      "country": null,
-      "videos": 1,
-      "views": 2466,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "대전 꿈돌이 라면 먹방 후기•신상•신제품•리뷰•야식•신상라면•대전여행•혼자놀기•브이로그•mukbang"
-      ]
-    },
-    {
       "channelId": "UCGmmfztJfO6wbsqeA-vGh5A",
       "channelTitle": "찐맛노트",
       "country": null,
       "videos": 1,
-      "views": 2430,
+      "views": 2487,
       "suggest": {
         "review": 1
       },
       "examples": [
         "피자 꼬다리가 크루아상인 피자? #shorts #파파존스 #신메뉴리뷰 #크루아상피자"
+      ]
+    },
+    {
+      "channelId": "UCqbeULJcuIuN-KJGxdzBIdQ",
+      "channelTitle": "라냥히",
+      "country": null,
+      "videos": 1,
+      "views": 2460,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "대전 꿈돌이 라면 먹방 후기•신상•신제품•리뷰•야식•신상라면•대전여행•혼자놀기•브이로그•mukbang"
       ]
     },
     {
@@ -4210,11 +4071,24 @@
       ]
     },
     {
+      "channelId": "UCIcJfj_ZO7oN_zG7WpZ7nKw",
+      "channelTitle": "BTS NEWS",
+      "country": "KR",
+      "videos": 1,
+      "views": 2390,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "죄 논란에도 불구하고 왕성히 활동하는 연예인 TOP6"
+      ]
+    },
+    {
       "channelId": "UCSIWya3tYwMkM6UWwwZqawQ",
       "channelTitle": "충격 뉴스 숏츠",
       "country": "KR",
       "videos": 2,
-      "views": 2351,
+      "views": 2350,
       "suggest": {
         "entertainment": 2
       },
@@ -4241,12 +4115,38 @@
       "channelTitle": "e스포츠 대학리그_공식채널",
       "country": "KR",
       "videos": 1,
-      "views": 2301,
+      "views": 2305,
       "suggest": {
         "game": 1
       },
       "examples": [
         "LoL 신구대학교 vs 전남과학대학교 [2025 이스포츠 대학리그 전국본선 Day1]"
+      ]
+    },
+    {
+      "channelId": "UCylTe2UFqBD0CqgoohZT-Gw",
+      "channelTitle": "도라미의 맛집탐방",
+      "country": null,
+      "videos": 1,
+      "views": 2256,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "#shorts gs25 신상 젤리 아이스크림 메롱바 솔직 리뷰! 🤪🍏"
+      ]
+    },
+    {
+      "channelId": "UC3w_Hp0Bq4dkGkuI80bvafg",
+      "channelTitle": "이길형과 함께 백세인생",
+      "country": "KR",
+      "videos": 1,
+      "views": 2230,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "9월부터 확 바뀔 시니어 정책 10가지! #시니어건강 #시니어 #이재명 #정책 #시니어정책 #민주당"
       ]
     },
     {
@@ -4263,29 +4163,16 @@
       ]
     },
     {
-      "channelId": "UC3w_Hp0Bq4dkGkuI80bvafg",
-      "channelTitle": "이길형과 함께 백세인생",
+      "channelId": "UCycLhsaemd7RQeaKl4csPBQ",
+      "channelTitle": "유쾌상쾌통쾌",
       "country": "KR",
       "videos": 1,
-      "views": 2215,
+      "views": 2160,
       "suggest": {
         "senior": 1
       },
       "examples": [
-        "9월부터 확 바뀔 시니어 정책 10가지! #시니어건강 #시니어 #이재명 #정책 #시니어정책 #민주당"
-      ]
-    },
-    {
-      "channelId": "UCylTe2UFqBD0CqgoohZT-Gw",
-      "channelTitle": "도라미의 맛집탐방",
-      "country": null,
-      "videos": 1,
-      "views": 2210,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "#shorts gs25 신상 젤리 아이스크림 메롱바 솔직 리뷰! 🤪🍏"
+        "🚪문 두드린 여자는? | 시니어 넌센스 퀴즈 (정답은 영상 끝!)"
       ]
     },
     {
@@ -4306,7 +4193,7 @@
       "channelTitle": "정모썰(정치모든이야기)",
       "country": null,
       "videos": 1,
-      "views": 2099,
+      "views": 2105,
       "suggest": {
         "politics": 1
       },
@@ -4319,12 +4206,25 @@
       "channelTitle": "헬시시니어연구소",
       "country": "KR",
       "videos": 1,
-      "views": 2069,
+      "views": 2086,
       "suggest": {
         "senior": 1
       },
       "examples": [
         "뇌경색 막는 음식 3가지#뇌경색예방 #시니어건강 #혈관건강 #헬시시니어연구소"
+      ]
+    },
+    {
+      "channelId": "UCB-wwwhSg7ELQGujaDdNHwQ",
+      "channelTitle": "인생을담다",
+      "country": "KR",
+      "videos": 1,
+      "views": 2056,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "이거 하나면 징리 끝~~~ #쿠팡 #쿠팡꿀템 #쿠팡리뷰 #쿠팡추천"
       ]
     },
     {
@@ -4345,13 +4245,39 @@
       "channelTitle": "1min 순삭 연예 뉴스",
       "country": "KR",
       "videos": 2,
-      "views": 1947,
+      "views": 1945,
       "suggest": {
         "entertainment": 2
       },
       "examples": [
         "[자기발견]한가인이 23년간 연예인 친구를 피한 충격적인 이유(2/3편)",
         "[자기발견]한가인이 23년간 연예인 친구를 피한 충격적인 이유(1/3편)"
+      ]
+    },
+    {
+      "channelId": "UCwkVEGwmuJV5W3DMiYbWoYg",
+      "channelTitle": "강남서초TV",
+      "country": null,
+      "videos": 1,
+      "views": 1939,
+      "suggest": {
+        "sports": 1
+      },
+      "examples": [
+        "청담르엘 커뮤니티시설 수영장 골프장 카페테리아"
+      ]
+    },
+    {
+      "channelId": "UCFK4Pvt0us7cgMP-bfVDr0g",
+      "channelTitle": "SSUL모먼트",
+      "country": null,
+      "videos": 1,
+      "views": 1937,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "노후 포기하고 키운 아들 이제는 연락하지 말랍니다 (시니어사연⎜노후사연 오디오북) #shorts #시니어사연 #노후사연오디오북"
       ]
     },
     {
@@ -4368,16 +4294,16 @@
       ]
     },
     {
-      "channelId": "UCFK4Pvt0us7cgMP-bfVDr0g",
-      "channelTitle": "SSUL모먼트",
-      "country": null,
+      "channelId": "UCnGdQDEIm4WweqlIPgMPJUQ",
+      "channelTitle": "하루이슈",
+      "country": "KR",
       "videos": 1,
-      "views": 1926,
+      "views": 1906,
       "suggest": {
-        "senior": 1
+        "politics": 1
       },
       "examples": [
-        "노후 포기하고 키운 아들 이제는 연락하지 말랍니다 (시니어사연⎜노후사연 오디오북) #shorts #시니어사연 #노후사연오디오북"
+        "정치이슈｜김병기 “특검법 합의 논란, 심려 끼쳐 죄송”…당내 수습 나섰다..#정치이슈 #김병기 #특검법 #합의논란 #사과발언 #민주당 #국민의힘"
       ]
     },
     {
@@ -4385,7 +4311,7 @@
       "channelTitle": "AI K-Dance Studio | AI K-댄스 스튜디오",
       "country": "TW",
       "videos": 1,
-      "views": 1898,
+      "views": 1895,
       "suggest": {
         "ai": 1
       },
@@ -4411,7 +4337,7 @@
       "channelTitle": "사이먼 스큅 코리아",
       "country": "KR",
       "videos": 1,
-      "views": 1877,
+      "views": 1887,
       "suggest": {
         "community": 1
       },
@@ -4433,16 +4359,29 @@
       ]
     },
     {
-      "channelId": "UCwkVEGwmuJV5W3DMiYbWoYg",
-      "channelTitle": "강남서초TV",
-      "country": null,
+      "channelId": "UCJL3u9cz3ag68n2FMVePVEg",
+      "channelTitle": "윗돌",
+      "country": "KR",
       "videos": 1,
-      "views": 1844,
+      "views": 1821,
       "suggest": {
-        "sports": 1
+        "entertainment": 1
       },
       "examples": [
-        "청담르엘 커뮤니티시설 수영장 골프장 카페테리아"
+        "몰입감 개오지는 역대급 좀비게임 가져왔습니다..! 워킹데드 시즌1 스토리 (上편)"
+      ]
+    },
+    {
+      "channelId": "UCkJc9k40YHX4-WMkR-zjYIg",
+      "channelTitle": "웨스트스타 서별",
+      "country": "KR",
+      "videos": 1,
+      "views": 1794,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "몬트쿠키 두바이 4종세트 묵어보께유#먹방 #리뷰"
       ]
     },
     {
@@ -4450,25 +4389,12 @@
       "channelTitle": "Golpo kotha",
       "country": "KR",
       "videos": 1,
-      "views": 1801,
+      "views": 1787,
       "suggest": {
         "official": 1
       },
       "examples": [
         "오피셜트럼프 코인 본격 반등! 정치계 거물들이 매수한 충격적 이유 공개 🚀 목표가 3만원까지?! #오피셜트럼프"
-      ]
-    },
-    {
-      "channelId": "UCJL3u9cz3ag68n2FMVePVEg",
-      "channelTitle": "윗돌",
-      "country": "KR",
-      "videos": 1,
-      "views": 1775,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "몰입감 개오지는 역대급 좀비게임 가져왔습니다..! 워킹데드 시즌1 스토리 (上편)"
       ]
     },
     {
@@ -4485,6 +4411,19 @@
       ]
     },
     {
+      "channelId": "UCJt9OaIPHKBArMgwvjkxw2A",
+      "channelTitle": "개껄이",
+      "country": null,
+      "videos": 1,
+      "views": 1756,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "헌티좀비 이제 한정인 단검 리뷰"
+      ]
+    },
+    {
       "channelId": "UCmGZPCz232NidDJQ6e5CqxA",
       "channelTitle": "🍥뉴뉴🍥",
       "country": null,
@@ -4498,42 +4437,16 @@
       ]
     },
     {
-      "channelId": "UCJt9OaIPHKBArMgwvjkxw2A",
-      "channelTitle": "개껄이",
-      "country": null,
-      "videos": 1,
-      "views": 1748,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "헌티좀비 이제 한정인 단검 리뷰"
-      ]
-    },
-    {
       "channelId": "UC-XwEbdPOQUaRcIhIWvsbuw",
       "channelTitle": "온드드쉬",
       "country": null,
       "videos": 1,
-      "views": 1745,
+      "views": 1737,
       "suggest": {
         "review": 1
       },
       "examples": [
         "우리나라엔 팔지 않는 쏘울 리뷰!! #기아 #2023쏘울 #리뷰 #리즘아 도와줘"
-      ]
-    },
-    {
-      "channelId": "UCUvXLIg_9trRpCsBrQ7rNfA",
-      "channelTitle": "DAIN Story",
-      "country": null,
-      "videos": 1,
-      "views": 1740,
-      "suggest": {
-        "ai": 1
-      },
-      "examples": [
-        "스포츠스태킹 원테이크 #권다인 #스포츠스태킹 #연습"
       ]
     },
     {
@@ -4550,6 +4463,19 @@
       ]
     },
     {
+      "channelId": "UCUvXLIg_9trRpCsBrQ7rNfA",
+      "channelTitle": "DAIN Story",
+      "country": null,
+      "videos": 1,
+      "views": 1722,
+      "suggest": {
+        "ai": 1
+      },
+      "examples": [
+        "스포츠스태킹 원테이크 #권다인 #스포츠스태킹 #연습"
+      ]
+    },
+    {
       "channelId": "UCmLeOdnnbc8pvgOhn744ZDA",
       "channelTitle": "롤 EXPRESS",
       "country": null,
@@ -4560,6 +4486,19 @@
       },
       "examples": [
         "오피셜) 비디디 5세트 후푸 평점 “9.9”"
+      ]
+    },
+    {
+      "channelId": "UCB5x7VddoCobxouXTVMPziA",
+      "channelTitle": "Medic",
+      "country": null,
+      "videos": 1,
+      "views": 1717,
+      "suggest": {
+        "ai": 1
+      },
+      "examples": [
+        "🍓유리 과일 자르기 asmr #ai #딸기"
       ]
     },
     {
@@ -4576,16 +4515,16 @@
       ]
     },
     {
-      "channelId": "UCB5x7VddoCobxouXTVMPziA",
-      "channelTitle": "Medic",
-      "country": null,
+      "channelId": "UCO0cK8JUsfNPyyUPYhA5DRw",
+      "channelTitle": "그래서 사람이다",
+      "country": "KR",
       "videos": 1,
-      "views": 1712,
+      "views": 1714,
       "suggest": {
-        "ai": 1
+        "review": 1
       },
       "examples": [
-        "🍓유리 과일 자르기 asmr #ai #딸기"
+        "부부의 [이혼숙려캠프] 리뷰...\"외도만 5번? 왜 살어?\" (박성현&이수진)"
       ]
     },
     {
@@ -4606,7 +4545,7 @@
       "channelTitle": "Playful Plates",
       "country": null,
       "videos": 1,
-      "views": 1707,
+      "views": 1704,
       "suggest": {
         "entertainment": 1
       },
@@ -4615,29 +4554,17 @@
       ]
     },
     {
-      "channelId": "UCkJc9k40YHX4-WMkR-zjYIg",
-      "channelTitle": "웨스트스타 서별",
-      "country": "KR",
-      "videos": 1,
-      "views": 1702,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "몬트쿠키 두바이 4종세트 묵어보께유#먹방 #리뷰"
-      ]
-    },
-    {
-      "channelId": "UCIb2Hl36yCPxT1obTqiITow",
-      "channelTitle": "쓰니",
+      "channelId": "UCBOKHlcrcqyontywxlND2eg",
+      "channelTitle": "인정이TV",
       "country": null,
-      "videos": 1,
-      "views": 1690,
+      "videos": 2,
+      "views": 1679,
       "suggest": {
-        "community": 1
+        "entertainment": 2
       },
       "examples": [
-        "여의도 퍼시스 커뮤니티 오피스에서 오둥이 만났어요!"
+        "#동두천락페스티벌#스프링스 축하공연#동두천연예협회",
+        "#동두천락페스티벌#동두천연예협회#동두천 스프링스 축하무대"
       ]
     },
     {
@@ -4658,7 +4585,7 @@
       "channelTitle": "노년의  지혜",
       "country": "KR",
       "videos": 1,
-      "views": 1665,
+      "views": 1664,
       "suggest": {
         "senior": 1
       },
@@ -4671,12 +4598,25 @@
       "channelTitle": "비컴101",
       "country": "KR",
       "videos": 1,
-      "views": 1632,
+      "views": 1643,
       "suggest": {
         "review": 1
       },
       "examples": [
         "[비컴] 보더랜드4 전용드라이버 나왔는데..왜 크래시 되냐? - 581.29 리뷰"
+      ]
+    },
+    {
+      "channelId": "UCIb2Hl36yCPxT1obTqiITow",
+      "channelTitle": "쓰니",
+      "country": null,
+      "videos": 1,
+      "views": 1641,
+      "suggest": {
+        "community": 1
+      },
+      "examples": [
+        "여의도 퍼시스 커뮤니티 오피스에서 오둥이 만났어요!"
       ]
     },
     {
@@ -4697,7 +4637,7 @@
       "channelTitle": "대공 DAE GONG",
       "country": "KR",
       "videos": 1,
-      "views": 1603,
+      "views": 1601,
       "suggest": {
         "review": 1
       },
@@ -4706,16 +4646,16 @@
       ]
     },
     {
-      "channelId": "UC2FAbMqdKe7vzetvqupkzGg",
-      "channelTitle": "Story_Teller",
-      "country": null,
+      "channelId": "UCuqWX5br33IbjtKHgJFZAIw",
+      "channelTitle": "이슈왔슈다",
+      "country": "KR",
       "videos": 1,
-      "views": 1593,
+      "views": 1582,
       "suggest": {
         "entertainment": 1
       },
       "examples": [
-        "가수 정동원, 무면허 운전 논란 #정동원 #무면허운전 #검찰수사 #연예뉴스 #트로트스타 #연예인논란 #미스터트롯 #연예계이슈 #사건사고 #뉴스브"
+        "대세 배우의 숨겨진 진짜 이야기 TOP3  #연예#이슈#연예뉴스#연예인"
       ]
     },
     {
@@ -4723,7 +4663,7 @@
       "channelTitle": "한닙정치",
       "country": "KR",
       "videos": 1,
-      "views": 1576,
+      "views": 1574,
       "suggest": {
         "politics": 1
       },
@@ -4736,7 +4676,7 @@
       "channelTitle": "바로지금 (NEWS)",
       "country": "KR",
       "videos": 1,
-      "views": 1569,
+      "views": 1563,
       "suggest": {
         "entertainment": 1
       },
@@ -4749,7 +4689,7 @@
       "channelTitle": "잎이(leafy)",
       "country": "KR",
       "videos": 1,
-      "views": 1552,
+      "views": 1561,
       "suggest": {
         "senior": 1
       },
@@ -4758,16 +4698,16 @@
       ]
     },
     {
-      "channelId": "UCycLhsaemd7RQeaKl4csPBQ",
-      "channelTitle": "유쾌상쾌통쾌",
-      "country": "KR",
+      "channelId": "UCaK2qvLtdrkExfFYqlmiI5Q",
+      "channelTitle": "KUNA쿠나",
+      "country": null,
       "videos": 1,
-      "views": 1541,
+      "views": 1557,
       "suggest": {
-        "senior": 1
+        "review": 1
       },
       "examples": [
-        "🚪문 두드린 여자는? | 시니어 넌센스 퀴즈 (정답은 영상 끝!)"
+        "오사카&교토 실용템 구매 리뷰 #오사카 #교토 #한큐백화점 #빅카메라 #헬로키티 #다마고치 #치이카와 #리뷰 #osaka #kyoto #tama"
       ]
     },
     {
@@ -4784,16 +4724,16 @@
       ]
     },
     {
-      "channelId": "UCaK2qvLtdrkExfFYqlmiI5Q",
-      "channelTitle": "KUNA쿠나",
-      "country": null,
+      "channelId": "UC9uOBQIr7Zxd_EoIrZMP8kw",
+      "channelTitle": "돌발러",
+      "country": "KR",
       "videos": 1,
-      "views": 1539,
+      "views": 1528,
       "suggest": {
-        "review": 1
+        "official": 1
       },
       "examples": [
-        "오사카&교토 실용템 구매 리뷰 #오사카 #교토 #한큐백화점 #빅카메라 #헬로키티 #다마고치 #치이카와 #리뷰 #osaka #kyoto #tama"
+        "사쿠라가 밝힌 오피셜 허리 사이즈는?"
       ]
     },
     {
@@ -4823,6 +4763,19 @@
       ]
     },
     {
+      "channelId": "UCWbNZDEsIoJoPYa6A8pbqLA",
+      "channelTitle": "포푼 Popun",
+      "country": null,
+      "videos": 1,
+      "views": 1511,
+      "suggest": {
+        "community": 1
+      },
+      "examples": [
+        "짧고 빠른 플라베베 커뮤니티데이 정산. [포켓몬고]"
+      ]
+    },
+    {
       "channelId": "UCMlX3EmToQMkz5fz0VO-tkw",
       "channelTitle": "올댓트레일 A.T.T 트레일러닝",
       "country": null,
@@ -4840,7 +4793,7 @@
       "channelTitle": "이슈있슈있슈",
       "country": null,
       "videos": 1,
-      "views": 1486,
+      "views": 1485,
       "suggest": {
         "senior": 1
       },
@@ -4862,16 +4815,16 @@
       ]
     },
     {
-      "channelId": "UC9uOBQIr7Zxd_EoIrZMP8kw",
-      "channelTitle": "돌발러",
+      "channelId": "UCv6hY-Vu00HwCHOZDuVCtYQ",
+      "channelTitle": "월드탑 TV",
       "country": "KR",
       "videos": 1,
-      "views": 1479,
+      "views": 1471,
       "suggest": {
-        "official": 1
+        "entertainment": 1
       },
       "examples": [
-        "사쿠라가 밝힌 오피셜 허리 사이즈는?"
+        "충격과 레전드… 역대급 연예 스캔들 TOP10#연예스캔들 #레전드커플 #이혼충격 #결혼이야기 #월드탑텐"
       ]
     },
     {
@@ -4892,7 +4845,7 @@
       "channelTitle": "요가마미",
       "country": "KR",
       "videos": 1,
-      "views": 1451,
+      "views": 1448,
       "suggest": {
         "senior": 1
       },
@@ -4911,6 +4864,19 @@
       },
       "examples": [
         "가장 빠른 치타는 누구일까? #치타  #ai #aiart"
+      ]
+    },
+    {
+      "channelId": "UC7oHxx3BWOk65ZPR3R-pkcw",
+      "channelTitle": "시니어건강톡톡톡",
+      "country": "KR",
+      "videos": 1,
+      "views": 1437,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "혈당스파이크 막는 올바른 식습관 4가지 #건강정보 #시니어건강 #건강한중년 #60대건강"
       ]
     },
     {
@@ -4944,12 +4910,25 @@
       "channelTitle": "스포츠분석왕자네",
       "country": "KR",
       "videos": 1,
-      "views": 1402,
+      "views": 1401,
       "suggest": {
         "sports": 1
       },
       "examples": [
         "프로토분석 토토분석 스포츠분석 9월14일 KBO 프로야구 분석 야구분석 KBO분석"
+      ]
+    },
+    {
+      "channelId": "UCtKCwptUEUFSpFbDJqu3-qw",
+      "channelTitle": "Wai",
+      "country": null,
+      "videos": 1,
+      "views": 1386,
+      "suggest": {
+        "community": 1
+      },
+      "examples": [
+        "플라베베 커뮤니티 데이[Flabébé Community Day]"
       ]
     },
     {
@@ -4970,25 +4949,12 @@
       "channelTitle": "비나츄",
       "country": "KR",
       "videos": 1,
-      "views": 1371,
+      "views": 1370,
       "suggest": {
         "community": 1
       },
       "examples": [
         "👉 “100명 한정🔥 오클리 50주년 커뮤니티 러닝, 완벽 그 이상”"
-      ]
-    },
-    {
-      "channelId": "UCgIDKBn1zJiGKTuJ276zxhA",
-      "channelTitle": "올드필름맨",
-      "country": "KR",
-      "videos": 1,
-      "views": 1369,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "얼굴 우리가 마주하게 되는 진짜 민낯 얼굴리뷰 #리뷰 #movie #얼굴"
       ]
     },
     {
@@ -5002,19 +4968,6 @@
       },
       "examples": [
         "내가 생각하는 명곡들 #6 #official髭男dism #오피셜히게단디즘 #pretender #인생곡 #명곡 #노래추천 #플레이리스트"
-      ]
-    },
-    {
-      "channelId": "UCtKCwptUEUFSpFbDJqu3-qw",
-      "channelTitle": "Wai",
-      "country": null,
-      "videos": 1,
-      "views": 1352,
-      "suggest": {
-        "community": 1
-      },
-      "examples": [
-        "플라베베 커뮤니티 데이[Flabébé Community Day]"
       ]
     },
     {
@@ -5048,7 +5001,7 @@
       "channelTitle": "스포츠분석:정프로",
       "country": "KR",
       "videos": 1,
-      "views": 1341,
+      "views": 1339,
       "suggest": {
         "sports": 1
       },
@@ -5061,7 +5014,7 @@
       "channelTitle": "사무리 라이브",
       "country": "KR",
       "videos": 1,
-      "views": 1322,
+      "views": 1321,
       "suggest": {
         "politics": 1
       },
@@ -5070,24 +5023,11 @@
       ]
     },
     {
-      "channelId": "UCk-bKVOGe9g7S1M9gTyYabw",
-      "channelTitle": "정답은건강",
-      "country": null,
-      "videos": 1,
-      "views": 1312,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "“엄마 아빠, 뇌졸중 이렇게 막으세요” #건강 #건강정보 #시니어"
-      ]
-    },
-    {
       "channelId": "UCPQracRG5P3BsHo-7c0hXQQ",
       "channelTitle": "꽁중사",
       "country": "KR",
       "videos": 1,
-      "views": 1295,
+      "views": 1287,
       "suggest": {
         "review": 1
       },
@@ -5096,16 +5036,29 @@
       ]
     },
     {
-      "channelId": "UCWbNZDEsIoJoPYa6A8pbqLA",
-      "channelTitle": "포푼 Popun",
+      "channelId": "UChQF6Kw3TDghgDYYSZjfi3A",
+      "channelTitle": "인싸가족(리뷰채널)",
       "country": null,
       "videos": 1,
-      "views": 1270,
+      "views": 1232,
       "suggest": {
-        "community": 1
+        "review": 1
       },
       "examples": [
-        "짧고 빠른 플라베베 커뮤니티데이 정산. [포켓몬고]"
+        "박지현가수 영호남 한 축제에서(목포) 목포학생의 위로 리뷰영상입니다 #박지현 #가수박지현 #목포"
+      ]
+    },
+    {
+      "channelId": "UCUIgyDOuAsFsUDjKlJPB0dA",
+      "channelTitle": "승튜브 일상",
+      "country": null,
+      "videos": 1,
+      "views": 1230,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "프랑스 사탕 리뷰"
       ]
     },
     {
@@ -5122,16 +5075,16 @@
       ]
     },
     {
-      "channelId": "UChQF6Kw3TDghgDYYSZjfi3A",
-      "channelTitle": "인싸가족(리뷰채널)",
-      "country": null,
+      "channelId": "UCPfW3zeFsbw82mobUsjU9MQ",
+      "channelTitle": "FUTURE VEHICLES ",
+      "country": "US",
       "videos": 1,
-      "views": 1211,
+      "views": 1205,
       "suggest": {
         "review": 1
       },
       "examples": [
-        "박지현가수 영호남 한 축제에서(목포) 목포학생의 위로 리뷰영상입니다 #박지현 #가수박지현 #목포"
+        "2026 현대 포터 II 완전 변경 리뷰 | 외관·성능·실내까지 총정리 🚛"
       ]
     },
     {
@@ -5139,25 +5092,12 @@
       "channelTitle": "왔다 봄 TV",
       "country": "KR",
       "videos": 1,
-      "views": 1205,
+      "views": 1200,
       "suggest": {
         "senior": 1
       },
       "examples": [
         "시니어 근육 살리는 단백질 3대장🔥#영양정보#단백질식품#근육건강"
-      ]
-    },
-    {
-      "channelId": "UCPfW3zeFsbw82mobUsjU9MQ",
-      "channelTitle": "FUTURE VEHICLES ",
-      "country": "US",
-      "videos": 1,
-      "views": 1202,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "2026 현대 포터 II 완전 변경 리뷰 | 외관·성능·실내까지 총정리 🚛"
       ]
     },
     {
@@ -5187,33 +5127,6 @@
       ]
     },
     {
-      "channelId": "UC6oI7ceQkDkSAkR3uu2BVow",
-      "channelTitle": "권영찬TV",
-      "country": "KR",
-      "videos": 2,
-      "views": 1165,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "박서진 KBS 연예대상 대상 최우수상 노려 트로트 장장구의신",
-        "[박서진 KBS 연예대상 대상 최우수상 인기상 노려 대상도 가능 최우수상 인기상은 안정? 야망 드러나]"
-      ]
-    },
-    {
-      "channelId": "UCrKSOBZt0hlvi4t_iD_Vkrg",
-      "channelTitle": "Korean top machines ",
-      "country": "KR",
-      "videos": 1,
-      "views": 1155,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "🇰🇷 2026 KF-31 Thunderstrike 리뷰! 한국 차세대 전투기의 모든 것 ✈️🔥"
-      ]
-    },
-    {
       "channelId": "UCTzyBcgpue68BlsaFBgH2cQ",
       "channelTitle": "진격의 코인",
       "country": "KR",
@@ -5227,16 +5140,29 @@
       ]
     },
     {
-      "channelId": "UCEsNsYtYwjAizwyX9YfH0KQ",
-      "channelTitle": "JUNOMOVIE",
+      "channelId": "UC8_LPVE4Yuc6KF0opF6uS_w",
+      "channelTitle": "KTV 아카이브",
       "country": "KR",
       "videos": 1,
-      "views": 1146,
+      "views": 1150,
       "suggest": {
-        "review": 1
+        "sports": 1
       },
       "examples": [
-        "🎎전통혼례 스냅촬영 리뷰 #삼청각 #전통혼례 #국제커플 #koreatraditionalwedding"
+        "광복 80년 특별기획 “세계로 향한 스포츠 파워” | 대한민국 영광의 20장면 11부"
+      ]
+    },
+    {
+      "channelId": "UCDz9ZRL9GqfbkHyhCxIyC5g",
+      "channelTitle": "김홍종",
+      "country": null,
+      "videos": 1,
+      "views": 1144,
+      "suggest": {
+        "politics": 1
+      },
+      "examples": [
+        "민주당과 이재명도 내부사정 복잡할듯  티비조선정치쇼"
       ]
     },
     {
@@ -5283,7 +5209,7 @@
       "channelTitle": "NewAuto Show",
       "country": "US",
       "videos": 1,
-      "views": 1111,
+      "views": 1114,
       "suggest": {
         "review": 1
       },
@@ -5292,16 +5218,16 @@
       ]
     },
     {
-      "channelId": "UC8_LPVE4Yuc6KF0opF6uS_w",
-      "channelTitle": "KTV 아카이브",
-      "country": "KR",
+      "channelId": "UC1pphmFfGv5pV7QpZRty_Wg",
+      "channelTitle": "한인 이민자의 미국살이",
+      "country": "US",
       "videos": 1,
-      "views": 1108,
+      "views": 1107,
       "suggest": {
-        "sports": 1
+        "senior": 1
       },
       "examples": [
-        "광복 80년 특별기획 “세계로 향한 스포츠 파워” | 대한민국 영광의 20장면 11부"
+        "'놓치면 손해' 트럼프의 '이 법안'이 한인 시니어 생활을 바꿉니다 (시니어 보너스 디덕션,메디케이드,스냅)"
       ]
     },
     {
@@ -5322,12 +5248,38 @@
       "channelTitle": "elenasmirnov",
       "country": "EG",
       "videos": 1,
-      "views": 1089,
+      "views": 1087,
       "suggest": {
         "community": 1
       },
       "examples": [
         "[에볼루션] 각종 커뮤니티 보증 1등 안전 놀이터 #에볼루션 #에볼 #에볼루션카지노 #에볼루션바카라"
+      ]
+    },
+    {
+      "channelId": "UCaWQoI4g9J0A0o_yCEeEX3Q",
+      "channelTitle": "인생덕후",
+      "country": "KR",
+      "videos": 1,
+      "views": 1074,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "“매주 토요일, 다른 남자의 여자가 된다”#황혼연예#반전사연#오디오북#막장드라마#창작드라마#충격실화"
+      ]
+    },
+    {
+      "channelId": "UCrKSOBZt0hlvi4t_iD_Vkrg",
+      "channelTitle": "Korean top machines ",
+      "country": "KR",
+      "videos": 1,
+      "views": 1067,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "🇰🇷 2026 KF-31 Thunderstrike 리뷰! 한국 차세대 전투기의 모든 것 ✈️🔥"
       ]
     },
     {
@@ -5345,29 +5297,16 @@
       ]
     },
     {
-      "channelId": "UC1pphmFfGv5pV7QpZRty_Wg",
-      "channelTitle": "한인 이민자의 미국살이",
-      "country": "US",
+      "channelId": "UCUJaNY1u3GEq_mpQBoXlboQ",
+      "channelTitle": "우주소년 SPACE BOY ",
+      "country": "KR",
       "videos": 1,
-      "views": 1037,
+      "views": 1045,
       "suggest": {
-        "senior": 1
+        "review": 1
       },
       "examples": [
-        "'놓치면 손해' 트럼프의 '이 법안'이 한인 시니어 생활을 바꿉니다 (시니어 보너스 디덕션,메디케이드,스냅)"
-      ]
-    },
-    {
-      "channelId": "UCNwVuui2poN4U67PGWDALRQ",
-      "channelTitle": "쇼츠세상",
-      "country": null,
-      "videos": 1,
-      "views": 1031,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "구준엽의 끝없는 사랑, 서희원을 향한 그리움, 연예, 스포츠, 드라마를 재미있게"
+        "1964 도쿄 올림픽 세이코 월드타임 6117-6400 리뷰"
       ]
     },
     {
@@ -5375,12 +5314,25 @@
       "channelTitle": "규카랜드",
       "country": null,
       "videos": 1,
-      "views": 1028,
+      "views": 1026,
       "suggest": {
         "community": 1
       },
       "examples": [
         "친구야 왜..커뮤니티보세요"
+      ]
+    },
+    {
+      "channelId": "UCNwVuui2poN4U67PGWDALRQ",
+      "channelTitle": "쇼츠세상",
+      "country": null,
+      "videos": 1,
+      "views": 1026,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "구준엽의 끝없는 사랑, 서희원을 향한 그리움, 연예, 스포츠, 드라마를 재미있게"
       ]
     },
     {
@@ -5397,16 +5349,16 @@
       ]
     },
     {
-      "channelId": "UCUJaNY1u3GEq_mpQBoXlboQ",
-      "channelTitle": "우주소년 SPACE BOY ",
+      "channelId": "UCUxVsaFqX5EG7z-DLgo-GOg",
+      "channelTitle": "해피실버",
       "country": "KR",
       "videos": 1,
-      "views": 1012,
+      "views": 1020,
       "suggest": {
-        "review": 1
+        "senior": 1
       },
       "examples": [
-        "1964 도쿄 올림픽 세이코 월드타임 6117-6400 리뷰"
+        "관계 중 남자들이 흔히 하는 거짓말 #시니어 #시니어라이프 #시니어건강"
       ]
     },
     {
@@ -5438,24 +5390,11 @@
       ]
     },
     {
-      "channelId": "UCnhrAc3wK9_3W6eYCxeyjYg",
-      "channelTitle": "진짜FACT",
-      "country": "KR",
-      "videos": 1,
-      "views": 979,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "남현희 전청조 공범 불인정 #이슈 #연예 #뉴스"
-      ]
-    },
-    {
       "channelId": "UCXcXzDQG3zPreygQiUzzAKw",
       "channelTitle": "꽃태자",
       "country": "KR",
       "videos": 1,
-      "views": 978,
+      "views": 979,
       "suggest": {
         "official": 1
       },
@@ -5481,7 +5420,7 @@
       "channelTitle": "옛능: OBS 예능",
       "country": "KR",
       "videos": 2,
-      "views": 954,
+      "views": 963,
       "suggest": {
         "entertainment": 2
       },
@@ -5491,16 +5430,16 @@
       ]
     },
     {
-      "channelId": "UCDz9ZRL9GqfbkHyhCxIyC5g",
-      "channelTitle": "김홍종",
-      "country": null,
+      "channelId": "UCnhrAc3wK9_3W6eYCxeyjYg",
+      "channelTitle": "진짜FACT",
+      "country": "KR",
       "videos": 1,
-      "views": 947,
+      "views": 952,
       "suggest": {
-        "politics": 1
+        "entertainment": 1
       },
       "examples": [
-        "민주당과 이재명도 내부사정 복잡할듯  티비조선정치쇼"
+        "남현희 전청조 공범 불인정 #이슈 #연예 #뉴스"
       ]
     },
     {
@@ -5508,12 +5447,38 @@
       "channelTitle": "돌도사의 난도질 북소리",
       "country": "KR",
       "videos": 1,
-      "views": 913,
+      "views": 911,
       "suggest": {
         "politics": 1
       },
       "examples": [
         "정치보복은 어디까지/난도질북소리 #이재명#정치보복#내란#특별재핀부#사법개혁#더불어민주당#정청래#개딸#강성#국민의힘#장동혁#한동훈#송언석#특검#통"
+      ]
+    },
+    {
+      "channelId": "UCkg-p8nRSPFPPDjGPrbHsPA",
+      "channelTitle": "혁나브리",
+      "country": "KR",
+      "videos": 1,
+      "views": 910,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "국가대표 팀리뷰 스쿼드 13종 모음"
+      ]
+    },
+    {
+      "channelId": "UC0eDM-GrWgBvXGP0Pq8IhBA",
+      "channelTitle": "오재논",
+      "country": null,
+      "videos": 1,
+      "views": 909,
+      "suggest": {
+        "community": 1
+      },
+      "examples": [
+        "커뮤니티 데이 이로치 플라베베 겟(포켓몬GO)"
       ]
     },
     {
@@ -5561,39 +5526,13 @@
       "channelTitle": "코인서퍼",
       "country": null,
       "videos": 2,
-      "views": 891,
+      "views": 887,
       "suggest": {
         "official": 2
       },
       "examples": [
         "[오피셜트럼프 코인] 건드리면 가능성이 높은 이유는? 이미 과거데이터가 있습니다 ㄷㄷ",
         "[오피셜트럼프 코인] 건드리면 가능성이 높은 이유는? 이미 과거데이터가 있습니다 ㄷㄷ"
-      ]
-    },
-    {
-      "channelId": "UCkg-p8nRSPFPPDjGPrbHsPA",
-      "channelTitle": "혁나브리",
-      "country": "KR",
-      "videos": 1,
-      "views": 890,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "국가대표 팀리뷰 스쿼드 13종 모음"
-      ]
-    },
-    {
-      "channelId": "UC2DqPMAi32duj5oE-KjQfqg",
-      "channelTitle": "다시보는 인생사연",
-      "country": "KR",
-      "videos": 1,
-      "views": 863,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "5억 사라진 할아버지...범인은 전화기 너머 목소리 #사연 #실화 #시니어"
       ]
     },
     {
@@ -5610,11 +5549,37 @@
       ]
     },
     {
+      "channelId": "UC2DqPMAi32duj5oE-KjQfqg",
+      "channelTitle": "다시보는 인생사연",
+      "country": "KR",
+      "videos": 1,
+      "views": 861,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "5억 사라진 할아버지...범인은 전화기 너머 목소리 #사연 #실화 #시니어"
+      ]
+    },
+    {
+      "channelId": "UC6oI7ceQkDkSAkR3uu2BVow",
+      "channelTitle": "권영찬TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 845,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "박서진 KBS 연예대상 대상 최우수상 노려 트로트 장장구의신"
+      ]
+    },
+    {
       "channelId": "UCL-dOXBaPey9yOPGwOmU3MQ",
       "channelTitle": "AdamswellO",
       "country": null,
       "videos": 1,
-      "views": 835,
+      "views": 833,
       "suggest": {
         "politics": 1
       },
@@ -5623,29 +5588,29 @@
       ]
     },
     {
-      "channelId": "UCq8zYBjKzmFbG3uB8tZWQbg",
-      "channelTitle": "원룸필수템",
-      "country": null,
-      "videos": 1,
-      "views": 825,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "✨주방 혁명 기름때도 싹! 다용도 세척 용기 세트 리뷰🧼"
-      ]
-    },
-    {
       "channelId": "UC-ZsnGP0fH-9DVq2y9WLmLg",
       "channelTitle": "역사썰어조림",
       "country": "KR",
       "videos": 1,
-      "views": 816,
+      "views": 815,
       "suggest": {
         "community": 1
       },
       "examples": [
         "잘 생기면 바로 데뷔! 조선판 연예 기획사"
+      ]
+    },
+    {
+      "channelId": "UCq8zYBjKzmFbG3uB8tZWQbg",
+      "channelTitle": "원룸필수템",
+      "country": null,
+      "videos": 1,
+      "views": 766,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "✨주방 혁명 기름때도 싹! 다용도 세척 용기 세트 리뷰🧼"
       ]
     },
     {
@@ -5659,19 +5624,6 @@
       },
       "examples": [
         "[스포츠분석]9월13일(토)MLB,미국야구,프리뷰,스포츠토토,프로토,윈드로우"
-      ]
-    },
-    {
-      "channelId": "UC0eDM-GrWgBvXGP0Pq8IhBA",
-      "channelTitle": "오재논",
-      "country": null,
-      "videos": 1,
-      "views": 754,
-      "suggest": {
-        "community": 1
-      },
-      "examples": [
-        "커뮤니티 데이 이로치 플라베베 겟(포켓몬GO)"
       ]
     },
     {
@@ -5692,12 +5644,38 @@
       "channelTitle": "15년 경력의 중고차 전문가 \"카봄\"",
       "country": "KR",
       "videos": 1,
-      "views": 679,
+      "views": 690,
       "suggest": {
         "review": 1
       },
       "examples": [
         "풀옵션 말고 깡통? 현실적인 아이오닉6 페이스리프트 솔직리뷰 #shots"
+      ]
+    },
+    {
+      "channelId": "UCxi77hJnUpeGs5ZEnqx0aNg",
+      "channelTitle": "시니어학교 강동구 데이케어센터",
+      "country": null,
+      "videos": 1,
+      "views": 689,
+      "suggest": {
+        "senior": 1
+      },
+      "examples": [
+        "#주간보호센터 #데이케어센터 #강남데이케어센터 #시니어학교"
+      ]
+    },
+    {
+      "channelId": "UCI7NoF3EEkFT303Fe0j1UtA",
+      "channelTitle": "다이어림",
+      "country": null,
+      "videos": 1,
+      "views": 681,
+      "suggest": {
+        "official": 1
+      },
+      "examples": [
+        "Official髭男dism - Pretender 커버"
       ]
     },
     {
@@ -5711,19 +5689,6 @@
       },
       "examples": [
         "플라베베 커뮤니티데이때 만난 파란색 #이로치 #플라베베 #포켓몬고 #pokemongo"
-      ]
-    },
-    {
-      "channelId": "UCoXhAQhKVQ7YESixXq2Y1jQ",
-      "channelTitle": "중년패션 다다인 TV",
-      "country": "KR",
-      "videos": 1,
-      "views": 649,
-      "suggest": {
-        "senior": 1
-      },
-      "examples": [
-        "가을 코디 이 원피스 하나로 끝 ! #중년패션 #린넨원피스 #시니어패션"
       ]
     },
     {
@@ -5757,26 +5722,13 @@
       "channelTitle": "꽁위키",
       "country": null,
       "videos": 2,
-      "views": 567,
+      "views": 561,
       "suggest": {
         "community": 2
       },
       "examples": [
         "먹튀검증 커뮤니티 꽁위키 #꽁머니 #꽁위키 #먹튀검증 #먹튀검증커뮤니티 #먹튀 #먹튀사이트 #먹튀확정 #먹튀확정",
         "먹튀검증 커뮤니티 꽁위키 #꽁위키 #먹튀검증 #먹튀검증커뮤니티 #먹튀 #먹튀사이트 #꽁머니"
-      ]
-    },
-    {
-      "channelId": "UCI7NoF3EEkFT303Fe0j1UtA",
-      "channelTitle": "다이어림",
-      "country": null,
-      "videos": 1,
-      "views": 537,
-      "suggest": {
-        "official": 1
-      },
-      "examples": [
-        "Official髭男dism - Pretender 커버"
       ]
     },
     {
@@ -5793,16 +5745,16 @@
       ]
     },
     {
-      "channelId": "UCUxVsaFqX5EG7z-DLgo-GOg",
-      "channelTitle": "해피실버",
-      "country": "KR",
+      "channelId": "UCs89kEeHVfZR4deyEQAOG9w",
+      "channelTitle": "richardkhu50",
+      "country": null,
       "videos": 1,
-      "views": 527,
+      "views": 510,
       "suggest": {
-        "senior": 1
+        "sports": 1
       },
       "examples": [
-        "관계 중 남자들이 흔히 하는 거짓말 #시니어 #시니어라이프 #시니어건강"
+        "[MLB] 애틀랜타 vs 휴스턴 앰엘비 #스포츠분석#스포츠중계#엠엘비"
       ]
     },
     {
@@ -5836,7 +5788,7 @@
       "channelTitle": "GAME WORLD",
       "country": "KR",
       "videos": 1,
-      "views": 480,
+      "views": 477,
       "suggest": {
         "community": 1
       },
@@ -5849,7 +5801,7 @@
       "channelTitle": "예쁨비",
       "country": "KR",
       "videos": 1,
-      "views": 448,
+      "views": 447,
       "suggest": {
         "official": 1
       },
@@ -5862,7 +5814,7 @@
       "channelTitle": "WhosfanTV 후즈팬TV",
       "country": "KR",
       "videos": 2,
-      "views": 409,
+      "views": 410,
       "suggest": {
         "official": 2
       },
@@ -5950,16 +5902,16 @@
       ]
     },
     {
-      "channelId": "UClexcBGaayVAmwxb9senAbA",
-      "channelTitle": "크리스티나TV",
-      "country": "KR",
+      "channelId": "UCvLt8Tdk4A8d6XYE2neqSlw",
+      "channelTitle": "가수고길수 ♡친구야♡TV",
+      "country": null,
       "videos": 1,
-      "views": 332,
+      "views": 330,
       "suggest": {
-        "official": 1
+        "entertainment": 1
       },
       "examples": [
-        "한일가왕전 타케나카 유다이 오피셜 히게 단디즘 타케나타 유다이 박서진 진해성 에녹 신승태 김준수 최수호 강문경"
+        "25년9월14일/부산연예협회/제9회 부산항해양가요제 예심2부"
       ]
     },
     {
@@ -5989,16 +5941,16 @@
       ]
     },
     {
-      "channelId": "UCvLt8Tdk4A8d6XYE2neqSlw",
-      "channelTitle": "가수고길수 ♡친구야♡TV",
-      "country": null,
+      "channelId": "UCkSTFYGv0qmTX2RsT-ZMs_w",
+      "channelTitle": "소곤소곤이야기",
+      "country": "KR",
       "videos": 1,
-      "views": 313,
+      "views": 309,
       "suggest": {
         "entertainment": 1
       },
       "examples": [
-        "25년9월14일/부산연예협회/제9회 부산항해양가요제 예심2부"
+        "\"신지, 성형의혹 직접 해명!\"  #신지 #코요태 #성형의혹 #연예이슈 #가짜뉴스 #해명 #문원 #결혼#연예뉴스 #이슈 #핫이슈"
       ]
     },
     {
@@ -6014,6 +5966,19 @@
       "examples": [
         "🔥야노 뉴스 1분 정리 #연예 #Shorts",
         "🔥오피셜 뉴스 1분 정리 #스포츠 #Shorts"
+      ]
+    },
+    {
+      "channelId": "UCukLhgqUrVpOukQCXirTZzg",
+      "channelTitle": "맨유정보통",
+      "country": null,
+      "videos": 1,
+      "views": 300,
+      "suggest": {
+        "sports": 1
+      },
+      "examples": [
+        "[오피셜]맨유 맨시티 상대로 3:0패 #맨유 #맨시티 #manchesterunited #맨체스터유나이티드 #축구 #호일룬 #피파4 #쿠냐 #fo"
       ]
     },
     {
@@ -6047,25 +6012,12 @@
       "channelTitle": "Alchemist",
       "country": "KR",
       "videos": 1,
-      "views": 264,
+      "views": 265,
       "suggest": {
         "official": 1
       },
       "examples": [
         "오피셜히게단디즘-Pretender l 서울대학교 화학생물공학부 밴드 알케미스트 2025년 9월 정기공연 1부-4"
-      ]
-    },
-    {
-      "channelId": "UCznZV954R6e9KSOfOB6OAtQ",
-      "channelTitle": "트롯뉴스TV",
-      "country": null,
-      "videos": 1,
-      "views": 245,
-      "suggest": {
-        "official": 1
-      },
-      "examples": [
-        "한일가왕전 타케나카 유다이 오피셜 히게 단디즘 눈물 타케나카 유다이 박서진 진해성 에녹 신승태 김준수 최수호 강문경"
       ]
     },
     {
@@ -6086,12 +6038,38 @@
       "channelTitle": "현장속으로-부동산",
       "country": "KR",
       "videos": 1,
-      "views": 236,
+      "views": 234,
       "suggest": {
         "community": 1
       },
       "examples": [
         "왕길역 푸르지오 신검단 로얄파크 시티2의 최첨단 커뮤니티 시설 완전 정복!"
+      ]
+    },
+    {
+      "channelId": "UCf9maYt48dFrIZtWp1N7BGw",
+      "channelTitle": "해석왕 고태일 MovieMonster",
+      "country": "KR",
+      "videos": 1,
+      "views": 234,
+      "suggest": {
+        "review": 1
+      },
+      "examples": [
+        "올해 최악의 드라마🐯 I 트웰브 리뷰"
+      ]
+    },
+    {
+      "channelId": "UC4Fc1b1y3oUfbz_Erl78FQw",
+      "channelTitle": "어반스토리어",
+      "country": null,
+      "videos": 1,
+      "views": 229,
+      "suggest": {
+        "sports": 1
+      },
+      "examples": [
+        "#청담르엘 #청담르엘사전점검 #청담르엘골프 #청담르엘커뮤니티"
       ]
     },
     {
@@ -6108,24 +6086,11 @@
       ]
     },
     {
-      "channelId": "UCf9maYt48dFrIZtWp1N7BGw",
-      "channelTitle": "해석왕 고태일 MovieMonster",
-      "country": "KR",
-      "videos": 1,
-      "views": 226,
-      "suggest": {
-        "review": 1
-      },
-      "examples": [
-        "올해 최악의 드라마🐯 I 트웰브 리뷰"
-      ]
-    },
-    {
       "channelId": "UCt5-aCkiIKgHFkxHpulZOCw",
       "channelTitle": "바른자세 걷기 걸음걸이 연구가 정성열",
       "country": "KR",
       "videos": 1,
-      "views": 223,
+      "views": 224,
       "suggest": {
         "senior": 1
       },
@@ -6134,29 +6099,16 @@
       ]
     },
     {
-      "channelId": "UCx5dEsD6xW54wSx7_TEihAA",
-      "channelTitle": "도성TV",
-      "country": "KR",
-      "videos": 1,
-      "views": 217,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "살림남 박서진, 2025‘연예대상’ 대상·최우수상·우수상 셋 중 하나 어색한 워킹대상 야망!"
-      ]
-    },
-    {
-      "channelId": "UC4Fc1b1y3oUfbz_Erl78FQw",
-      "channelTitle": "어반스토리어",
+      "channelId": "UCQ8WiRMUbbPayatMhiDm9lA",
+      "channelTitle": "건강을위하여",
       "country": null,
       "videos": 1,
-      "views": 214,
+      "views": 200,
       "suggest": {
         "sports": 1
       },
       "examples": [
-        "#청담르엘 #청담르엘사전점검 #청담르엘골프 #청담르엘커뮤니티"
+        "건강을 위한 1분 12화(골다공증) #시니어 #건강 #시니어건강 #건강 #건강지식 #건강한중년 #인생2막 #골다공증 #건강을위하여"
       ]
     },
     {
@@ -6204,7 +6156,7 @@
       "channelTitle": "Love_러브",
       "country": null,
       "videos": 1,
-      "views": 179,
+      "views": 177,
       "suggest": {
         "entertainment": 1
       },
@@ -6230,13 +6182,26 @@
       "channelTitle": "BERU",
       "country": null,
       "videos": 2,
-      "views": 142,
+      "views": 144,
       "suggest": {
         "official": 2
       },
       "examples": [
         "イエスタデ(Yesterday | 예스터데이) - Official髭男dism(오피셜히게단디즘) (HELLO WORLD OST) 노래방 +2Key",
         "Pretender - Official髭男dism(오피셜히게단디즘) 노래방 +2Key"
+      ]
+    },
+    {
+      "channelId": "UCu8nwlbwqfKjtBzZ-YinyiA",
+      "channelTitle": "디아이TV",
+      "country": "KR",
+      "videos": 1,
+      "views": 140,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "[트민디] 연예림 \"성형 중독? NO, 잘못된 수술의 결과입니다\" 성형외과 전문의가 밝히는 재수술의 진실 | 디아이성형외과"
       ]
     },
     {
@@ -6250,19 +6215,6 @@
       },
       "examples": [
         "미국 시니어들이 자주 놓치는 의료비 절약법 TOP 7, 매년 수천달러 아끼세요 I 미국교포 I"
-      ]
-    },
-    {
-      "channelId": "UCu8nwlbwqfKjtBzZ-YinyiA",
-      "channelTitle": "디아이TV",
-      "country": "KR",
-      "videos": 1,
-      "views": 138,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "[트민디] 연예림 \"성형 중독? NO, 잘못된 수술의 결과입니다\" 성형외과 전문의가 밝히는 재수술의 진실 | 디아이성형외과"
       ]
     },
     {
@@ -6290,32 +6242,6 @@
       "examples": [
         "오피셜트럼프, TURMP 역대급 합병 결정했다 #오피셜트럼프",
         "[오피셜트럼프 코인] 재단 긴급 승부수! \"초대형 이슈\" 드디어 온다! #오피셜트럼프전망 #오피셜트럼프목표가 #오피셜트럼프 #오피셜트럼프호재 #"
-      ]
-    },
-    {
-      "channelId": "UCBOKHlcrcqyontywxlND2eg",
-      "channelTitle": "인정이TV",
-      "country": null,
-      "videos": 1,
-      "views": 122,
-      "suggest": {
-        "entertainment": 1
-      },
-      "examples": [
-        "#동두천락페스티벌#동두천연예협회#동두천 스프링스 축하무대"
-      ]
-    },
-    {
-      "channelId": "UC7Vx9IZxvVm6zc0y8_I02Nw",
-      "channelTitle": "OORT",
-      "country": "KR",
-      "videos": 1,
-      "views": 120,
-      "suggest": {
-        "official": 1
-      },
-      "examples": [
-        "No Doubt-오피셜히게단디즘 [호시마치 스이세이 / 2019-6-10]"
       ]
     },
     {
@@ -6364,7 +6290,7 @@
       "channelTitle": "슈링𐙚⋆˚",
       "country": null,
       "videos": 1,
-      "views": 97,
+      "views": 98,
       "suggest": {
         "community": 1
       },
@@ -6505,6 +6431,19 @@
       ]
     },
     {
+      "channelId": "UC-BAHTjeysEpLYmWrZfR_0g",
+      "channelTitle": "크립토트레이딩 [ Crypto-Trading ]",
+      "country": "KR",
+      "videos": 1,
+      "views": 49,
+      "suggest": {
+        "official": 1
+      },
+      "examples": [
+        "[오피셜트럼프 목표가] 충격의 1% 시나리오 드러났다! 단 5분 전략 공개"
+      ]
+    },
+    {
       "channelId": "UCoOCZD4tS0Unl5U8vsK6Www",
       "channelTitle": "냥냥씨로또",
       "country": "KR",
@@ -6535,7 +6474,7 @@
       "channelTitle": "다람",
       "country": null,
       "videos": 1,
-      "views": 34,
+      "views": 32,
       "suggest": {
         "community": 1
       },
@@ -6620,19 +6559,6 @@
       },
       "examples": [
         "[오피셜트럼프] 오피셜트럼프, 이 가격이 다시 나올까? 바닥권 매수 기회 포착 #오피셜트럼프"
-      ]
-    },
-    {
-      "channelId": "UC88snbSyoeaz3yqO5QmLCdw",
-      "channelTitle": "ㅇㅇ",
-      "country": null,
-      "videos": 1,
-      "views": 13,
-      "suggest": {
-        "official": 1
-      },
-      "examples": [
-        "250831 UNXL(언오피셜) - 번져가 @공상온도"
       ]
     },
     {
@@ -6819,20 +6745,6 @@
       ]
     },
     {
-      "channelId": "UCuVZziLdu52O-CVLqczQVnw",
-      "channelTitle": "남자의 사진첩",
-      "country": null,
-      "videos": 2,
-      "views": 2,
-      "suggest": {
-        "entertainment": 2
-      },
-      "examples": [
-        "#shorts #연예뉴스 #핫이슈 #실시간검색어 #충격폭로 #이슈쇼츠 송중기 마약 스캔들 기자회견 현장 대박 반전 팬들 난리난 이유 소름 연예계",
-        "#shorts #연예계핫이슈 #실시간검색어 #핫토픽 #충격실화 #연예뉴스 아이유 학폭 충격 폭로?! 팬들 멘붕 역대급 반전 결말 소름 돋았다 댓"
-      ]
-    },
-    {
       "channelId": "UC1-JH4vPrPgrr-KiOAx5Vmw",
       "channelTitle": "건강뿌리TV",
       "country": null,
@@ -6856,6 +6768,19 @@
       },
       "examples": [
         "철권 커뮤니티"
+      ]
+    },
+    {
+      "channelId": "UCuVZziLdu52O-CVLqczQVnw",
+      "channelTitle": "남자의 사진첩",
+      "country": null,
+      "videos": 1,
+      "views": 1,
+      "suggest": {
+        "entertainment": 1
+      },
+      "examples": [
+        "#shorts #연예계핫이슈 #실시간검색어 #핫토픽 #충격실화 #연예뉴스 아이유 학폭 충격 폭로?! 팬들 멘붕 역대급 반전 결말 소름 돋았다 댓"
       ]
     }
   ]
