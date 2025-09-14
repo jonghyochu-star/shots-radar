@@ -1,14 +1,5 @@
 // scripts/fetch-trend.js
 // ESM / Node >= 20
-//
-// 기능 요약
-// - 카테고리별 YouTube 검색 → videos.list 상세 조회
-// - 룰 + 채널 prior + (수동 라벨 포함) 멀티레이블 가중치
-// - 한국 타겟팅(언어/채널국가 캐시) 적용
-// - 시계열 집계 → public/kw-trend.json
-// - 보조 산출물: ch-prior.json, ch-geo.json, kw-debug.json
-// - 검토 파일: ch-review.json / ch-review.csv(엑셀 URL 클릭 가능, BOM 첨부)
-// - CSV 직독 수동 라벨: ch-review.csv / ch-manual.csv / ch-manual.json(우선순위: review.csv > manual.csv > manual.json)
 
 import fs from 'fs';
 import path from 'path';
@@ -39,6 +30,10 @@ const RULES_PATH         = process.env.SCORING_RULES_PATH || path.join(__dirname
 const CH_PRIOR_PATH      = process.env.CH_PRIOR_PATH || path.join(__dirname, '..', 'public', 'ch-prior.json');
 const DEBUG_OUT_PATH     = path.join(__dirname, '..', 'public', 'kw-debug.json');
 
+const CH_REVIEW_JSON_PATH = path.join(__dirname,'..','public','ch-review.json');
+const CH_REVIEW_CSV_PATH  = path.join(__dirname,'..','public','ch-review.csv');
+const CH_REVIEW_XLSX_PATH = path.join(__dirname,'..','public','ch-review.xlsx');
+
 // -------------------- 한국 타겟팅 --------------------
 const REGION_FILTER = process.env.REGION_FILTER || 'KR';
 const LANG_PREF = process.env.LANG_PREF || 'ko';
@@ -50,13 +45,12 @@ const CH_GEO_CACHE_PATH = process.env.CH_GEO_CACHE_PATH
   || path.join(__dirname, '..', 'public', 'ch-geo.json');
 
 // -------------------- 수동 라벨링 --------------------
-const CH_MANUAL_PATH   = process.env.CH_MANUAL_PATH || path.join(__dirname, '..', 'public', 'ch-manual.json');
+const CH_MANUAL_PATH     = process.env.CH_MANUAL_PATH || path.join(__dirname, '..', 'public', 'ch-manual.json');
 const CH_MANUAL_CSV_PATH = process.env.CH_MANUAL_CSV_PATH || path.join(__dirname, '..', 'public', 'ch-manual.csv');
-const MANUAL_FROM_REVIEW_CSV = process.env.MANUAL_FROM_REVIEW_CSV === '1'; // ch-review.csv rules 열을 바로 읽음
-
-const MANUAL_MODE      = process.env.MANUAL_MODE || 'soft';              // 'soft' | 'hard'
-const MANUAL_POS_BOOST = Number(process.env.MANUAL_POS_BOOST || '1.6');  // 포함 라벨 최소 부스트
-const MANUAL_NEG_BOOST = Number(process.env.MANUAL_NEG_BOOST || '0.8');  // 비포함 라벨 상한
+const MANUAL_FROM_REVIEW_CSV  = process.env.MANUAL_FROM_REVIEW_CSV === '1'; // ch-review.csv/.xlsx의 rules 읽기
+const MANUAL_MODE        = process.env.MANUAL_MODE || 'soft';              // 'soft' | 'hard'
+const MANUAL_POS_BOOST   = Number(process.env.MANUAL_POS_BOOST || '1.6');
+const MANUAL_NEG_BOOST   = Number(process.env.MANUAL_NEG_BOOST || '0.8');
 
 // -------------------- 리뷰 파일 생성 --------------------
 const SR_CH_REVIEW = process.env.SR_CH_REVIEW === '1';
@@ -64,17 +58,11 @@ const SR_CH_REVIEW = process.env.SR_CH_REVIEW === '1';
 // -------------------- 라벨/규칙 --------------------
 const CATEGORIES = ['AI','게임','커뮤니티','리뷰','정치','연예','시니어','오피셜','스포츠'];
 const RULE2LABEL = {
-  ai: 'AI',
-  game: '게임',
-  community: '커뮤니티',
-  review: '리뷰',
-  politics: '정치',
-  entertainment: '연예',
-  senior: '시니어',
-  official: '오피셜',
-  sports: '스포츠',
+  ai: 'AI', game: '게임', community: '커뮤니티', review: '리뷰', politics: '정치',
+  entertainment: '연예', senior: '시니어', official: '오피셜', sports: '스포츠',
 };
 const ALLOWED_RULES = new Set(Object.keys(RULE2LABEL));
+const UNASSIGNED_SET = new Set(['unassigned','none','미지정','미분류','-']);
 
 // -------------------- 유틸 --------------------
 function readJsonSafe(p, fallback = {}) {
@@ -121,7 +109,7 @@ function isKoreanSnippet(snippet,tags=[]){
   return hintKo || ratio >= LANG_MIN_HANGUL_RATIO;
 }
 
-// -------------------- CSV 파서 & 수동라벨 로더 --------------------
+// -------------------- CSV/XLSX 로더 & 드롭다운 --------------------
 function parseCSV(text){
   if (text && text.charCodeAt(0) === 0xFEFF) text = text.slice(1); // strip BOM
   const rows=[]; let cur=[], field='', inQ=false;
@@ -143,7 +131,9 @@ function parseCSV(text){
 }
 function splitRules(s){
   if(!s) return [];
-  const arr=String(s).split(/[|,]/).map(t=>t.trim().toLowerCase()).filter(Boolean);
+  const raw = String(s).trim();
+  if (UNASSIGNED_SET.has(raw.toLowerCase())) return [];
+  const arr=raw.split(/[|,]/).map(t=>t.trim().toLowerCase()).filter(Boolean);
   return [...new Set(arr)].filter(k=>ALLOWED_RULES.has(k));
 }
 function loadManualFromCSV(csvPath){
@@ -153,7 +143,7 @@ function loadManualFromCSV(csvPath){
   const header=rows[0].map(h=>String(h||'').trim().toLowerCase());
   const idxId=header.indexOf('channelid');
   const idxRules=header.indexOf('rules');
-  const idxNote=header.indexOf('note'); // optional
+  const idxNote=header.indexOf('note');
   if(idxId<0 || idxRules<0) return {};
   const out={};
   for(let r=1;r<rows.length;r++){
@@ -166,6 +156,90 @@ function loadManualFromCSV(csvPath){
   return out;
 }
 
+// XLSX 읽기 (있으면 CSV보다 우선)
+async function loadManualFromXLSX(xlsxPath){
+  try{
+    if(!fs.existsSync(xlsxPath)) return {};
+    const ExcelJS = (await import('exceljs')).default;
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile(xlsxPath);
+    const ws = wb.getWorksheet('review') || wb.worksheets[0];
+    if(!ws) return {};
+    const headerRow = ws.getRow(1);
+    const headers = headerRow.values.map(v=>String(v||'').trim().toLowerCase());
+    const idxId    = headers.findIndex(h=>h==='channelid');
+    const idxRules = headers.findIndex(h=>h==='rules');
+    const idxNote  = headers.findIndex(h=>h==='note');
+    if(idxId<0 || idxRules<0) return {};
+    const out={};
+    for(let r=2; r<=ws.rowCount; r++){
+      const row = ws.getRow(r).values;
+      const id   = String(row[idxId] || '').trim();
+      const rules= splitRules(row[idxRules] || '');
+      const note = idxNote>0 ? String(row[idxNote] || '').trim() : '';
+      if(!id || rules.length===0) continue;
+      out[id] = { rules, ...(note?{note}:{}) };
+    }
+    return out;
+  }catch(e){
+    console.warn('[manual:xlsx] skip:', e?.message||e);
+    return {};
+  }
+}
+
+// XLSX 생성 (rules 드롭다운)
+async function writeReviewXLSX(rows){
+  try{
+    const ExcelJS = (await import('exceljs')).default;
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('review', {properties:{tabColor:{argb:'FFDDEEFF'}}});
+
+    const headers = [
+      'channelId','channelUrl','channelTitle','country','videos','views','suggest','examples','rules','note'
+    ];
+    ws.addRow(headers);
+
+    for (const r of rows){
+      const url = `https://www.youtube.com/channel/${r.channelId}`;
+      const row = ws.addRow([
+        r.channelId, url, r.channelTitle, r.country || '', r.videos, Math.round(r.views),
+        Object.entries(r.suggest).map(([k,n])=>`${k}:${n}`).join('|'),
+        (r.examples||[]).join(' / '), '', ''
+      ]);
+      // 하이퍼링크
+      ws.getCell(`B${row.number}`).value = { text: url, hyperlink: url };
+    }
+
+    ws.columns = [
+      { key:'channelId', width:28 }, { key:'channelUrl', width:36 },
+      { key:'channelTitle', width:28 }, { key:'country', width:8 },
+      { key:'videos', width:8 }, { key:'views', width:12 },
+      { key:'suggest', width:22 }, { key:'examples', width:60 },
+      { key:'rules', width:16 }, { key:'note', width:24 }
+    ];
+
+    // 드롭다운 목록용 숨김 시트
+    const ref = wb.addWorksheet('ref');
+    const allowedList = [
+      'ai','game','community','review','politics','entertainment','senior','official','sports','unassigned'
+    ];
+    allowedList.forEach((v,i)=> ref.getCell(`A${i+1}`).value = v);
+    ref.state = 'veryHidden';
+
+    // rules 열 데이터 검증
+    const lastRow = ws.rowCount;
+    const dvRange = `I2:I${lastRow}`; // I: rules
+    ws.dataValidations.add(dvRange, {
+      type:'list', allowBlank:true, showErrorMessage:true, errorStyle:'stop',
+      formulae: ['ref!$A$1:$A$10']
+    });
+
+    await wb.xlsx.writeFile(CH_REVIEW_XLSX_PATH);
+  }catch(e){
+    console.warn('[xlsx] workbook not written (exceljs missing?):', e?.message||e);
+  }
+}
+
 // -------------------- 규칙/priors/지오 캐시 --------------------
 const RULES = readJsonSafe(RULES_PATH, {});
 const RULE_KEYS = RULES?.categories ? Object.keys(RULES.categories) : [];
@@ -174,29 +248,20 @@ const P0 = RULE_KEYS.length ? 1/RULE_KEYS.length : 0.1;
 const CHPR  = readJsonSafe(CH_PRIOR_PATH, {});
 const CH_GEO = readJsonSafe(CH_GEO_CACHE_PATH, {});
 
-// 수동 라벨: JSON + manual.csv + (옵션) review.csv
+// 수동 라벨: JSON + manual.csv
 let CH_MAN = readJsonSafe(CH_MANUAL_PATH, {});
 const CH_MAN_CSV = loadManualFromCSV(CH_MANUAL_CSV_PATH);
 CH_MAN = { ...CH_MAN, ...CH_MAN_CSV };
-const CH_REVIEW_CSV_PATH = path.join(__dirname,'..','public','ch-review.csv');
-if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_CSV_PATH)) {
-  const CH_FROM_REVIEW = loadManualFromCSV(CH_REVIEW_CSV_PATH);
-  CH_MAN = { ...CH_MAN, ...CH_FROM_REVIEW };
-}
 
 // -------------------- YouTube API --------------------
 function qs(obj){ return Object.entries(obj).map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'); }
 
 async function ytSearch(q, pageToken=''){
   const params={
-    part:'snippet',
-    type:'video',
-    maxResults:String(RESULTS_PER_PAGE),
-    q,
+    part:'snippet', type:'video', maxResults:String(RESULTS_PER_PAGE), q,
     order:'date',
     publishedAfter: new Date(Date.now()-LOOKBACK_DAYS_SEARCH*86400e3).toISOString(),
-    regionCode: REGION_FILTER,
-    relevanceLanguage: LANG_PREF,
+    regionCode: REGION_FILTER, relevanceLanguage: LANG_PREF,
   };
   if (pageToken) params.pageToken=pageToken;
   const url=`https://www.googleapis.com/youtube/v3/search?${qs(params)}`;
@@ -303,6 +368,17 @@ function initDailySums(){
 
 // -------------------- 메인 --------------------
 async function main(){
+  // XLSX에서 수동 라벨 읽기(있으면 최우선)
+  if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_XLSX_PATH)) {
+    const map = await loadManualFromXLSX(CH_REVIEW_XLSX_PATH);
+    CH_MAN = { ...CH_MAN, ...map };
+  }
+  // CSV도 지원 (엑셀에서 csv로 저장 덮어쓰기 한 경우)
+  if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_CSV_PATH)) {
+    const map = loadManualFromCSV(CH_REVIEW_CSV_PATH);
+    CH_MAN = { ...CH_MAN, ...map };
+  }
+
   // 이전 시계열 로드
   let oldSeries={};
   try {
@@ -415,10 +491,15 @@ async function main(){
 
   // 리뷰 파일
   if (SR_CH_REVIEW){
-    const rows=Object.values(reviewMap).sort((a,b)=>b.views-a.views);
-    writeJsonPretty(path.join(__dirname,'..','public','ch-review.json'), { updatedAt:new Date().toISOString(), rows });
+    const rows=Object.values({}).concat(Object.values(
+      // reviewMap은 채널별로 이미 aggregate
+      reviewMap
+    )).sort((a,b)=>b.views-a.views);
 
-    const header='channelId,channelUrl,channelTitle,country,videos,views,suggest,examples\n';
+    writeJsonPretty(CH_REVIEW_JSON_PATH, { updatedAt:new Date().toISOString(), rows });
+
+    // CSV (rules/note 컬럼 포함)
+    const header='channelId,channelUrl,channelTitle,country,videos,views,suggest,examples,rules,note\n';
     const esc=s=>`"${String(s||'').replace(/"/g,'""')}"`;
     const csv = header + rows.map(r=>{
       const url=`https://www.youtube.com/channel/${r.channelId}`;
@@ -430,11 +511,14 @@ async function main(){
         r.videos,
         Math.round(r.views),
         esc(Object.entries(r.suggest).map(([k,n])=>`${k}:${n}`).join('|')),
-        esc(r.examples.join(' / '))
+        esc((r.examples||[]).join(' / ')),
+        '', '' // rules, note (사용자 입력용)
       ].join(',');
     }).join('\n');
-    // BOM + UTF-8 → 엑셀에서 한글/URL 정상
-    fs.writeFileSync(path.join(__dirname,'..','public','ch-review.csv'), '\ufeff' + csv, 'utf8');
+    fs.writeFileSync(CH_REVIEW_CSV_PATH, '\ufeff' + csv, 'utf8'); // BOM for Excel
+
+    // XLSX (드롭다운 포함)
+    await writeReviewXLSX(rows);
   }
 
   await writeKeyStatus({
