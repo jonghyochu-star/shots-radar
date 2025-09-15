@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shorts Radar - 통합판 v0.9.5</title>
+  <title>Shorts Radar - 통합판 v7.4.0</title>
   <link rel="icon" href="data:,">
   <style>
     :root { --bg:#0b1116; --card:#101922; --muted:#7a8a9a; --text:#e8f0f7; --accent:#62d26f; --accent2:#6aa7ff; --warn:#ffb84d; }
@@ -84,7 +84,8 @@
     .best-card{background:#0f1620;border:1px solid #1f2a36;border-radius:12px;padding:8px;display:flex;gap:8px}
     .best-thumb{width:132px;height:74px;object-fit:cover;border-radius:10px;border:1px solid #223243}
     .meta-row{display:flex;gap:12px;flex-wrap:wrap;color:#a8b9cc;font-size:12px}
-    .badge-soft{display:inline-block;padding:4px 8px;border-radius:999px;background:#0e1620;border:1px solid #213142;color:#b9c7d6}
+    .badge-soft{display:inline-block;padding:4px 8px;border-radius:999px;background:#0e1620;border:1px solid #213142;color:#b9c7d6;cursor:pointer}
+    .badge-soft:disabled{opacity:.5;cursor:not-allowed}
     .hr{height:1px;background:#1e2a36;margin:8px 0}
     .rev-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .rev-out{font-weight:700}
@@ -92,86 +93,23 @@
     .ch-link:hover{opacity:.9}
     @media (max-width:768px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.best-grid{grid-template-columns:1fr}}
   
-/* --- v7.3.3 polish --- */
-#keyState{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-#keyState > *{ margin:0 !important; }
-.quota-flags{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px; }
-.quota-flag{ display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #2a3a4a; background:#0c141c; color:#9fb2c4; }
-.quota-flag.online{ color:#00d084 !important; border-color:#1c3a24 !important; background:#0c1f14 !important; font-weight:700 !important; }
-.quota-flag.offline{ color:#ffb8b8 !important; border-color:#4a1f1f !important; background:#1c0c0c !important; font-weight:700 !important; }
-.mode-badge{ white-space:nowrap; }
-
-/* v7.3.5 inline placement for quota flags */
-#quotaFlags.placed-next-to-reset{ display:inline-flex; gap:8px; margin-left:8px; }
-
-/* v7.3.7: modal refresh button style */
-.badge-soft{ padding:4px 8px; border-radius:999px; border:1px solid #334155; background:#0b1220; color:#cbd5e1; font-size:12px; cursor:pointer; }
-.badge-soft:disabled{ opacity:.5; cursor:not-allowed; }
-
-</style>
-  
-
-
-<script>
-// v7.3.6 guard: ensure snapshot helpers exist even if called early
-(function(){
-  if (typeof window.restoreLastListIfNeeded !== 'function') {
-    window.restoreLastListIfNeeded = function(){ /* no-op early; real impl replaces later */ };
-  }
-  if (typeof window.saveLastList !== 'function') {
-    window.saveLastList = function(){ /* no-op early; real impl replaces later */ };
-  }
-})();
-</script>
-<script>
-// v7.3.5 guard: ensure renderQuotaStateFlag exists before any init references
-(function(){
-  if (typeof window.renderQuotaStateFlag !== 'function') {
-    window.renderQuotaStateFlag = function(){
-      try {
-        var el = document.getElementById('quotaStateFlag');
-        if (!el) return;
-        var offline = (typeof isQuotaLocked === 'function') ? isQuotaLocked() : false;
-        el.className = 'quota-flag ' + (offline ? 'offline' : 'online');
-        el.innerHTML = '상태: <b>' + (offline ? 'OFFLINE(쿼터 소진)' : 'ONLINE') + '</b>';
-      } catch (_) {}
-    };
-  }
-})();
-</script>
-<script>
-// v7.3.4 guard: ensure time helpers exist before any init uses them
-(function(){
-  if (typeof window.pacificTodayStr !== 'function') {
-    window.pacificTodayStr = function(){
-      try {
-        return new Intl.DateTimeFormat('en-CA', { timeZone:'America/Los_Angeles', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date());
-      } catch(_) {
-        const d=new Date(); return d.toISOString().slice(0,10);
-      }
-    };
-  }
-  if (typeof window.nextPacificMidnightISO !== 'function') {
-    window.nextPacificMidnightISO = function(){
-      try {
-        const la = new Date(new Date().toLocaleString('en-US', { timeZone:'America/Los_Angeles' }));
-        la.setHours(24,0,0,0);
-        return la.toISOString();
-      } catch(_) {
-        const d=new Date(); d.setHours(24,0,0,0); return d.toISOString();
-      }
-    };
-  }
-})();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    /* v7.4.0 styles */
+    #keyState{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    #keyState > *{ margin:0 !important; }
+    .quota-flags{ display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; margin-left:8px; }
+    .quota-flag{ display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #2a3a4a; background:#0c141c; color:#9fb2c4; }
+    .quota-flag.online{ color:#00d084 !important; border-color:#1c3a24 !important; background:#0c1f14 !important; font-weight:700 !important; }
+    .quota-flag.offline{ color:#ffb8b8 !important; border-color:#4a1f1f !important; background:#1c0c0c !important; font-weight:700 !important; }
+    .snapshot-notice{background:#1a3a2a;border:2px solid #62d26f;margin:12px 0;padding:12px;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="row" style="justify-content:space-between">
       <div>
-        <h1>Shorts Radar — <span style="color:#7a8a9a">통합판</span> <span style='color:#7a8a9a;font-size:12px;margin-left:8px'>v0.9.5</span></h1>
+        <h1>Shorts Radar — <span style="color:#7a8a9a">통합판</span> <span style='color:#7a8a9a;font-size:12px;margin-left:8px'>v7.4.0</span></h1>
         <div class="sub">라벨 한글화 · S1 확장 지표/필터/정렬 · S2 채널 모달 · Excel Export · 워치리스트 스냅샷(Δ24h)</div>
       </div>
       <div class="row">
@@ -194,51 +132,13 @@
           <label>일일 한도(유닛)</label>
           <input id="quotaLimit" type="number" min="1000" step="100" value="10000" style="width:120px" aria-label="일일 한도" autocomplete="off"/>
           <button id="quotaApply" class="ghost">적용</button>
-          <span id="quotaStat" class="pill"><span id="apiUsageBadge" data-role="api-usage-badge">API 사용량(오늘)</span> 0 / 10000 (0%)</span>
-          <div id="quotaBar" class="qbar"><div class="fill" style="width:0%"></div>
-<div id="quotaFlags" class="quota-flags"><span id="quotaStateFlag" class="quota-flag">상태: <b>ONLINE</b></span></div>
-<script>
-// v7.3.5: place ONLINE/OFFLINE badge next to the "사용량 초기화" button
-(function placeFlagNextToReset(){
-  try{
-    var flags = document.getElementById('quotaFlags');
-    var reset = document.getElementById('quotaReset');
-    if(flags && reset && !flags.classList.contains('placed-next-to-reset')){
-      reset.parentNode.insertBefore(flags, reset);
-      flags.classList.add('placed-next-to-reset');
-      flags.style.display = 'inline-flex';
-      flags.style.marginLeft = '8px';
-      flags.style.verticalAlign = 'middle';
-    }
-  }catch(_){}
-})();
-window.addEventListener('load', function(){ try{ (typeof placeFlagNextToReset === 'function') ? placeFlagNextToReset() : null; }catch(_){} });
-</script>
-</div>
-          <button id="quotaReset" class="ghost">
-<script>
-// v7.3.6: move badge to the RIGHT of the "사용량 초기화" button
-(function placeFlagRightOfReset(){
-  try{
-    var flags = document.getElementById('quotaFlags');
-    var reset = document.getElementById('quotaReset');
-    if(flags && reset && !flags.classList.contains('placed-right-of-reset')){
-      if (reset.nextSibling) {
-        reset.parentNode.insertBefore(flags, reset.nextSibling);
-      } else {
-        reset.parentNode.appendChild(flags);
-      }
-      flags.classList.add('placed-right-of-reset');
-      flags.style.display = 'inline-flex';
-      flags.style.marginLeft = '8px';
-      flags.style.verticalAlign = 'middle';
-    }
-  }catch(_){}
-})();
-window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset === 'function') ? placeFlagRightOfReset() : null; }catch(_){} });
-</script>
-사용량 초기화</button>
+          <span id="quotaStat" class="pill">API 사용량(오늘) 0 / 10000 (0%)</span>
+          <button id="quotaReset" class="ghost">사용량 초기화</button>
+          <div id="quotaFlags" class="quota-flags">
+            <span id="quotaStateFlag" class="quota-flag online">상태: <b>ONLINE</b></span>
+          </div>
         </div>
+        <div id="quotaBar" class="qbar"><div class="fill" style="width:0%"></div></div>
         <!-- 키 회전 상태 표시 -->
         <div id="keyState" class="row" style="gap:6px;margin-top:8px"></div>
       </div>
@@ -346,7 +246,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
           <label>정렬</label>
           <select id="sortKey"></select>
           <select id="sortDir"><option value="desc">내림차순</option><option value="asc">오름차순</option></select>
-          <label>최소 반응률(‰)</label><input id="fMinER" type="number" step="0.1" value="0" style="width:90px"/>
+          <label>최소 반응률 (‰)</label><input id="fMinER" type="number" step="0.1" value="0" style="width:90px"/>
           <label>최소 조회 배율</label><input id="fMinVX" type="number" step="0.1" value="0" style="width:90px"/>
           <label>최소 임팩트 등급</label>
           <select id="fMinGrade"><option value="ALL">전체</option><option value="D">D</option><option value="C">C</option><option value="B">B</option><option value="A">A</option><option value="S">S</option></select>
@@ -367,7 +267,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
               <th>좋아요</th>
               <th>댓글</th>
               <th>속도</th>
-              <th>반응률(‰)</th>
+              <th>반응률 (‰)</th>
               <th>신선도</th>
               <th>조회 배율</th>
               <th>속도 배율</th>
@@ -394,6 +294,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       <div class="modal-head">
         <div class="modal-title" id="chTitle">채널 상세</div>
         <div class="meta-row" id="chLinkHolder"></div>
+        <button class="badge-soft" id="chRefresh">실시간 새로고침</button>
         <button class="modal-close" id="chClose">닫기</button>
       </div>
       <div id="chLoading" class="hint">로딩중…</div>
@@ -422,6 +323,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   </div>
 
 <script>
+// ========== SHORTS RADAR v7.4.0 COMPLETE ==========
 (function(){
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -445,24 +347,39 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   function save(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
   function load(key,def){ try{ return JSON.parse(localStorage.getItem(key)) ?? def;}catch(e){return def}}
 
-  // ---------- 키 회전(로컬) - 수정된 버전 ----------
+  // ---------- 시간 헬퍼 ----------
+  function pacificTodayStr(){
+    try { return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
+    catch(_) { const d=new Date(); return d.toISOString().slice(0,10); }
+  }
+  function nextPacificMidnightISO(){
+    try{ const la = new Date(new Date().toLocaleString('en-US', { timeZone:'America/Los_Angeles' })); la.setHours(24,0,0,0); return la.toISOString(); }
+    catch(_){ const d=new Date(); d.setHours(24,0,0,0); return d.toISOString(); }
+  }
+
+  // ---------- 키 회전(로컬) - v7.4.0 개선 ----------
   const ROT = {
     keys: [],
     idx: 0,
     stat: [],
+    lastMarkTime: 0, // 중복 방지용
     
     load(){
       const arr = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
       const legacy = JSON.parse(localStorage.getItem('yt_api_key')||'""');
       this.keys = (arr && arr.length) ? arr : (legacy? [legacy] : []);
       
-      // 현재 인덱스 복원
       const savedIdx = parseInt(localStorage.getItem('sr_curIdx')||'0', 10);
       this.idx = (savedIdx >= 0 && savedIdx < this.keys.length) ? savedIdx : 0;
       
-      // 통계 로드
-      const savedStat = load('sr_keyStat', {}); const savedDate = load('sr_keyStatDate', null); const todayLA = pacificTodayStr(); if(savedDate !== todayLA){ save('sr_keyStatDate', todayLA); save('sr_keyStat', {}); }
-      this.stat = this.keys.map((k,i) => savedStat[k] || {ok:0, fail:0, blocked:false});
+      const savedStat = load('sr_keyStat', {}); 
+      const savedDate = load('sr_keyStatDate', null); 
+      const todayLA = pacificTodayStr(); 
+      if(savedDate !== todayLA){ 
+        save('sr_keyStatDate', todayLA); 
+        save('sr_keyStat', {}); 
+      }
+      this.stat = this.keys.map((k,i) => savedStat[k] || {ok:0, fail:0, blocked:false, used:0});
       
       renderKeyState();
     },
@@ -470,7 +387,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     saveStat(){
       const obj = {};
       this.keys.forEach((k,i) => { 
-        obj[k] = this.stat[i] || {ok:0, fail:0, blocked:false}; 
+        obj[k] = this.stat[i] || {ok:0, fail:0, blocked:false, used:0}; 
       });
       save('sr_keyStat', obj);
     },
@@ -482,7 +399,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     rotate(){ 
       if(this.keys.length <= 1) return;
       
-      // 블록되지 않은 다음 키 찾기
       let attempts = 0;
       do {
         this.idx = (this.idx + 1) % this.keys.length;
@@ -494,31 +410,39 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     },
     
     markOk(){ 
-      if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false};
+      const now = Date.now();
+      if(now - this.lastMarkTime < 500) return; // 중복 방지
+      this.lastMarkTime = now;
+      
+      if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false, used:0};
       this.stat[this.idx].ok++;
       this.saveStat();
       renderKeyState();
     },
     
     markFail(){ 
-      if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false};
+      const now = Date.now();
+      if(now - this.lastMarkTime < 500) return; // 중복 방지
+      this.lastMarkTime = now;
+      
+      if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false, used:0};
       const s = this.stat[this.idx];
       s.fail++;
       if(s.fail >= 3) {
         s.blocked = true;
       }
       this.saveStat();
-      this.rotate(); // 실패시 자동 회전
+      this.rotate();
     },
     
     resetKeyStats(){
-      this.stat = this.keys.map(() => ({ok:0, fail:0, blocked:false}));
+      this.stat = this.keys.map(() => ({ok:0, fail:0, blocked:false, used:0}));
       this.saveStat();
       renderKeyState();
     }
   };
 
-  // 키 상태 표시 - 수정된 버전
+  // 키 상태 표시
   function renderKeyState(){
     const holder = $('#keyState');
     if (!holder) return;
@@ -529,7 +453,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     }
     
     holder.innerHTML = ROT.keys.map((_, i) => {
-      const s = ROT.stat[i] || {ok:0, fail:0, blocked:false};
+      const s = ROT.stat[i] || {ok:0, fail:0, blocked:false, used:0};
       const isActive = (i === ROT.idx);
       const className = s.blocked ? 'pill blocked' : (isActive ? 'pill active' : 'pill');
       
@@ -544,6 +468,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
           ${isActive ? '<span class="badge">NOW</span>' : ''}
           <span class="badge">ok:${s.ok}</span>
           <span class="badge">fail:${s.fail}</span>
+          ${s.used ? `<span class="badge">used:${s.used}</span>` : ''}
           ${s.blocked ? '<span class="badge">BLOCK</span>' : ''}
         </span>
       `;
@@ -559,16 +484,15 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     ROT.idx = i;
     localStorage.setItem('sr_curIdx', String(i));
     renderKeyState();
+    renderQuota(); // 키 변경시 쿼터 표시 업데이트
   };
 
-  // API 호출 - 수정된 버전
+  // API 호출
   async function fetchWithRotate(url, quotaInc){
-  try{ console.debug('[sr] fetchWithRotate'); }catch(_e){}
-    const maxTry = Math.max(1, ROT.keys.length * 2); // 더 많은 시도
+    const maxTry = Math.max(1, ROT.keys.length * 2);
     let lastError = null;
     let allBlocked = true;
     
-    // 모든 키가 블록되었는지 확인
     for(let i = 0; i < ROT.keys.length; i++) {
       if(!ROT.stat[i]?.blocked) {
         allBlocked = false;
@@ -576,7 +500,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       }
     }
     
-    // 모든 키가 블록되었다면 첫 번째 키의 블록을 해제하고 시도
     if(allBlocked && ROT.keys.length > 0) {
       console.log('모든 키가 차단됨. 첫 번째 키 블록 해제 시도...');
       ROT.stat[0].blocked = false;
@@ -592,7 +515,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
         throw new Error('사용 가능한 API 키가 없습니다');
       }
       
-      // 블록된 키는 건너뛰기 (단, 모든 키가 블록된 경우는 제외)
       if(ROT.stat[ROT.idx]?.blocked && !allBlocked) {
         ROT.rotate();
         continue;
@@ -605,15 +527,21 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
         
         if(res.ok){
           const data = await res.json();
-          if(quotaInc){ incQuota(quotaInc); try{ ROT.stat[ROT.idx].used=(ROT.stat[ROT.idx].used||0)+quotaInc; save('sr_keyStat', Object.fromEntries(ROT.stat.map((s,i)=>['K'+i,s]))); }catch(_e){} } ROT.markOk();
+          if(quotaInc){ 
+            incQuota(quotaInc); 
+            // 키별 사용량 증가
+            if(!ROT.stat[ROT.idx]) ROT.stat[ROT.idx] = {ok:0, fail:0, blocked:false, used:0};
+            ROT.stat[ROT.idx].used = (ROT.stat[ROT.idx].used || 0) + quotaInc;
+            ROT.saveStat();
+          } 
+          ROT.markOk();
           return data;
         } else {
-          const errorText = await res.text(); lastError = `HTTP ${res.status}: ${errorText}`; if(shouldLockForQuota(res.status,errorText)) setQuotaLocked(true);
+          const errorText = await res.text(); 
+          lastError = `HTTP ${res.status}: ${errorText}`; 
+          if(shouldLockForQuota(res.status,errorText)) setQuotaLocked(true);
           
-          // 403은 쿼터 초과일 가능성이 높음
-          if(res.status === 403) {
-            ROT.markFail();
-          } else if(res.status >= 400 && res.status < 500) {
+          if(res.status === 403 || (res.status >= 400 && res.status < 500)) {
             ROT.markFail();
           }
         }
@@ -628,13 +556,85 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
 
   // ---------- 쿼터 ----------
   const QUOTA_KEY='sr_quota';
+  const QUOTA_LOCK_KEY='sr_quota_lock_until';
+  
   function todayStr(){ return pacificTodayStr(); }
   function getQuota(){ let q = load(QUOTA_KEY, null); const today=todayStr(); if(!q) q={date:today, used:0, limit:10000}; if(q.date!==today){ q.date=today; q.used=0; } return q; }
   function saveQuota(q){ save(QUOTA_KEY, q); }
   function setQuotaLimit(n){ const q=getQuota(); q.limit=Math.max(1000, Number(n)||10000); saveQuota(q); renderQuota(); renderQuotaStateFlag(); }
-  function incQuota(units){ const q=getQuota(); q.used += Math.max(0, units|0); saveQuota(q); renderQuota(); renderQuotaStateFlag(); }
-  function resetQuota(){ const q={date:todayStr(), used:0, limit:getQuota().limit}; saveQuota(q); renderQuota(); renderQuotaStateFlag(); }
-  function renderQuota(){ const q=getQuota(); const pct=Math.min(100, Math.round((q.used/(q.limit||1))*100)); $('#quotaStat').innerHTML=`API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%)`; $('#quotaLimit').value=q.limit; $('#quotaBar .fill').style.width=pct+'%'; }
+  function incQuota(units){ 
+    const q=getQuota(); 
+    q.used += Math.max(0, units|0); 
+    saveQuota(q); 
+    renderQuota(); 
+    renderQuotaStateFlag(); 
+  }
+  function resetQuota(){ 
+    const q={date:todayStr(), used:0, limit:getQuota().limit}; 
+    saveQuota(q); 
+    // 키별 사용량도 초기화
+    if(ROT.stat){
+      ROT.stat.forEach(s => { if(s) s.used = 0; });
+      ROT.saveStat();
+    }
+    renderQuota(); 
+    renderQuotaStateFlag(); 
+    renderKeyState();
+  }
+  
+  // v7.4.0 개선된 renderQuota
+  function renderQuota(){ 
+    const q=getQuota(); 
+    const pct=Math.min(100, Math.round((q.used/(q.limit||1))*100)); 
+    
+    // 현재 키 사용량
+    let keyInfo = '';
+    if(ROT.keys.length > 0){
+      const keyUsed = (ROT.stat[ROT.idx] && ROT.stat[ROT.idx].used) || 0;
+      keyInfo = ` [KEY${ROT.idx+1}: ${keyUsed}]`;
+    }
+    
+    $('#quotaStat').innerHTML=`API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%)${keyInfo}`; 
+    $('#quotaLimit').value=q.limit; 
+    $('#quotaBar .fill').style.width=pct+'%'; 
+  }
+  
+  function isQuotaLocked(){ 
+    const iso=localStorage.getItem(QUOTA_LOCK_KEY); 
+    if(!iso) return false; 
+    if(new Date(iso)<=new Date()){ 
+      localStorage.removeItem(QUOTA_LOCK_KEY); 
+      return false; 
+    } 
+    return true; 
+  }
+  
+  function setQuotaLocked(on=true){ 
+    if(on) localStorage.setItem(QUOTA_LOCK_KEY,nextPacificMidnightISO()); 
+    else localStorage.removeItem(QUOTA_LOCK_KEY); 
+    renderQuotaStateFlag(); 
+  }
+  
+  function shouldLockForQuota(status, text){
+    if(status===429) return true;
+    if(status!==403) return false;
+    const lower = String(text||'').toLowerCase();
+    try{ 
+      const j=JSON.parse(text); 
+      const reason=(j?.error?.errors?.[0]?.reason||j?.error?.status||'').toLowerCase(); 
+      if(['quotaexceeded','dailylimitexceeded','userratelimitexceeded','ratelimitexceeded'].includes(reason)) return true; 
+    }catch(_){}
+    if(/quota|daily.*limit|userratelimitexceeded|ratelimitexceeded/.test(lower)) return true;
+    return false;
+  }
+  
+  function renderQuotaStateFlag(){
+    const el = $('#quotaStateFlag');
+    if(!el) return;
+    const offline = isQuotaLocked();
+    el.className = 'quota-flag ' + (offline ? 'offline' : 'online');
+    el.innerHTML = '상태: <b>' + (offline ? 'OFFLINE(쿼터 소진)' : 'ONLINE') + '</b>';
+  }
 
   // ---------- API ----------
   async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, pageToken, lang, durBucket, order}){
@@ -644,20 +644,9 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       maxResults:String(Math.min(50, maxResults||50))
     });
     
-    // publishedAfter가 있을 때만 추가
-    if(publishedAfter) {
-      params.set('publishedAfter', publishedAfter);
-    }
-    
-    // regionCode가 있을 때만 추가
-    if(regionCode) {
-      params.set('regionCode', regionCode);
-    }
-    
-    // relevanceLanguage가 있을 때만 추가  
-    if(lang) {
-      params.set('relevanceLanguage', lang);
-    }
+    if(publishedAfter) params.set('publishedAfter', publishedAfter);
+    if(regionCode) params.set('regionCode', regionCode);
+    if(lang) params.set('relevanceLanguage', lang);
     
     params.set('order', order || 'date');
     if(q) params.set('q', q);
@@ -743,12 +732,12 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     if(!STATE.colVis) STATE.colVis = load('sr_cols', null) || defaultColVis();
     const holder = $('#colToggles'); holder.innerHTML='';
     const keys = Object.keys(STATE.colVis);
-    const labels = {bookmark:'☆', thumb:'썸네일', title:'제목', channel:'채널', uploadedAt:'업로드일', length:'길이', views:'조회', likes:'좋아요', comments:'댓글', vel:'속도', er:'반응률(‰)', fresh:'신선도', viewMult:'조회 배율', velMult:'속도 배율', impact:'임팩트', delta:'Δ24h', pick:'종합'};
+    const labels = {bookmark:'☆', thumb:'썸네일', title:'제목', channel:'채널', uploadedAt:'업로드일', length:'길이', views:'조회', likes:'좋아요', comments:'댓글', vel:'속도', er:'반응률 (‰)', fresh:'신선도', viewMult:'조회 배율', velMult:'속도 배율', impact:'임팩트', delta:'Δ24h', pick:'종합'};
     keys.forEach(k=>{
       const id='vis_'+k; const w=document.createElement('label'); w.style.display='flex'; w.style.alignItems='center'; w.style.gap='6px'; w.className='hint';
       w.innerHTML = `<input type="checkbox" id="${id}" ${STATE.colVis[k]?'checked':''}/> ${labels[k]||k}`;
       holder.appendChild(w);
-      w.querySelector('input').addEventListener('change', ()=>{ STATE.colVis[k]=w.querySelector('input').checked; save('sr_cols', STATE.colVis); applyColumnVisibility(); restoreLastListIfNeeded(); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},0); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},250); });
+      w.querySelector('input').addEventListener('change', ()=>{ STATE.colVis[k]=w.querySelector('input').checked; save('sr_cols', STATE.colVis); applyColumnVisibility(); });
     });
   }
   function applyColumnVisibility(){
@@ -764,7 +753,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   function buildSortKeys(){
     if(!STATE.sortKey) STATE.sortKey = load('sr_sortKey', null) || 'uploadedAt';
     if(!STATE.sortDir) STATE.sortDir = load('sr_sortDir', null) || 'desc';
-    const labelMap = {pick:'종합', uploadedAt:'업로드일', er:'반응률(‰)', viewMult:'조회 배율', velMult:'속도 배율', views:'조회', vel:'속도'};
+    const labelMap = {pick:'종합', uploadedAt:'업로드일', er:'반응률 (‰)', viewMult:'조회 배율', velMult:'속도 배율', views:'조회', vel:'속도'};
     const opts = ['pick','uploadedAt','er','viewMult','velMult','views','vel'];
     const sk = $('#sortKey'); sk.innerHTML=''; opts.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=labelMap[k]||k; sk.appendChild(o); });
     if(!opts.includes(STATE.sortKey)) STATE.sortKey='uploadedAt';
@@ -789,10 +778,11 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   }
   function rankGrade(g){ return ({'D':1,'C':2,'B':3,'A':4,'S':5}[g]||0); }
   function renderTable(videos){
-  try{ window.__bootTime = window.__bootTime || performance.now(); const elapsed=(performance.now()-(window.__bootTime||0)); if(Array.isArray(videos)&&videos.length===0 && elapsed<4000){ const last=load('sr_lastList',null); if(last&&Array.isArray(last.videos)&&last.videos.length){ return; 
-  try{ if(Array.isArray(videos)&&videos.length) saveLastList(); }catch(_e){}
-} } }catch(_e){}
-
+    // 자동 스냅샷 저장
+    if(Array.isArray(videos) && videos.length > 0){
+      saveSnapshot();
+    }
+    
     const tb = $('#tbody'); tb.innerHTML='';
     const f = STATE.filters;
     const filtered = videos.filter(v=> (v._d.er >= (f.minER||0)) && (v._d.viewMult >= (f.minVX||0)) && (f.minGrade==='ALL' || rankGrade(v._impact.grade) >= rankGrade(f.minGrade)));
@@ -825,7 +815,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     }
     tb.querySelectorAll('.star').forEach(s=> s.addEventListener('click', (ev)=>{ const id=ev.target.getAttribute('data-id'); toggleWatch(id);}));
     tb.querySelectorAll('.ch-link').forEach(btn=> btn.addEventListener('click', ()=> openChannelModal(btn.dataset.cid, btn.dataset.ctitle)));
-    applyColumnVisibility(); restoreLastListIfNeeded(); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},0); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},250);
+    applyColumnVisibility();
     setSummary(videos, filtered);
     renderBestTimes(videos);
   }
@@ -895,6 +885,8 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   }
 
   // ---------- S2: Channel Modal ----------
+  let __lastChannel = null; // 마지막 열린 채널 정보 저장
+  
   async function listChannelRecentVideos(channelId, n=50){
     let items=[], next=null;
     const region = $('#region')?.value||undefined;
@@ -917,6 +909,8 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   function fmtWon(n){ n=Number(n||0); return '₩'+n.toLocaleString('ko-KR'); }
 
   async function openChannelModal(cid, ctitle){
+    __lastChannel = {cid, title: ctitle}; // 저장
+    
     const m = document.getElementById('channelModal');
     const body = document.getElementById('chBody');
     const load = document.getElementById('chLoading');
@@ -935,7 +929,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       const meta = await ytChannels([cid]);
       const ch = (meta.items||[])[0];
       const vids = await listChannelRecentVideos(cid, 60);
-      // Pick shorts only (≤62s or #shorts)
       const shorts = vids.filter(v=>{
         const m = (v.contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
         const sec = (m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0);
@@ -947,11 +940,9 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       // KPI
       const avgVel = (sum(shorts, x=>x._d.vel)/Math.max(1,shorts.length)).toFixed(1);
       const avgEr  = (sum(shorts, x=>x._d.er)/Math.max(1,shorts.length)).toFixed(2);
-      // cadence
       const ts = shorts.map(v=> new Date(v.snippet.publishedAt).getTime()).sort((a,b)=>a-b);
       const gaps=[]; for(let i=1;i<ts.length;i++){ gaps.push((ts[i]-ts[i-1])/(24*3600*1000)); }
       const medGap = gaps.length? median(gaps).toFixed(1)+'일':'-';
-      // top hour
       const hours = new Array(24).fill(0); shorts.forEach(v=> hours[new Date(v.snippet.publishedAt).getHours()] += (v._d.pick||0));
       const topHour = hours.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v)[0]?.i ?? 0;
 
@@ -964,7 +955,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
 
       pat.innerHTML = `<span class="badge-soft">업로드 주기(중앙값) ${medGap}</span> <span class="badge-soft">히트 시간대 ${String(topHour).padStart(2,'0')}:00</span>`;
 
-      // Best 3 by pick
       const top = [...shorts].sort((a,b)=> (b._d.pick - a._d.pick) || (b._d.vel - a._d.vel) || (b._d.er - a._d.er)).slice(0,3);
       best.innerHTML = top.map(v=>{
         const sec = (v.contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
@@ -978,7 +968,6 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
         </div>`;
       }).join('');
 
-      // Revenue estimate
       function calcRevenue(){
         const low = Number(document.getElementById('cpmLow').value||0);
         const high= Number(document.getElementById('cpmHigh').value||0);
@@ -1003,6 +992,41 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
   document.getElementById('chClose').addEventListener('click', closeChannelModal);
   document.getElementById('channelModal').addEventListener('click', (ev)=>{ if(ev.target.id==='channelModal') closeChannelModal(); });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeChannelModal(); });
+
+  // 모달 새로고침 버튼 이벤트
+  document.getElementById('chRefresh').addEventListener('click', function(){
+    if(isQuotaLocked()){
+      alert('오늘 쿼터 소진 - 내일 00:00 이후 가능');
+      return;
+    }
+    
+    if(!__lastChannel || !__lastChannel.cid){
+      console.error('No channel info to refresh');
+      return;
+    }
+    
+    // 버튼 상태 변경
+    const btn = this;
+    const originalText = btn.textContent;
+    btn.textContent = '새로고침 중...';
+    btn.disabled = true;
+    
+    // 로딩 표시
+    const loading = document.getElementById('chLoading');
+    const body = document.getElementById('chBody');
+    if(loading) loading.style.display = '';
+    if(body) body.style.display = 'none';
+    
+    // 모달 다시 열기
+    setTimeout(function(){
+      openChannelModal(__lastChannel.cid, __lastChannel.title || '');
+      // 버튼 복구
+      setTimeout(function(){
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 500);
+    }, 100);
+  });
 
   // ---------- Export (XLSX) ----------
   function exportXlsx(){
@@ -1156,7 +1180,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
       ds[k] = { views:arr, ema28, score, n };
     }
     const usableKeys = Object.keys(ds).sort((a,b)=> (ds[b].score.at(-1)||0)-(ds[a].score.at(-1)||0));
-    // --- SR fix v3: compute shareCounts AFTER usableKeys is built ---
+    
     (function(){
       const __sr_sumArr = (arr)=>arr.reduce((a,b)=>a+(+b||0),0);
       const __sr_last7  = (arr)=>arr.slice(Math.max(0, arr.length-7));
@@ -1164,8 +1188,7 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
         window.shareCounts = (usableKeys || []).map(k => __sr_sumArr(__sr_last7(ds[k].views || [])));
       }
     })();
-    // ----------------------------------------------------------------
-
+    
     const tot = (Array.isArray(window.shareCounts)? window.shareCounts.reduce((a,b)=>a+(+b||0),0) : 0) || 1;
 
     const datasets = usableKeys.map(k=> ({
@@ -1202,80 +1225,169 @@ window.addEventListener('load', function(){ try{ (typeof placeFlagRightOfReset =
     });
 
     function sumRange(arr, days, eps){
-  const L = arr.length; const mid=Math.max(0,L-days); const start=Math.max(0,L-days*2);
-  const prev = sumArr(arr.slice(start, mid)); const now = sumArr(arr.slice(mid, L));
-  if (prev < (eps||1000)) return {prev, now, label:'NEW'};
-  const pct = Math.round(Math.max(-99, Math.min(999, (now - prev) / Math.max(prev,1) * 100)));
-  const label = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
-  return {prev, now, label};
-}
-const rises = usableKeys.map(k=> ({k, ...sumRange(ds[k].views, 7, 1000)}))
-                        .sort((a,b)=> b.now - a.now).slice(0,5);
-const risers = document.getElementById('ltRisers');
-if(risers) risers.innerHTML = rises.map((r,i)=> `<span class="pill"><b>${i+1}. ${r.k}</b> <i>${r.label}</i> <small>${fmt(r.now)}</small></span>`).join('');ltShare = new Chart(document.getElementById('ltShare'), {
+      const L = arr.length; const mid=Math.max(0,L-days); const start=Math.max(0,L-days*2);
+      const prev = sumArr(arr.slice(start, mid)); const now = sumArr(arr.slice(mid, L));
+      if (prev < (eps||1000)) return {prev, now, label:'NEW'};
+      const pct = Math.round(Math.max(-99, Math.min(999, (now - prev) / Math.max(prev,1) * 100)));
+      const label = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
+      return {prev, now, label};
+    }
+    const rises = usableKeys.map(k=> ({k, ...sumRange(ds[k].views, 7, 1000)}))
+                            .sort((a,b)=> b.now - a.now).slice(0,5);
+    const risers = document.getElementById('ltRisers');
+    if(risers) risers.innerHTML = rises.map((r,i)=> `<span class="pill"><b>${i+1}. ${r.k}</b> <i>${r.label}</i> <small>${fmt(r.now)}</small></span>`).join('');
+    
+    ltShare = new Chart(document.getElementById('ltShare'), {
       type:'bar',
       data:{ labels:usableKeys, datasets:[{label:'최근 30일 표본 비중(%)', data: shareCounts.map(x=> Math.round(x/tot*100))}] },
       options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:4,right:8,bottom:0,left:8}},
         plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:100, grid:{color:'rgba(255,255,255,0.06)'}}} }
     });
+    
     try{
-
-const vEl = document.getElementById('ltValidation');
-const eEl = document.getElementById('ltEndpoint');
-
-const L = labels.length;
-const DAYS_CHECK = Math.min(30, L);
-const startIdx = L - DAYS_CHECK;
-
-// 하루 단위 합계를 만들고(키워드 전체 합), 그걸로 범위/평균 계산
-const totalViewsByDay  = Array(DAYS_CHECK).fill(0);
-const totalSampleByDay = Array(DAYS_CHECK).fill(0);
-
-let nonZero = 0;
-const expected = usableKeys.length * DAYS_CHECK;
-
-for (const k of usableKeys) {
-  const vArr = ds[k].views.slice(startIdx, startIdx + DAYS_CHECK);
-  const nArr = ds[k].n.slice(startIdx, startIdx + DAYS_CHECK);
-  for (let i = 0; i < DAYS_CHECK; i++) {
-    const v = +vArr[i] || 0;
-    const n = +nArr[i] || 0;
-    totalViewsByDay[i]  += v;
-    totalSampleByDay[i] += n;
-    if (v > 0) nonZero++;
-  }
-}
-
-const sampleN   = totalSampleByDay.reduce((a,b)=>a+b,0);      // 30일 누적 표본수
-const sumViews  = totalViewsByDay.reduce((a,b)=>a+b,0);       // 30일 누적 조회수
-const avgSample = Math.round(sampleN / DAYS_CHECK);           // 일평균 표본수
-const avgViews  = Math.round(sumViews / DAYS_CHECK);          // 일평균 조회수
-
-const minV = Math.round(Math.min(...totalViewsByDay));
-const maxV = Math.round(Math.max(...totalViewsByDay));
-
-const miss = expected > 0 ? Math.max(0, 1 - nonZero / expected) : 1;
-
-if (vEl) {
-  vEl.innerHTML = [
-    `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
-    `<span class="pill">일평균 표본수: ${avgSample.toLocaleString()}</span>`,
-    `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
-    `<span class="pill">일 조회합 범위: ${minV.toLocaleString()} ~ ${maxV.toLocaleString()}</span>`,
-    `<span class="pill">일평균 조회수: ${avgViews.toLocaleString()}</span>`,
-    `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
-    `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__ || 'sample'}</code></span>`
-  ].join(' ');
-}
-
-if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
-
+      const vEl = document.getElementById('ltValidation');
+      const eEl = document.getElementById('ltEndpoint');
       
+      const L = labels.length;
+      const DAYS_CHECK = Math.min(30, L);
+      const startIdx = L - DAYS_CHECK;
       
-      if(eEl) eEl.textContent = window.__LT_ENDPOINT__||'-';
+      const totalViewsByDay  = Array(DAYS_CHECK).fill(0);
+      const totalSampleByDay = Array(DAYS_CHECK).fill(0);
+      
+      let nonZero = 0;
+      const expected = usableKeys.length * DAYS_CHECK;
+      
+      for (const k of usableKeys) {
+        const vArr = ds[k].views.slice(startIdx, startIdx + DAYS_CHECK);
+        const nArr = ds[k].n.slice(startIdx, startIdx + DAYS_CHECK);
+        for (let i = 0; i < DAYS_CHECK; i++) {
+          const v = +vArr[i] || 0;
+          const n = +nArr[i] || 0;
+          totalViewsByDay[i]  += v;
+          totalSampleByDay[i] += n;
+          if (v > 0) nonZero++;
+        }
+      }
+      
+      const sampleN   = totalSampleByDay.reduce((a,b)=>a+b,0);
+      const sumViews  = totalViewsByDay.reduce((a,b)=>a+b,0);
+      const avgSample = Math.round(sampleN / DAYS_CHECK);
+      const avgViews  = Math.round(sumViews / DAYS_CHECK);
+      
+      const minV = Math.round(Math.min(...totalViewsByDay));
+      const maxV = Math.round(Math.max(...totalViewsByDay));
+      
+      const miss = expected > 0 ? Math.max(0, 1 - nonZero / expected) : 1;
+      
+      if (vEl) {
+        vEl.innerHTML = [
+          `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
+          `<span class="pill">일평균 표본수: ${avgSample.toLocaleString()}</span>`,
+          `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
+          `<span class="pill">일 조회합 범위: ${minV.toLocaleString()} ~ ${maxV.toLocaleString()}</span>`,
+          `<span class="pill">일평균 조회수: ${avgViews.toLocaleString()}</span>`,
+          `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
+          `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__ || 'sample'}</code></span>`
+        ].join(' ');
+      }
+      
+      if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
     }catch(e){ console.warn('validation error', e); }
   }
   setTimeout(()=>{ const btn = document.getElementById('ltReload'); if(btn) btn.addEventListener('click', buildLongTrend); buildLongTrend(); },0);
+
+  // ---------- 스냅샷 v7.4.0 ----------
+  function saveSnapshot(){
+    try {
+      if(!STATE.videos || !STATE.videos.length) return false;
+      
+      const snapshot = {
+        version: '7.4.0',
+        timestamp: Date.now(),
+        date: new Date().toISOString(),
+        data: {
+          videos: STATE.videos,
+          filters: STATE.filters || {},
+          sortKey: STATE.sortKey || 'uploadedAt',
+          sortDir: STATE.sortDir || 'desc',
+          colVis: STATE.colVis || {}
+        }
+      };
+      
+      localStorage.setItem('sr_snapshot_v74', JSON.stringify(snapshot));
+      console.log('[SR] Snapshot saved:', STATE.videos.length, 'videos');
+      return true;
+    } catch(e) {
+      console.error('[SR] Snapshot save failed:', e);
+      return false;
+    }
+  }
+  
+  function loadSnapshot(){
+    try {
+      const raw = localStorage.getItem('sr_snapshot_v74');
+      if(!raw) {
+        console.log('[SR] No snapshot found');
+        return false;
+      }
+      
+      const snapshot = JSON.parse(raw);
+      if(!snapshot || !snapshot.data || !snapshot.data.videos || !snapshot.data.videos.length) {
+        console.log('[SR] Invalid snapshot');
+        return false;
+      }
+      
+      // 24시간 이내 체크
+      const age = Date.now() - snapshot.timestamp;
+      if(age > 24 * 3600 * 1000) {
+        console.log('[SR] Snapshot too old:', Math.round(age/3600000), 'hours');
+        localStorage.removeItem('sr_snapshot_v74');
+        return false;
+      }
+      
+      // STATE 복원
+      STATE.videos = snapshot.data.videos;
+      STATE.filters = snapshot.data.filters || {};
+      STATE.sortKey = snapshot.data.sortKey || 'uploadedAt';
+      STATE.sortDir = snapshot.data.sortDir || 'desc';
+      STATE.colVis = snapshot.data.colVis || STATE.colVis || {};
+      
+      // UI 복원
+      if($('#fMinER')) $('#fMinER').value = STATE.filters.minER || 0;
+      if($('#fMinVX')) $('#fMinVX').value = STATE.filters.minVX || 0;
+      if($('#fMinGrade')) $('#fMinGrade').value = STATE.filters.minGrade || 'ALL';
+      if($('#sortKey')) $('#sortKey').value = STATE.sortKey;
+      if($('#sortDir')) $('#sortDir').value = STATE.sortDir;
+      
+      // 테이블 렌더링
+      renderTable(STATE.videos);
+      
+      // 복원 알림 표시
+      const wrap = $('.wrap');
+      if(wrap) {
+        const notice = document.createElement('div');
+        notice.className = 'card snapshot-notice';
+        const ageMin = Math.round(age / 60000);
+        const ageHour = Math.round(age / 3600000);
+        const ageText = ageHour > 0 ? ageHour + '시간' : ageMin + '분';
+        notice.innerHTML = `✅ <b>${ageText} 전</b> 검색 결과를 복원했습니다. (${STATE.videos.length}개 영상)`;
+        wrap.insertBefore(notice, wrap.children[2]);
+        
+        setTimeout(function(){
+          notice.style.transition = 'all 0.5s';
+          notice.style.opacity = '0';
+          setTimeout(function(){ notice.remove(); }, 500);
+        }, 5000);
+      }
+      
+      console.log('[SR] Snapshot loaded:', STATE.videos.length, 'videos from', new Date(snapshot.timestamp));
+      return true;
+    } catch(e) {
+      console.error('[SR] Snapshot load failed:', e);
+      return false;
+    }
+  }
 
   // ---------- 이벤트 바인딩 ----------
   $('#runBtn').addEventListener('click', run);
@@ -1314,7 +1426,7 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
     else if(p==='speedeng'){ ['thumb','title','vel','er','pick'].forEach(k=>on[k]=true); on.bookmark=true; }
     else if(p==='metrics'){ ['vel','er','fresh','viewMult','velMult','impact','pick'].forEach(k=>on[k]=true); on.bookmark=true; on.title=true; on.thumb=true; }
     else if(p==='packaging'){ ['thumb','title','uploadedAt','likes','comments','impact','delta','pick'].forEach(k=>on[k]=true); on.bookmark=true; }
-    STATE.colVis=on; save('sr_cols', on); buildColToggles(); applyColumnVisibility(); restoreLastListIfNeeded(); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},0); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},250);
+    STATE.colVis=on; save('sr_cols', on); buildColToggles(); applyColumnVisibility();
   });
 
   // 초기화
@@ -1324,613 +1436,25 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
     const savedSortKey = load('sr_sortKey', null); if(savedSortKey) STATE.sortKey=savedSortKey;
     const savedSortDir = load('sr_sortDir', null); if(savedSortDir) STATE.sortDir=savedSortDir;
     loadWatch();
-    renderQuota(); renderQuotaStateFlag();
+    renderQuota(); 
+    renderQuotaStateFlag();
     buildSortKeys();
     buildColToggles();
-    applyColumnVisibility(); restoreLastListIfNeeded(); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},0); setTimeout(()=>{try{restoreLastListIfNeeded();}catch(_e){}},250);
+    applyColumnVisibility();
+    
+    // 스냅샷 복원 시도
+    setTimeout(function(){
+      if(!STATE.videos || STATE.videos.length === 0){
+        loadSnapshot();
+      }
+    }, 100);
   })();
+  
+  // 페이지 떠날 때 저장
+  window.addEventListener('beforeunload', saveSnapshot);
+  window.addEventListener('pagehide', saveSnapshot);
 })();
 </script>
 
-
-<script>
-// v7.3.7 snapshot hooks
-(function(){
-  function _load(k, d){ try{ return JSON.parse(localStorage.getItem(k) || "null") ?? d; }catch(_){ return d; } }
-  function _save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(_){} }
-
-  // Fallback impl if app didn't define yet
-  if(typeof window.saveLastList !== 'function'){
-    window.saveLastList = function(){
-      try{ if(Array.isArray(window.STATE?.videos) && STATE.videos.length){ _save('sr_lastList', {ts:Date.now(), videos: STATE.videos}); } }catch(_){}
-    };
-  }
-  if(typeof window.restoreLastListIfNeeded !== 'function'){
-    window.restoreLastListIfNeeded = function(){
-      try{
-        if(Array.isArray(window.STATE?.videos) && STATE.videos.length) return false;
-        var last = _load('sr_lastList', null);
-        if(last && Array.isArray(last.videos) && last.videos.length){
-          window.STATE = window.STATE||{}; STATE.videos = last.videos.slice();
-          if(typeof window.renderTable==='function'){ renderTable(STATE.videos); }
-          return true;
-        }
-      }catch(_){}
-      return false;
-    };
-  }
-
-  // Ensure we try restore on important lifecycle points too
-  window.addEventListener('pageshow', function(){ try{ restoreLastListIfNeeded(); }catch(_){}});
-  document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible'){ try{ restoreLastListIfNeeded(); }catch(_){}} });
-  window.addEventListener('beforeunload', function(){ try{ saveLastList(); }catch(_){} });
-
-  // Monkey-patch renderTable to auto-save after successful render
-  if(typeof window.renderTable === 'function' && !window.__sr_rt_patched){
-    const _orig = window.renderTable;
-    window.renderTable = function(v){
-      try{
-        if(Array.isArray(v) && v.length){
-          window.STATE = window.STATE||{}; STATE.videos = v;
-          _save('sr_lastList', {ts:Date.now(), videos:v});
-        }
-      }catch(_){}
-      return _orig.apply(this, arguments);
-    };
-    window.__sr_rt_patched = true;
-  }
-
-  // Late double-restore in case init cleared once
-  setTimeout(function(){ try{ restoreLastListIfNeeded(); }catch(_){} }, 200);
-  setTimeout(function(){ try{ restoreLastListIfNeeded(); }catch(_){} }, 1200);
-})();
-</script>
-
-<script>
-// === YouTube Shorts Dashboard v7.3.9 Fixes ===
-(function(){
-  console.log('[SR v7.3.9] Applying fixes...');
-  
-  // ========== Fix 1: 모달 새로고침 시각적 피드백 추가 ==========
-  (function fixModalRefresh(){
-    // 기존 openChannelModal 래핑
-    var _origOpen = window.openChannelModal;
-    if(typeof _origOpen === 'function' && !window.__sr_modal_fixed){
-      window.openChannelModal = function(cid, title){
-        // 새로고침인지 확인
-        var isRefresh = false;
-        var modal = document.getElementById('channelModal');
-        if(modal && modal.style.display === 'flex' && window.__lastChannel && window.__lastChannel.cid === cid){
-          isRefresh = true;
-          // 로딩 표시
-          var loading = document.getElementById('chLoading');
-          var body = document.getElementById('chBody');
-          if(loading) loading.style.display = '';
-          if(body) body.style.display = 'none';
-          
-          // 시각적 피드백
-          var refreshBtn = document.getElementById('chRefresh');
-          if(refreshBtn){
-            refreshBtn.textContent = '새로고침 중...';
-            refreshBtn.disabled = true;
-            setTimeout(function(){
-              refreshBtn.textContent = '실시간 새로고침';
-              refreshBtn.disabled = false;
-            }, 1000);
-          }
-        }
-        
-        window.__lastChannel = {cid: cid, title: title||''};
-        return _origOpen.apply(this, arguments);
-      };
-      window.__sr_modal_fixed = true;
-    }
-  })();
-  
-  // ========== Fix 2: ok/fail 카운터 중복 방지 강화 ==========
-  (function fixDuplicateCounters(){
-    if(!window.ROT) return;
-    
-    // 요청별 고유 ID 추가
-    var requestId = 0;
-    var lastRequestId = {};
-    
-    // fetchWithRotate 래핑
-    var _origFetch = window.fetchWithRotate;
-    if(typeof _origFetch === 'function' && !window.__sr_fetch_fixed){
-      window.fetchWithRotate = function(url, quotaInc){
-        var thisReqId = ++requestId;
-        
-        return _origFetch.apply(this, arguments).then(function(data){
-          // 성공시 한번만 카운트
-          if(lastRequestId.success !== thisReqId){
-            lastRequestId.success = thisReqId;
-            // markOk는 이미 호출됨
-          }
-          return data;
-        }).catch(function(err){
-          // 실패시 한번만 카운트
-          if(lastRequestId.fail !== thisReqId){
-            lastRequestId.fail = thisReqId;
-            // markFail은 이미 호출됨
-          }
-          throw err;
-        });
-      };
-      window.__sr_fetch_fixed = true;
-    }
-    
-    // markOk/markFail 중복 방지 강화
-    ['markOk', 'markFail'].forEach(function(method){
-      var orig = ROT[method];
-      if(typeof orig === 'function' && !ROT['__fixed_' + method]){
-        ROT[method] = (function(m){
-          var lastCall = 0;
-          return function(){
-            var now = Date.now();
-            if(now - lastCall < 100) return; // 100ms 간격 강제
-            lastCall = now;
-            return orig.apply(this, arguments);
-          };
-        })(method);
-        ROT['__fixed_' + method] = true;
-      }
-    });
-  })();
-  
-  // ========== Fix 3: API 사용량 키별 표시 수정 ==========
-  (function fixApiUsageDisplay(){
-    // 쿼터 렌더링 함수 재정의
-    window.renderQuota = function(){
-      try{
-        var q = getQuota();
-        var pct = Math.min(100, Math.round((q.used/(q.limit||1))*100));
-        
-        // 현재 키의 사용량 가져오기
-        var currentKeyUsage = 0;
-        if(window.ROT && typeof ROT.idx === 'number' && ROT.stat[ROT.idx]){
-          currentKeyUsage = ROT.stat[ROT.idx].used || 0;
-        }
-        
-        // 표시 업데이트
-        var statEl = document.getElementById('quotaStat');
-        if(statEl){
-          statEl.innerHTML = `API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%) · KEY${(ROT.idx||0)+1}: <b>${currentKeyUsage}</b>`;
-        }
-        
-        var limitEl = document.getElementById('quotaLimit');
-        if(limitEl) limitEl.value = q.limit;
-        
-        var barEl = document.querySelector('#quotaBar .fill');
-        if(barEl) barEl.style.width = pct + '%';
-      }catch(e){
-        console.error('[SR] renderQuota error:', e);
-      }
-    };
-    
-    // incQuota 수정 - 키별 사용량 정확히 기록
-    var _origInc = window.incQuota;
-    window.incQuota = function(units){
-      try{
-        // 전체 쿼터 증가
-        if(typeof _origInc === 'function') _origInc.apply(this, arguments);
-        
-        // 현재 키 사용량 증가
-        if(window.ROT && typeof ROT.idx === 'number'){
-          if(!ROT.stat[ROT.idx]) ROT.stat[ROT.idx] = {ok:0, fail:0, blocked:false, used:0};
-          ROT.stat[ROT.idx].used = (ROT.stat[ROT.idx].used || 0) + (units || 0);
-          ROT.saveStat();
-        }
-        
-        // 화면 업데이트
-        renderQuota();
-        renderKeyState();
-      }catch(e){
-        console.error('[SR] incQuota error:', e);
-      }
-    };
-    
-    // 초기 렌더링
-    setTimeout(renderQuota, 100);
-  })();
-  
-  // ========== Fix 4: 스냅샷 저장/복원 수정 ==========
-  (function fixSnapshot(){
-    // 영상 검색 성공시 자동 저장
-    var _origRenderTable = window.renderTable;
-    if(typeof _origRenderTable === 'function' && !window.__sr_snapshot_fixed){
-      window.renderTable = function(videos){
-        try{
-          // 비어있지 않은 경우만 저장
-          if(Array.isArray(videos) && videos.length > 0){
-            var snapshot = {
-              ts: Date.now(),
-              videos: videos,
-              filters: STATE.filters || {},
-              sortKey: STATE.sortKey || 'uploadedAt',
-              sortDir: STATE.sortDir || 'desc'
-            };
-            localStorage.setItem('sr_lastList', JSON.stringify(snapshot));
-            console.log('[SR] Snapshot saved:', videos.length, 'videos');
-          }
-        }catch(e){
-          console.error('[SR] Snapshot save error:', e);
-        }
-        
-        return _origRenderTable.apply(this, arguments);
-      };
-      window.__sr_snapshot_fixed = true;
-    }
-    
-    // 페이지 로드시 복원
-    window.restoreLastListIfNeeded = function(){
-      try{
-        // 이미 데이터가 있으면 복원 안함
-        if(window.STATE && Array.isArray(STATE.videos) && STATE.videos.length > 0){
-          return false;
-        }
-        
-        var snapshot = JSON.parse(localStorage.getItem('sr_lastList') || 'null');
-        if(!snapshot || !Array.isArray(snapshot.videos) || !snapshot.videos.length){
-          return false;
-        }
-        
-        // 24시간 이내 데이터만 복원
-        var age = Date.now() - (snapshot.ts || 0);
-        if(age > 24 * 3600 * 1000){
-          console.log('[SR] Snapshot too old, skipping');
-          return false;
-        }
-        
-        // STATE 복원
-        window.STATE = window.STATE || {};
-        STATE.videos = snapshot.videos;
-        STATE.filters = snapshot.filters || {};
-        STATE.sortKey = snapshot.sortKey || 'uploadedAt';
-        STATE.sortDir = snapshot.sortDir || 'desc';
-        
-        // 필터 UI 복원
-        if(snapshot.filters){
-          var fMinER = document.getElementById('fMinER');
-          var fMinVX = document.getElementById('fMinVX');
-          var fMinGrade = document.getElementById('fMinGrade');
-          if(fMinER) fMinER.value = snapshot.filters.minER || 0;
-          if(fMinVX) fMinVX.value = snapshot.filters.minVX || 0;
-          if(fMinGrade) fMinGrade.value = snapshot.filters.minGrade || 'ALL';
-        }
-        
-        // 정렬 UI 복원
-        var sortKey = document.getElementById('sortKey');
-        var sortDir = document.getElementById('sortDir');
-        if(sortKey) sortKey.value = STATE.sortKey;
-        if(sortDir) sortDir.value = STATE.sortDir;
-        
-        // 테이블 렌더링
-        if(typeof renderTable === 'function'){
-          renderTable(STATE.videos);
-          
-          // 복원 알림
-          var wrap = document.querySelector('.wrap');
-          if(wrap && !document.getElementById('snapshotNotice')){
-            var notice = document.createElement('div');
-            notice.id = 'snapshotNotice';
-            notice.className = 'card';
-            notice.style.cssText = 'background:#1a2330;border:1px solid #2a6fff;margin:12px 0;padding:10px;font-size:13px;';
-            var ageMinutes = Math.round(age / 60000);
-            notice.innerHTML = `📌 <b>${ageMinutes}분 전</b> 검색 결과를 복원했습니다. (${STATE.videos.length}개 영상)`;
-            wrap.insertBefore(notice, wrap.children[3]);
-            
-            // 5초 후 자동 제거
-            setTimeout(function(){
-              notice.style.transition = 'opacity 0.5s';
-              notice.style.opacity = '0';
-              setTimeout(function(){ notice.remove(); }, 500);
-            }, 5000);
-          }
-        }
-        
-        console.log('[SR] Snapshot restored:', STATE.videos.length, 'videos');
-        return true;
-      }catch(e){
-        console.error('[SR] Snapshot restore error:', e);
-        return false;
-      }
-    };
-    
-    // 페이지 로드 완료 후 복원 시도
-    if(document.readyState === 'complete'){
-      setTimeout(restoreLastListIfNeeded, 100);
-    }else{
-      window.addEventListener('load', function(){
-        setTimeout(restoreLastListIfNeeded, 100);
-      });
-    }
-    
-    // 페이지 언로드시 저장
-    window.addEventListener('beforeunload', function(){
-      try{
-        if(window.STATE && Array.isArray(STATE.videos) && STATE.videos.length > 0){
-          var snapshot = {
-            ts: Date.now(),
-            videos: STATE.videos,
-            filters: STATE.filters || {},
-            sortKey: STATE.sortKey || 'uploadedAt',
-            sortDir: STATE.sortDir || 'desc'
-          };
-          localStorage.setItem('sr_lastList', JSON.stringify(snapshot));
-        }
-      }catch(e){}
-    });
-  })();
-  
-  // ========== 추가: 키 사용량 초기화시 개별 키 사용량도 초기화 ==========
-  (function fixQuotaReset(){
-    var resetBtn = document.getElementById('quotaReset');
-    if(resetBtn && !resetBtn.__fixed){
-      resetBtn.addEventListener('click', function(){
-        // 키별 사용량 초기화
-        if(window.ROT && ROT.stat){
-          ROT.stat.forEach(function(s){
-            if(s) s.used = 0;
-          });
-          ROT.saveStat();
-          renderKeyState();
-        }
-      });
-      resetBtn.__fixed = true;
-    }
-  })();
-  
-  console.log('[SR v7.3.9] Fixes applied successfully');
-})();
-</script>
-  
 </body>
 </html>
-
-<script>
-
-  // ---------- v7.3.3: Time & Quota helpers ----------
-  function pacificTodayStr(){
-    try { return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
-    catch(_) { const d=new Date(); return d.toISOString().slice(0,10); }
-  }
-  function nextPacificMidnightISO(){
-    try{ const la = new Date(new Date().toLocaleString('en-US', { timeZone:'America/Los_Angeles' })); la.setHours(24,0,0,0); return la.toISOString(); }
-    catch(_){ const d=new Date(); d.setHours(24,0,0,0); return d.toISOString(); }
-  }
-  const QUOTA_LOCK_KEY='sr_quota_lock_until';
-  function setQuotaLocked(on=true){ if(on) localStorage.setItem(QUOTA_LOCK_KEY,nextPacificMidnightISO()); else localStorage.removeItem(QUOTA_LOCK_KEY); renderQuotaStateFlag(); }
-
-  // ---------- Snapshot helpers ----------
-  function saveLastList(){ try{ if(Array.isArray(STATE?.videos)&&STATE.videos.length){ save('sr_lastList',{ts:Date.now(),videos:STATE.videos}); } }catch(e){} }
-  function restoreLastListIfNeeded(){ try{ if(Array.isArray(STATE?.videos)&&STATE.videos.length) return false; const last=load('sr_lastList',null); if(last&&Array.isArray(last.videos)&&last.videos.length){ STATE.videos=last.videos; renderTable(STATE.videos); const cont=document.querySelector('.container'); const msg=document.createElement('div'); msg.className='note'; msg.textContent=isQuotaLocked()? '오프라인 – 지난 결과(로컬 스냅샷)를 표시 중입니다.' : '지난 결과(로컬 스냅샷)를 표시 중입니다.'; cont&&cont.insertBefore(msg,cont.children[1]||null); return true; } }catch(e){} return false; }
-
-
-  function isQuotaLocked(){ const iso=localStorage.getItem(QUOTA_LOCK_KEY); if(!iso) return false; if(new Date(iso)<=new Date()){ localStorage.removeItem(QUOTA_LOCK_KEY); return false; } return true; }
-  function shouldLockForQuota(status, text){
-    if(status===429) return true;
-    if(status!==403) return false;
-    const lower = String(text||'').toLowerCase();
-    try{ const j=JSON.parse(text); const reason=(j?.error?.errors?.[0]?.reason||j?.error?.status||'').toLowerCase(); if(['quotaexceeded','dailylimitexceeded','userratelimitexceeded','ratelimitexceeded'].includes(reason)) return true; }catch(_){}
-    if(/quota|daily.*limit|userratelimitexceeded|ratelimitexceeded/.test(lower)) return true;
-    return false;
-  }
-  function renderQuotaStateFlag(){
-    const el = document.getElementById('quotaStateFlag') || document.querySelector('#quotaFlags #quotaStateFlag');
-    if(!el) return;
-    const offline = isQuotaLocked();
-    el.className = 'quota-flag ' + (offline ? 'offline' : 'online');
-    el.innerHTML = '상태: <b>' + (offline ? 'OFFLINE(쿼터 소진)' : 'ONLINE') + '</b>';
-    el.style.cssText = offline ? 'color:#ffb8b8;border-color:#4a1f1f;background:#1c0c0c;font-weight:700' : 'color:#00d084;border-color:#1c3a24;background:#0c1f14;font-weight:700';
-  }
-  window.__forceQuota = (on=true)=> setQuotaLocked(!!on);
-
-</script>
-
-<script>window.addEventListener('load',()=>{try{restoreLastListIfNeeded();}catch(_e){}}); window.addEventListener('beforeunload',()=>{try{saveLastList();}catch(_e){}});</script>
-
-<script>(function(){ const f=document.getElementById('quotaStateFlag'); if(f){ f.style.cursor='pointer'; f.title='클릭하면 락 해제'; f.onclick=()=>{ setQuotaLocked(false); renderQuotaStateFlag(); }; }})();</script>
-
-<script>
-// v7.3.7: ensure modal has a [실시간 새로고침] button
-(function(){
-  function ensureRefreshButton(modal){
-    try{
-      if(!modal) return;
-      var head = modal.querySelector('.modal-head') || modal.querySelector('[data-role="head"]') || modal;
-      if(!head) return;
-      var btn = modal.querySelector('#chRefresh');
-      if(!btn){
-        btn = document.createElement('button');
-        btn.id = 'chRefresh';
-        btn.className = 'badge-soft';
-        btn.textContent = '실시간 새로고침';
-        btn.style.marginLeft = '8px';
-        var closeEl = modal.querySelector('#chClose') || head.lastElementChild;
-        if(closeEl && closeEl.nextSibling){
-          head.insertBefore(btn, closeEl.nextSibling);
-        }else{
-          head.appendChild(btn);
-        }
-      }
-      btn.disabled = (typeof isQuotaLocked==='function') ? isQuotaLocked() : false;
-      btn.title = btn.disabled ? '오늘 쿼터 소진 – 내일 00:00 이후 가능' : 'YouTube에서 최신 데이터 불러오기';
-      btn.onclick = function(){
-        if((typeof isQuotaLocked==='function') && isQuotaLocked()){
-          alert('오늘 쿼터 소진 – 내일 00:00 이후 가능');
-          return;
-        }
-        // 재호출: 현재 모달이 채널 모달이라고 가정하고 cid/ctitle 재사용 로직
-        try{
-          var cid = modal.getAttribute('data-channel-id') || modal.dataset.cid;
-          var ctitle = modal.getAttribute('data-channel-title') || modal.dataset.title || '';
-          if(typeof openChannelModal==='function' && cid){
-            openChannelModal(cid, ctitle||'');
-          }else{
-            // fallback: 전체 화면 새로고침
-            location.reload();
-          }
-        }catch(_){ location.reload(); }
-      };
-    }catch(_){}
-  }
-
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){
-      m.addedNodes && m.addedNodes.forEach(function(n){
-        if(!(n instanceof HTMLElement)) return;
-        if(n.id==='channelModal' || n.classList?.contains('channel-modal') || n.querySelector?.('#channelModal')){
-          var target = n.id==='channelModal' ? n : n.querySelector('#channelModal');
-          ensureRefreshButton(target||n);
-        }
-      });
-    });
-  });
-  try{
-    mo.observe(document.body, { childList:true, subtree:true });
-  }catch(_){}
-  // If already present
-  var existing = document.getElementById('channelModal');
-  if(existing) ensureRefreshButton(existing);
-})();
-</script>
-
-<script>
-// v7.3.7: API 사용량 배지에 현재 키 사용량 동기화
-(function(){
-  function renderApiUsageWithKey(){
-    try{
-      var badge = document.querySelector('[data-role="api-usage-badge"]') || document.querySelector('#apiUsageBadge');
-      if(!badge) return;
-      var q = (window.QUOTA||{});
-      var used = q.used||0, limit = q.limit||10000;
-      var idx = (window.ROT && typeof ROT.idx==='number') ? ROT.idx : 0;
-      var per = (window.ROT && ROT.stat && ROT.stat[idx] && (ROT.stat[idx].used||0)) || 0;
-      badge.textContent = 'API 사용량(오늘) ' + used + ' / ' + limit + ' · KEY' + (idx+1) + ' ' + per;
-    }catch(_){}
-  }
-  window.renderApiUsageWithKey = renderApiUsageWithKey;
-
-  // 바인딩: 키 배지 클릭 시, 키 회전 시, 렌더 시
-  document.addEventListener('click', function(e){
-    var t = e.target;
-    if(!t) return;
-    if(t.closest && t.closest('#keyState')){
-      setTimeout(renderApiUsageWithKey, 0);
-    }
-  }, true);
-  // 주기적 안정화(키 코드가 외부에서 바뀌는 경우)
-  setInterval(function(){ try{ renderApiUsageWithKey(); }catch(_){} }, 1000);
-
-  // 초기 2회 보정
-  setTimeout(renderApiUsageWithKey, 0);
-  setTimeout(renderApiUsageWithKey, 300);
-})();
-</script>
-
-<script>
-// v7.3.8 quality fixes
-(function(){
-  // 1) Track last opened channel for modal refresh
-  (function hookOpenChannel(){
-    try{
-      var _orig = window.openChannelModal;
-      if(typeof _orig === 'function' && !window.__sr_openChannel_hooked){
-        window.openChannelModal = function(cid, title){
-          try{ window.__lastChannel = { cid: cid, title: title||'' }; }catch(_){}
-          var res = _orig.apply(this, arguments);
-          try{
-            // stamp data on modal when it appears
-            setTimeout(function(){
-              var m = document.getElementById('channelModal');
-              if(m){ m.dataset.cid = cid; m.dataset.title = title||''; }
-            }, 0);
-          }catch(_){}
-          return res;
-        };
-        window.__sr_openChannel_hooked = true;
-      }
-    }catch(_){}
-  })();
-
-  // 2) Ensure modal refresh button only refreshes modal (no full page reload)
-  (function hookRefreshClickInterceptor(){
-    document.addEventListener('click', function(e){
-      var btn = e.target && e.target.id === 'chRefresh' ? e.target : (e.target && e.target.closest && e.target.closest('#chRefresh'));
-      if(!btn) return;
-      e.preventDefault(); e.stopPropagation();
-      try{
-        if(typeof isQuotaLocked==='function' && isQuotaLocked()){
-          alert('오늘 쿼터 소진 – 내일 00:00 이후 가능');
-          return;
-        }
-        var m = document.getElementById('channelModal');
-        var cid = (m && (m.getAttribute('data-channel-id') || m.dataset.cid)) || (window.__lastChannel && window.__lastChannel.cid);
-        var title = (m && (m.getAttribute('data-channel-title') || m.dataset.title)) || (window.__lastChannel && window.__lastChannel.title) || '';
-        if(typeof openChannelModal==='function' && cid){
-          openChannelModal(cid, title||'');
-        }
-      }catch(_){}
-    }, true);
-  })();
-
-  // 3) De-duplicate ok/fail counters (guard against double mark within same tick)
-  (function guardMarkCounters(){
-    function wrapMark(obj, key, stampKey){
-      try{
-        if(!obj || typeof obj[key] !== 'function' || obj['__wrapped_'+key]) return;
-        var orig = obj[key];
-        obj[key] = function(){
-          var now = performance.now();
-          if(now - (obj[stampKey] || 0) < 20){ return; }
-          obj[stampKey] = now;
-          return orig.apply(this, arguments);
-        };
-        obj['__wrapped_'+key] = true;
-      }catch(_){}
-    }
-    function tryWrap(){
-      if(window.ROT){
-        wrapMark(ROT, 'markOk', '_lastOkTs');
-        wrapMark(ROT, 'markFail', '_lastFailTs');
-        return true;
-      }
-      return false;
-    }
-    if(!tryWrap()){
-      var iv = setInterval(function(){ if(tryWrap()){ clearInterval(iv); } }, 200);
-      setTimeout(function(){ try{ clearInterval(iv); }catch(_){}} , 5000);
-    }
-  })();
-
-  // 4) Per-key API 사용량 동기화: wrap incQuota to record per-key usage
-  (function wrapIncQuota(){
-    try{
-      if(window.__sr_incQuota_wrapped) return;
-      var orig = window.incQuota;
-      window.incQuota = function(n){
-        try{
-          if(window.ROT && typeof ROT.idx==='number'){
-            var st = ROT.stat[ROT.idx] = ROT.stat[ROT.idx] || {};
-            st.used = (st.used||0) + (n||0);
-            try{ localStorage.setItem('sr_keyStat', JSON.stringify(Object.fromEntries((ROT.stat||[]).map(function(s,i){ return ['K'+i, s]; })))) }catch(_){}
-          }
-        }catch(_){}
-        var r = (typeof orig === 'function') ? orig.apply(this, arguments) : undefined;
-        try{ if(window.renderApiUsageWithKey) renderApiUsageWithKey(); }catch(_){}
-        return r;
-      };
-      window.__sr_incQuota_wrapped = true;
-    }catch(_){}
-  })();
-
-  // Update badge immediately when key changes
-  (function bindKeyChangeRefresh(){
-    document.addEventListener('click', function(e){
-      var pill = e.target && e.target.closest && e.target.closest('#keyState .pill');
-      if(pill){ setTimeout(function(){ try{ renderApiUsageWithKey && renderApiUsageWithKey(); }catch(_){} }, 0); }
-    }, true);
-  })();
-})();
-</script>
