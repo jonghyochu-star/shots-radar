@@ -1456,53 +1456,5 @@
 })();
 </script>
 
-<script>
-// v7.4.1 - 상승률 계산 수정
-(function(){
-  // sumRange 함수 재정의
-  window.sumRange = function(arr, days, eps){
-    const L = arr.length;
-    if(L < days * 2) {
-      // 데이터가 충분하지 않은 경우
-      const total = arr.reduce((a,b) => a+b, 0);
-      return {prev: 0, now: total, label: 'NEW'};
-    }
-    
-    // 정확히 7일씩 나누기
-    const now_start = Math.max(0, L - days);
-    const prev_start = Math.max(0, L - days * 2);
-    const prev_end = now_start;
-    
-    const prev = arr.slice(prev_start, prev_end).reduce((a,b) => a+b, 0);
-    const now = arr.slice(now_start, L).reduce((a,b) => a+b, 0);
-    
-    // 이전 기간 데이터가 너무 작으면 NEW로 표시
-    if (prev < (eps || 10000)) {
-      return {prev, now, label: 'NEW'};
-    }
-    
-    // 정상적인 백분율 계산
-    const pct = Math.round(((now - prev) / prev) * 100);
-    
-    // 백분율 표시 개선
-    let label;
-    if(pct > 200) {
-      label = '🚀 ' + pct + '%';
-    } else if(pct >= 0) {
-      label = '▲ ' + pct + '%';
-    } else {
-      label = '▼ ' + Math.abs(pct) + '%';
-    }
-    
-    return {prev, now, label};
-  };
-  
-  // 차트 재로드
-  if(typeof buildLongTrend === 'function') {
-    setTimeout(buildLongTrend, 100);
-  }
-})();
-</script>
-  
 </body>
 </html>
