@@ -1493,6 +1493,157 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
 })();
 </script>
 
+<script>
+// v7.4.0 upgrades
+(function(){
+  /* 1) 모달 [실시간 새로고침] = ‘모달만’ 재오픈 + 시각 피드백 */
+  function __sr_chRefreshHandler(ev){
+    try{
+      if(ev){ ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation && ev.stopImmediatePropagation(); }
+      var btn = document.getElementById('chRefresh');
+      if(btn){ btn.disabled = true; var old=btn.textContent; btn.textContent='갱신중…'; setTimeout(function(){ try{btn.disabled=false; btn.textContent=old;}catch(_){} }, 1800); }
+      if(typeof isQuotaLocked==='function' && isQuotaLocked()){ alert('오늘 쿼터 소진 – 내일 00:00 이후 가능'); return; }
+      var m = document.getElementById('channelModal');
+      var cid = (m && (m.getAttribute('data-channel-id') || m.dataset.cid)) || (window.__lastChannel && window.__lastChannel.cid);
+      var title = (m && (m.getAttribute('data-channel-title') || m.dataset.title)) || (window.__lastChannel && window.__lastChannel.title) || '';
+      if(typeof openChannelModal==='function' && cid){ openChannelModal(cid, title||''); }
+    }catch(_){}
+  }
+  function __sr_bindChRefresh(){
+    try{
+      var b = document.getElementById('chRefresh');
+      if(b && b.__sr_bound !== true){
+        b.onclick = __sr_chRefreshHandler;
+        b.addEventListener('click', __sr_chRefreshHandler, true);
+        b.__sr_bound = true;
+      }
+    }catch(_){}
+  }
+  setInterval(__sr_bindChRefresh, 300);
+  document.addEventListener('click', function(e){
+    if(e.target && (e.target.id==='chRefresh' || (e.target.closest && e.target.closest('#chRefresh')))){
+      __sr_chRefreshHandler(e);
+    }
+  }, true);
+  (function(){  // 최근 열린 채널 추적
+    try{
+      var _o = window.openChannelModal;
+      if(typeof _o === 'function' && !window.__sr_openChannel_hooked_v740){
+        window.openChannelModal = function(cid, title){
+          try{ window.__lastChannel = { cid: cid, title: title||'' }; }catch(_){}
+          var r = _o.apply(this, arguments);
+          setTimeout(function(){
+            var m = document.getElementById('channelModal');
+            if(m){ m.dataset.cid = cid; m.dataset.title = title||''; }
+          }, 0);
+          return r;
+        };
+        window.__sr_openChannel_hooked_v740 = true;
+      }
+    }catch(_){}
+  })();
+
+  /* 2) ok/fail = ‘검색 1회당 1증가’가 되도록 run 단위 중복 방지 */
+  (function dedupeByRun(){
+    try{
+      var _ys = window.ytSearch;
+      if(typeof _ys === 'function' && !window.__sr_ytSearch_hooked){
+        window.ytSearch = function(){
+          window.__sr_runId = (Date.now().toString(36)+Math.random().toString(36).slice(2));
+          return _ys.apply(this, arguments);
+        };
+        window.__sr_ytSearch_hooked = true;
+      }
+    }catch(_){}
+    function wrapOncePerRun(obj, key, stampKey){
+      try{
+        if(!obj || typeof obj[key]!=='function' || obj['__wrapped_'+key+'_run']) return;
+        var orig = obj[key];
+        obj[key] = function(){
+          var run = window.__sr_runId || 'noRun';
+          var map = obj.__lastRunMap = obj.__lastRunMap || {};
+          if(map[stampKey] === run) return; // 같은 run 재호출 무시
+          map[stampKey] = run;
+          return orig.apply(this, arguments);
+        };
+        obj['__wrapped_'+key+'_run'] = true;
+      }catch(_){}
+    }
+    function fallbackThrottle(obj, key){
+      try{
+        if(!obj || typeof obj[key]!=='function' || obj['__wrapped_'+key+'_th']) return;
+        var orig = obj[key], last=0;
+        obj[key] = function(){
+          var now = performance.now();
+          if(now-last<250) return;
+          last = now;
+          return orig.apply(this, arguments);
+        };
+        obj['__wrapped_'+key+'_th'] = true;
+      }catch(_){}
+    }
+    function tryWrap(){
+      if(window.ROT){
+        wrapOncePerRun(ROT,'markOk','okRun');
+        wrapOncePerRun(ROT,'markFail','failRun');
+        fallbackThrottle(ROT,'markOk');
+        fallbackThrottle(ROT,'markFail');
+        return true;
+      }
+      return false;
+    }
+    if(!tryWrap()){
+      var iv=setInterval(function(){ if(tryWrap()) clearInterval(iv); },150);
+      setTimeout(function(){ try{clearInterval(iv);}catch(_){}} ,6000);
+    }
+  })();
+
+  /* 3) 키별 API 사용량 = ‘호출 순간’ 현재 키에 귀속 */
+  (function perKeyUsage(){
+    function bump(n){
+      try{
+        if(!window.ROT || typeof ROT.idx!=='number') return;
+        var st = ROT.stat[ROT.idx] = ROT.stat[ROT.idx] || {};
+        st.used = (st.used||0) + (n||0);
+        try{
+          localStorage.setItem('sr_keyStat',
+            JSON.stringify(Object.fromEntries((ROT.stat||[]).map(function(s,i){ return ['K'+i, s]; }))));
+        }catch(_){}
+        if(window.renderApiUsageWithKey) renderApiUsageWithKey();
+      }catch(_){}
+    }
+    // (a) 앱의 incQuota가 있으면 그 순간 귀속(가장 정확)
+    try{
+      if(typeof window.incQuota === 'function' && !window.__sr_incQuota_hooked_v740){
+        var _iq = window.incQuota;
+        window.incQuota = function(n){ bump(n||0); return _iq.apply(this, arguments); };
+        window.__sr_incQuota_hooked_v740 = true;
+      }
+    }catch(_){}
+    // (b) 없을 경우를 대비해 fetch 보조(youtube.googleapis.com만 1유닛으로 처리)
+    try{
+      if(typeof window.fetch === 'function' && !window.__sr_fetch_hooked_v740){
+        var _f = window.fetch;
+        window.fetch = function(input, init){
+          try{
+            var url = (typeof input==='string') ? input : (input&&input.url)||'';
+            if(url.indexOf('youtube.googleapis.com')!==-1){ setTimeout(function(){ bump(1); }, 0); }
+          }catch(_){}
+          return _f.apply(this, arguments);
+        };
+        window.__sr_fetch_hooked_v740 = true;
+      }
+    }catch(_){}
+    // 키 전환 시 배지 즉시 갱신
+    document.addEventListener('click', function(e){
+      if(e.target && e.target.closest && e.target.closest('#keyState .pill')){
+        setTimeout(function(){ try{ renderApiUsageWithKey(); }catch(_){}} ,0);
+      }
+    }, true);
+  })();
+})();
+</script>
+
   
 </body>
 </html>
