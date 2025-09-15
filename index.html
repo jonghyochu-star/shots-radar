@@ -1386,6 +1386,114 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
 })();
 </script>
 
+<script>
+// v7.3.9 fixes
+(function(){
+  /* 1) 모달 [실시간 새로고침]은 '모달만' 다시 그리기 */
+  // 최근 연 채널 기억
+  (function hookOpenChannel(){
+    try{
+      var _orig = window.openChannelModal;
+      if (typeof _orig === 'function' && !window.__sr_openChannel_hooked) {
+        window.openChannelModal = function(cid, title){
+          try { window.__lastChannel = { cid: cid, title: title||'' }; } catch(_){}
+          var res = _orig.apply(this, arguments);
+          setTimeout(function(){
+            var m = document.getElementById('channelModal');
+            if (m) { m.dataset.cid = cid; m.dataset.title = title||''; }
+          }, 0);
+          return res;
+        };
+        window.__sr_openChannel_hooked = true;
+      }
+    } catch(_){}
+  })();
+
+  // 버튼 클릭을 가로채서 페이지 리로드를 원천 차단
+  function chRefreshHandler(ev){
+    try{
+      if (ev){ ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation && ev.stopImmediatePropagation(); }
+      if (typeof isQuotaLocked==='function' && isQuotaLocked()){
+        alert('오늘 쿼터 소진 – 내일 00:00 이후 가능'); return;
+      }
+      var m = document.getElementById('channelModal');
+      var cid   = (m && (m.getAttribute('data-channel-id') || m.dataset.cid)) || (window.__lastChannel && window.__lastChannel.cid);
+      var title = (m && (m.getAttribute('data-channel-title') || m.dataset.title)) || (window.__lastChannel && window.__lastChannel.title) || '';
+      if (typeof openChannelModal==='function' && cid) openChannelModal(cid, title||'');
+    }catch(_){}
+  }
+  // 모달이 다시 그려져도 계속 바인딩 유지
+  function forceBindChRefresh(){
+    try{
+      var b = document.getElementById('chRefresh');
+      if (b && b.__sr_bound !== true){
+        b.onclick = chRefreshHandler;
+        b.addEventListener('click', chRefreshHandler, true);
+        b.__sr_bound = true;
+      }
+    }catch(_){}
+  }
+  setInterval(forceBindChRefresh, 300);
+  document.addEventListener('click', function(e){
+    if (e.target && (e.target.id==='chRefresh' || (e.target.closest && e.target.closest('#chRefresh')))){
+      chRefreshHandler(e);
+    }
+  }, true);
+
+  /* 2) ok/fail 중복 카운트 방지 (키별 100ms 가드) */
+  (function strongGuardMarks(){
+    function wrap(obj, key, stampKey){
+      try{
+        if (!obj || typeof obj[key]!=='function' || obj['__wrapped_'+key]) return;
+        var orig = obj[key];
+        obj[key] = function(){
+          var now = performance.now();
+          var k = (window.ROT && typeof ROT.idx==='number') ? 'k'+ROT.idx : 'k?';
+          var map = obj.__lastMap = obj.__lastMap || {};
+          var last = map[stampKey+k] || 0;
+          if (now - last < 100) return;          // <- 중복 방지
+          map[stampKey+k] = now;
+          return orig.apply(this, arguments);
+        };
+        obj['__wrapped_'+key] = true;
+      }catch(_){}
+    }
+    function tryWrap(){ if (window.ROT){ wrap(ROT,'markOk','ok'); wrap(ROT,'markFail','fail'); return true; } return false; }
+    if (!tryWrap()){
+      var iv = setInterval(function(){ if (tryWrap()) clearInterval(iv); }, 150);
+      setTimeout(function(){ try{ clearInterval(iv); }catch(_){} }, 6000);
+    }
+  })();
+
+  /* 3) 키별 API 사용량: 글로벌 used 증분을 현재 키에 귀속 */
+  (function perKeyUsageFromDelta(){
+    var last = 0;
+    setInterval(function(){
+      try{
+        if (!window.QUOTA || typeof QUOTA.used!=='number') return;
+        if (!window.ROT   || typeof ROT.idx!=='number')   return;
+        var u = QUOTA.used|0;
+        if (u > last){
+          var delta = u - last;
+          last = u;
+          var st = ROT.stat[ROT.idx] = ROT.stat[ROT.idx] || {};
+          st.used = (st.used||0) + delta;               // ← 키별 누적
+          try{
+            localStorage.setItem('sr_keyStat',
+              JSON.stringify(Object.fromEntries((ROT.stat||[])
+                .map(function(s,i){ return ['K'+i, s]; }))));
+          }catch(_){}
+          if (window.renderApiUsageWithKey) renderApiUsageWithKey();
+        }else if (u < last){ // 리셋 감지
+          last = u;
+        }
+      }catch(_){}
+    }, 150);
+  })();
+})();
+</script>
+
+  
 </body>
 </html>
 
