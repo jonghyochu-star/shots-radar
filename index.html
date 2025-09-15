@@ -1644,6 +1644,195 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
 })();
 </script>
 
+<script>
+/* ===== v7.4.fix — modal refresh / single-source counter / per-key usage ===== */
+(function(){
+  /* ------------------------------------------------------------------------
+   * 0) 헬퍼: 현재 키 인덱스/스탯/배지 렌더
+   * ---------------------------------------------------------------------- */
+  function getKeyIdx(){ try { return (window.ROT && typeof ROT.idx === 'number') ? ROT.idx : 0; } catch(_) { return 0; } }
+  function statAt(i){ window.ROT = window.ROT || ({}); window.ROT.stat = window.ROT.stat || []; return (window.ROT.stat[i] = window.ROT.stat[i] || { used:0, ok:0, fail:0 }); }
+  function renderApiUsageWithKey(){
+    try{
+      var b = document.querySelector('#apiUsageBadge,[data-role="api-usage-badge"]');
+      if(!b) return;
+      var used = (window.QUOTA && +window.QUOTA.used) || 0;
+      var limit = (window.QUOTA && +window.QUOTA.limit) || 10000;
+      var idx = getKeyIdx();
+      var per = statAt(idx).used|0;
+      b.textContent = 'API 사용량(오늘) ' + used + ' / ' + limit + ' · KEY' + (idx+1) + ' ' + per;
+    }catch(_){}
+  }
+
+  /* ------------------------------------------------------------------------
+   * 1) 모달 [실시간 새로고침] → “모달만” 재오픈 (페이지 리로드 금지)
+   *    - 최근 openChannelModal 인자 추적
+   *    - 버튼 클릭 시 preventDefault + stopImmediatePropagation
+   * ---------------------------------------------------------------------- */
+  (function hookOpenForRefresh(){
+    try{
+      var _open = window.openChannelModal;
+      if (typeof _open === 'function' && !window.__sr_open_hooked) {
+        window.openChannelModal = function(cid, title){
+          try { window.__lastChannel = { cid: cid, title: title || '' }; } catch(_){}
+          var r = _open.apply(this, arguments);
+          setTimeout(function(){
+            var m = document.getElementById('channelModal');
+            if (m) { m.dataset.cid = cid; m.dataset.title = title || ''; }
+          }, 0);
+          return r;
+        };
+        window.__sr_open_hooked = true;
+      }
+    }catch(_){}
+  })();
+
+  function onChRefresh(ev){
+    try{
+      if (ev){ ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation && ev.stopImmediatePropagation(); }
+      if (typeof isQuotaLocked === 'function' && isQuotaLocked()){
+        alert('오늘 쿼터 소진 – 내일 00:00 이후 가능'); return;
+      }
+      var m = document.getElementById('channelModal');
+      var cid   = (m && (m.getAttribute('data-channel-id') || m.dataset.cid)) || (window.__lastChannel && window.__lastChannel.cid);
+      var title = (m && (m.getAttribute('data-channel-title') || m.dataset.title)) || (window.__lastChannel && window.__lastChannel.title) || '';
+      if (typeof openChannelModal === 'function' && cid) openChannelModal(cid, title);
+    }catch(_){}
+  }
+  function bindChRefresh(){
+    try{
+      var btn = document.getElementById('chRefresh');
+      if (btn && !btn.__sr_bound){
+        btn.__sr_bound = true;
+        btn.onclick = onChRefresh;
+        btn.addEventListener('click', onChRefresh, true);
+      }
+    }catch(_){}
+  }
+  setInterval(bindChRefresh, 300);
+  document.addEventListener('click', function(e){
+    if (e.target && (e.target.id === 'chRefresh' || (e.target.closest && e.target.closest('#chRefresh')))) {
+      onChRefresh(e);
+    }
+  }, true);
+
+  /* ------------------------------------------------------------------------
+   * 2) 카운터 중복 제거 + 키별 사용량 집계 = “하나의 출처”만 집계
+   *    - fetchWithRotate 가 있으면 **그곳만** 카운트 & 사용량 귀속
+   *    - 다른 곳에서 중복 호출(incQuota/markOk/markFail 등)은 스킵
+   * ---------------------------------------------------------------------- */
+  window.__sr_countSource = 'fetchWithRotate';   // 단일 소스 강제
+  window.__sr_inRotate = false;                  // 회전 래퍼 내부 플래그
+
+  function bumpKeyUsage(cost){ try { statAt(getKeyIdx()).used += (cost||0); renderApiUsageWithKey(); } catch(_){ } }
+
+  // markOk/markFail를 fetchWithRotate 내부에서만 반영되도록 얇은 래퍼
+  (function fenceMarks(){
+    ['markOk','markFail'].forEach(function(k){
+      try{
+        var obj = window.ROT || (window.ROT={});
+        if (!obj || typeof obj[k] !== 'function' || obj['__sr_fenced_'+k]) return;
+        var orig = obj[k];
+        obj[k] = function(){
+          if (!window.__sr_inRotate) return; // 회전 래퍼 안에서만 카운트
+          return orig.apply(this, arguments);
+        };
+        obj['__sr_fenced_'+k] = true;
+      }catch(_){}
+    });
+  })();
+
+  // incQuota는 전역 사용량만 + per-key는 회전 래퍼 안에서만
+  (function fenceIncQuota(){
+    try{
+      var orig = window.incQuota;
+      if (typeof orig === 'function' && !window.__sr_iq_fenced){
+        window.incQuota = function(n){
+          var r = orig.apply(this, arguments);   // 전역 QUOTA.used 는 기존 로직대로
+          if (window.__sr_inRotate) bumpKeyUsage(n||0); // 키별 사용량은 여기서만 반영
+          return r;
+        };
+        window.__sr_iq_fenced = true;
+      }
+    }catch(_){}
+  })();
+
+  // fetchWithRotate가 있으면 “여기서만” OK/FAIL + per-key 사용량 반영
+  (function wrapFWR(){
+    try{
+      var fwr = window.fetchWithRotate;
+      if (typeof fwr === 'function' && !window.__sr_fwr_wrapped){
+        window.fetchWithRotate = async function(url, opts, cost){
+          window.__sr_inRotate = true;
+          var ok = false, res;
+          try{
+            res = await fwr.apply(this, arguments);
+            ok = !!(res && res.ok);
+            return res;
+          }catch(e){
+            ok = false;
+            throw e;
+          }finally{
+            try{
+              var n = (+cost||1);
+              if (typeof window.incQuota === 'function') window.incQuota(n);  // 전역 사용량
+              bumpKeyUsage(n);                                               // 키별 사용량
+              if (window.ROT && typeof window.ROT.markOk === 'function' && typeof window.ROT.markFail === 'function'){
+                ok ? window.ROT.markOk() : window.ROT.markFail();            // OK/FAIL 1회만
+              }
+            }catch(_){}
+            window.__sr_inRotate = false;
+          }
+        };
+        window.__sr_fwr_wrapped = true;
+      }
+    }catch(_){}
+  })();
+
+  /* ------------------------------------------------------------------------
+   * 3) 검색 1회에 2증가 현상 방지 (run 단위 가드 – 혹시 외부에서 중복 호출할 경우)
+   *    - ytSearch 시작시 runId 생성 → 같은 run에서 markOk/markFail 중복 차단
+   * ---------------------------------------------------------------------- */
+  (function runGuard(){
+    try{
+      var _ys = window.ytSearch;
+      if (typeof _ys === 'function' && !window.__sr_ys_hooked){
+        window.ytSearch = function(){
+          window.__sr_runId = Date.now().toString(36) + Math.random().toString(36).slice(2);
+          return _ys.apply(this, arguments);
+        };
+        window.__sr_ys_hooked = true;
+      }
+    }catch(_){}
+    function oncePerRun(obj, key, tag){
+      try{
+        if (!obj || typeof obj[key] !== 'function' || obj['__sr_run_'+key]) return;
+        var orig = obj[key];
+        obj[key] = function(){
+          var r = window.__sr_runId || 'noRun';
+          obj.__sr_seen = obj.__sr_seen || {};
+          if (obj.__sr_seen[tag] === r) return;
+          obj.__sr_seen[tag] = r;
+          return orig.apply(this, arguments);
+        };
+        obj['__sr_run_'+key] = true;
+      }catch(_){}
+    }
+    if (window.ROT){ oncePerRun(window.ROT,'markOk','ok'); oncePerRun(window.ROT,'markFail','fail'); }
+  })();
+
+  /* ------------------------------------------------------------------------
+   * 4) 키 바꾸면 배지 즉시 갱신
+   * ---------------------------------------------------------------------- */
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.closest && e.target.closest('#keyState .pill')) setTimeout(renderApiUsageWithKey, 0);
+  }, true);
+  // 초기 보정
+  setTimeout(renderApiUsageWithKey, 0);
+  setInterval(renderApiUsageWithKey, 1000);
+})();
+</script>
+
   
 </body>
 </html>
