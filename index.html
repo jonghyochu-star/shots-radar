@@ -1833,6 +1833,195 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
 })();
 </script>
 
+  <script>
+/* ===== SRFIX v7.3.8.final =====
+ * Fixes:
+ * 1) 모달 '실시간 새로고침' → 모달만 재오픈(페이지 리로드 차단)
+ * 2) 키 배지 ok/fail 중복 증가 방지(키별 120ms 스로틀 + run 가드)
+ * 3) 키별 API 사용량 분리: 호출 비용을 해당 시점의 키에 정확 귀속 (대기열 방식)
+ * ------------------------------------------------------------------ */
+(function(){
+  /* ---------- 0. 안전 헬퍼 ---------- */
+  function now(){ return (window.performance && performance.now) ? performance.now() : Date.now(); }
+  function getIdx(){ try { return (window.ROT && typeof ROT.idx==='number') ? ROT.idx : 0; } catch(_){ return 0; } }
+  function ensureStat(i){
+    window.ROT = window.ROT || {}; ROT.stat = ROT.stat || [];
+    return (ROT.stat[i] = ROT.stat[i] || { used:0, ok:0, fail:0 });
+  }
+  function renderUsage(){
+    try{
+      var badge = document.querySelector('#apiUsageBadge,[data-role="api-usage-badge"]');
+      var used = (window.QUOTA && +QUOTA.used) || 0;
+      var limit = (window.QUOTA && +QUOTA.limit) || 10000;
+      var per = ensureStat(getIdx()).used|0;
+      if (badge) badge.textContent = 'API 사용량(오늘) ' + used + ' / ' + limit + ' · KEY' + (getIdx()+1) + ' ' + per;
+    }catch(_){}
+  }
+
+  /* ---------- 1) 모달 새로고침: 모달만 다시 그리기 ---------- */
+  (function(){
+    try{
+      var _o = window.openChannelModal;
+      if (typeof _o === 'function' && !window.__srf_open_hooked){
+        window.openChannelModal = function(cid, title){
+          try { window.__srf_lastCh = { cid: cid, title: title||'' }; } catch(_){}
+          var r = _o.apply(this, arguments);
+          setTimeout(function(){
+            var m = document.getElementById('channelModal');
+            if (m){ m.dataset.cid = cid; m.dataset.title = title||''; }
+          }, 0);
+          return r;
+        };
+        window.__srf_open_hooked = true;
+      }
+    }catch(_){}
+
+    function onRefresh(ev){
+      if (ev){ ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation && ev.stopImmediatePropagation(); }
+      try{
+        if (typeof isQuotaLocked==='function' && isQuotaLocked()){
+          alert('오늘 쿼터 소진 – 내일 00:00 이후 가능'); return;
+        }
+        var m = document.getElementById('channelModal');
+        var cid = (m && (m.getAttribute('data-channel-id') || m.dataset.cid)) || (window.__srf_lastCh && __srf_lastCh.cid);
+        var title = (m && (m.getAttribute('data-channel-title') || m.dataset.title)) || (window.__srf_lastCh && __srf_lastCh.title) || '';
+        if (typeof openChannelModal==='function' && cid) openChannelModal(cid, title);
+      }catch(_){}
+    }
+    function bind(){
+      try{
+        var b = document.getElementById('chRefresh');
+        if (b && !b.__srfBound){
+          b.__srfBound=true;
+          b.onclick=onRefresh;
+          b.addEventListener('click', onRefresh, true); // 캡처 단계에서도 잡아서 리로드 경로 차단
+        }
+      }catch(_){}
+    }
+    setInterval(bind, 300);
+    document.addEventListener('click', function(e){
+      if (e.target && (e.target.id==='chRefresh' || (e.target.closest && e.target.closest('#chRefresh')))) onRefresh(e);
+    }, true);
+  })();
+
+  /* ---------- 2) ok/fail 2중 카운트 방지 ---------- */
+  (function(){
+    // run 가드: 검색 시작 시 runId 갱신
+    try{
+      var _ys = window.ytSearch;
+      if (typeof _ys === 'function' && !window.__srf_ys){
+        window.ytSearch = function(){
+          window.__srf_run = Date.now().toString(36)+Math.random().toString(36).slice(2);
+          return _ys.apply(this, arguments);
+        };
+        window.__srf_ys = true;
+      }
+    }catch(_){}
+
+    // 키별 120ms 스로틀 + 같은 run 재호출 무시
+    function throttleKey(obj, key, stampKey){
+      try{
+        if (!obj || typeof obj[key] !== 'function' || obj['__srf_'+key]) return;
+        var orig = obj[key];
+        obj[key] = function(){
+          var i = getIdx();
+          var map = obj.__srf_last = obj.__srf_last || {};
+          var last = map[stampKey+i] || 0;
+          var t = now();
+          if (t - last < 120){ return; }       // 120ms 내 중복 무시
+          map[stampKey+i] = t;
+
+          var run = window.__srf_run || 'norun';
+          obj.__srf_seen = obj.__srf_seen || {};
+          if (obj.__srf_seen[stampKey+i] === run){ return; } // 같은 검색 run 중복 무시
+          obj.__srf_seen[stampKey+i] = run;
+
+          return orig.apply(this, arguments);
+        };
+        obj['__srf_'+key] = true;
+      }catch(_){}
+    }
+
+    function tryWrap(){
+      if (window.ROT){
+        throttleKey(ROT, 'markOk', 'ok');
+        throttleKey(ROT, 'markFail', 'fail');
+        return true;
+      }
+      return false;
+    }
+    if (!tryWrap()){
+      var iv = setInterval(function(){ if (tryWrap()) clearInterval(iv); }, 150);
+      setTimeout(function(){ try{ clearInterval(iv); }catch(_){ } }, 6000);
+    }
+  })();
+
+  /* ---------- 3) 키별 API 사용량 ‘정확 귀속’ (대기열 방식) ---------- */
+  (function(){
+    var Q = []; // { idx, cost }
+
+    function enqueue(cost){
+      Q.push({ idx: getIdx(), cost: +cost||1, ts: now() });
+    }
+    function consume(n){
+      var left = n|0;
+      while(left>0 && Q.length){
+        var h = Q[0];
+        var take = Math.min(left, h.cost);
+        ensureStat(h.idx).used += take;
+        h.cost -= take; left -= take;
+        if (h.cost<=0) Q.shift();
+      }
+      renderUsage();
+    }
+
+    // A) fetchWithRotate 있으면, 호출 시점의 키/비용을 대기열에 기록
+    try{
+      var fwr = window.fetchWithRotate;
+      if (typeof fwr === 'function' && !window.__srf_fwr){
+        window.fetchWithRotate = function(url, opts, cost){
+          enqueue(+cost || 1);
+          return fwr.apply(this, arguments);
+        };
+        window.__srf_fwr = true;
+      }
+    }catch(_){}
+
+    // B) incQuota가 실제로 전역 사용량을 올리는 순간, 대기열에서 소모 → 해당 키에 귀속
+    try{
+      var iq = window.incQuota;
+      if (typeof iq === 'function' && !window.__srf_iq){
+        window.incQuota = function(n){
+          var r = iq.apply(this, arguments);
+          try{ consume(+n||0); }catch(_){}
+          return r;
+        };
+        window.__srf_iq = true;
+      }
+    }catch(_){}
+
+    // C) 보조: 누군가 QUOTA.used를 직접 올릴 경우(incQuota 미사용) 델타를 현재 키에 귀속
+    (function observeQuota(){
+      var last = (window.QUOTA && QUOTA.used)|0;
+      setInterval(function(){
+        try{
+          if (!window.QUOTA) return;
+          var u = QUOTA.used|0;
+          if (u>last){ consume(u-last); last=u; }
+          else if (u<last){ last=u; } // 리셋
+        }catch(_){}
+      }, 180);
+    })();
+
+    // 키 바꾸면 배지 즉시 갱신
+    document.addEventListener('click', function(e){
+      if (e.target && e.target.closest && e.target.closest('#keyState .pill')) setTimeout(renderUsage, 0);
+    }, true);
+    setTimeout(renderUsage, 0);
+  })();
+})();
+</script>
+
   
 </body>
 </html>
