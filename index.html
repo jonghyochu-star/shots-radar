@@ -1386,6 +1386,305 @@ if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
 })();
 </script>
 
+<script>
+// === YouTube Shorts Dashboard v7.3.9 Fixes ===
+(function(){
+  console.log('[SR v7.3.9] Applying fixes...');
+  
+  // ========== Fix 1: 모달 새로고침 시각적 피드백 추가 ==========
+  (function fixModalRefresh(){
+    // 기존 openChannelModal 래핑
+    var _origOpen = window.openChannelModal;
+    if(typeof _origOpen === 'function' && !window.__sr_modal_fixed){
+      window.openChannelModal = function(cid, title){
+        // 새로고침인지 확인
+        var isRefresh = false;
+        var modal = document.getElementById('channelModal');
+        if(modal && modal.style.display === 'flex' && window.__lastChannel && window.__lastChannel.cid === cid){
+          isRefresh = true;
+          // 로딩 표시
+          var loading = document.getElementById('chLoading');
+          var body = document.getElementById('chBody');
+          if(loading) loading.style.display = '';
+          if(body) body.style.display = 'none';
+          
+          // 시각적 피드백
+          var refreshBtn = document.getElementById('chRefresh');
+          if(refreshBtn){
+            refreshBtn.textContent = '새로고침 중...';
+            refreshBtn.disabled = true;
+            setTimeout(function(){
+              refreshBtn.textContent = '실시간 새로고침';
+              refreshBtn.disabled = false;
+            }, 1000);
+          }
+        }
+        
+        window.__lastChannel = {cid: cid, title: title||''};
+        return _origOpen.apply(this, arguments);
+      };
+      window.__sr_modal_fixed = true;
+    }
+  })();
+  
+  // ========== Fix 2: ok/fail 카운터 중복 방지 강화 ==========
+  (function fixDuplicateCounters(){
+    if(!window.ROT) return;
+    
+    // 요청별 고유 ID 추가
+    var requestId = 0;
+    var lastRequestId = {};
+    
+    // fetchWithRotate 래핑
+    var _origFetch = window.fetchWithRotate;
+    if(typeof _origFetch === 'function' && !window.__sr_fetch_fixed){
+      window.fetchWithRotate = function(url, quotaInc){
+        var thisReqId = ++requestId;
+        
+        return _origFetch.apply(this, arguments).then(function(data){
+          // 성공시 한번만 카운트
+          if(lastRequestId.success !== thisReqId){
+            lastRequestId.success = thisReqId;
+            // markOk는 이미 호출됨
+          }
+          return data;
+        }).catch(function(err){
+          // 실패시 한번만 카운트
+          if(lastRequestId.fail !== thisReqId){
+            lastRequestId.fail = thisReqId;
+            // markFail은 이미 호출됨
+          }
+          throw err;
+        });
+      };
+      window.__sr_fetch_fixed = true;
+    }
+    
+    // markOk/markFail 중복 방지 강화
+    ['markOk', 'markFail'].forEach(function(method){
+      var orig = ROT[method];
+      if(typeof orig === 'function' && !ROT['__fixed_' + method]){
+        ROT[method] = (function(m){
+          var lastCall = 0;
+          return function(){
+            var now = Date.now();
+            if(now - lastCall < 100) return; // 100ms 간격 강제
+            lastCall = now;
+            return orig.apply(this, arguments);
+          };
+        })(method);
+        ROT['__fixed_' + method] = true;
+      }
+    });
+  })();
+  
+  // ========== Fix 3: API 사용량 키별 표시 수정 ==========
+  (function fixApiUsageDisplay(){
+    // 쿼터 렌더링 함수 재정의
+    window.renderQuota = function(){
+      try{
+        var q = getQuota();
+        var pct = Math.min(100, Math.round((q.used/(q.limit||1))*100));
+        
+        // 현재 키의 사용량 가져오기
+        var currentKeyUsage = 0;
+        if(window.ROT && typeof ROT.idx === 'number' && ROT.stat[ROT.idx]){
+          currentKeyUsage = ROT.stat[ROT.idx].used || 0;
+        }
+        
+        // 표시 업데이트
+        var statEl = document.getElementById('quotaStat');
+        if(statEl){
+          statEl.innerHTML = `API 사용량(오늘) <b>${q.used}</b> / ${q.limit} (${pct}%) · KEY${(ROT.idx||0)+1}: <b>${currentKeyUsage}</b>`;
+        }
+        
+        var limitEl = document.getElementById('quotaLimit');
+        if(limitEl) limitEl.value = q.limit;
+        
+        var barEl = document.querySelector('#quotaBar .fill');
+        if(barEl) barEl.style.width = pct + '%';
+      }catch(e){
+        console.error('[SR] renderQuota error:', e);
+      }
+    };
+    
+    // incQuota 수정 - 키별 사용량 정확히 기록
+    var _origInc = window.incQuota;
+    window.incQuota = function(units){
+      try{
+        // 전체 쿼터 증가
+        if(typeof _origInc === 'function') _origInc.apply(this, arguments);
+        
+        // 현재 키 사용량 증가
+        if(window.ROT && typeof ROT.idx === 'number'){
+          if(!ROT.stat[ROT.idx]) ROT.stat[ROT.idx] = {ok:0, fail:0, blocked:false, used:0};
+          ROT.stat[ROT.idx].used = (ROT.stat[ROT.idx].used || 0) + (units || 0);
+          ROT.saveStat();
+        }
+        
+        // 화면 업데이트
+        renderQuota();
+        renderKeyState();
+      }catch(e){
+        console.error('[SR] incQuota error:', e);
+      }
+    };
+    
+    // 초기 렌더링
+    setTimeout(renderQuota, 100);
+  })();
+  
+  // ========== Fix 4: 스냅샷 저장/복원 수정 ==========
+  (function fixSnapshot(){
+    // 영상 검색 성공시 자동 저장
+    var _origRenderTable = window.renderTable;
+    if(typeof _origRenderTable === 'function' && !window.__sr_snapshot_fixed){
+      window.renderTable = function(videos){
+        try{
+          // 비어있지 않은 경우만 저장
+          if(Array.isArray(videos) && videos.length > 0){
+            var snapshot = {
+              ts: Date.now(),
+              videos: videos,
+              filters: STATE.filters || {},
+              sortKey: STATE.sortKey || 'uploadedAt',
+              sortDir: STATE.sortDir || 'desc'
+            };
+            localStorage.setItem('sr_lastList', JSON.stringify(snapshot));
+            console.log('[SR] Snapshot saved:', videos.length, 'videos');
+          }
+        }catch(e){
+          console.error('[SR] Snapshot save error:', e);
+        }
+        
+        return _origRenderTable.apply(this, arguments);
+      };
+      window.__sr_snapshot_fixed = true;
+    }
+    
+    // 페이지 로드시 복원
+    window.restoreLastListIfNeeded = function(){
+      try{
+        // 이미 데이터가 있으면 복원 안함
+        if(window.STATE && Array.isArray(STATE.videos) && STATE.videos.length > 0){
+          return false;
+        }
+        
+        var snapshot = JSON.parse(localStorage.getItem('sr_lastList') || 'null');
+        if(!snapshot || !Array.isArray(snapshot.videos) || !snapshot.videos.length){
+          return false;
+        }
+        
+        // 24시간 이내 데이터만 복원
+        var age = Date.now() - (snapshot.ts || 0);
+        if(age > 24 * 3600 * 1000){
+          console.log('[SR] Snapshot too old, skipping');
+          return false;
+        }
+        
+        // STATE 복원
+        window.STATE = window.STATE || {};
+        STATE.videos = snapshot.videos;
+        STATE.filters = snapshot.filters || {};
+        STATE.sortKey = snapshot.sortKey || 'uploadedAt';
+        STATE.sortDir = snapshot.sortDir || 'desc';
+        
+        // 필터 UI 복원
+        if(snapshot.filters){
+          var fMinER = document.getElementById('fMinER');
+          var fMinVX = document.getElementById('fMinVX');
+          var fMinGrade = document.getElementById('fMinGrade');
+          if(fMinER) fMinER.value = snapshot.filters.minER || 0;
+          if(fMinVX) fMinVX.value = snapshot.filters.minVX || 0;
+          if(fMinGrade) fMinGrade.value = snapshot.filters.minGrade || 'ALL';
+        }
+        
+        // 정렬 UI 복원
+        var sortKey = document.getElementById('sortKey');
+        var sortDir = document.getElementById('sortDir');
+        if(sortKey) sortKey.value = STATE.sortKey;
+        if(sortDir) sortDir.value = STATE.sortDir;
+        
+        // 테이블 렌더링
+        if(typeof renderTable === 'function'){
+          renderTable(STATE.videos);
+          
+          // 복원 알림
+          var wrap = document.querySelector('.wrap');
+          if(wrap && !document.getElementById('snapshotNotice')){
+            var notice = document.createElement('div');
+            notice.id = 'snapshotNotice';
+            notice.className = 'card';
+            notice.style.cssText = 'background:#1a2330;border:1px solid #2a6fff;margin:12px 0;padding:10px;font-size:13px;';
+            var ageMinutes = Math.round(age / 60000);
+            notice.innerHTML = `📌 <b>${ageMinutes}분 전</b> 검색 결과를 복원했습니다. (${STATE.videos.length}개 영상)`;
+            wrap.insertBefore(notice, wrap.children[3]);
+            
+            // 5초 후 자동 제거
+            setTimeout(function(){
+              notice.style.transition = 'opacity 0.5s';
+              notice.style.opacity = '0';
+              setTimeout(function(){ notice.remove(); }, 500);
+            }, 5000);
+          }
+        }
+        
+        console.log('[SR] Snapshot restored:', STATE.videos.length, 'videos');
+        return true;
+      }catch(e){
+        console.error('[SR] Snapshot restore error:', e);
+        return false;
+      }
+    };
+    
+    // 페이지 로드 완료 후 복원 시도
+    if(document.readyState === 'complete'){
+      setTimeout(restoreLastListIfNeeded, 100);
+    }else{
+      window.addEventListener('load', function(){
+        setTimeout(restoreLastListIfNeeded, 100);
+      });
+    }
+    
+    // 페이지 언로드시 저장
+    window.addEventListener('beforeunload', function(){
+      try{
+        if(window.STATE && Array.isArray(STATE.videos) && STATE.videos.length > 0){
+          var snapshot = {
+            ts: Date.now(),
+            videos: STATE.videos,
+            filters: STATE.filters || {},
+            sortKey: STATE.sortKey || 'uploadedAt',
+            sortDir: STATE.sortDir || 'desc'
+          };
+          localStorage.setItem('sr_lastList', JSON.stringify(snapshot));
+        }
+      }catch(e){}
+    });
+  })();
+  
+  // ========== 추가: 키 사용량 초기화시 개별 키 사용량도 초기화 ==========
+  (function fixQuotaReset(){
+    var resetBtn = document.getElementById('quotaReset');
+    if(resetBtn && !resetBtn.__fixed){
+      resetBtn.addEventListener('click', function(){
+        // 키별 사용량 초기화
+        if(window.ROT && ROT.stat){
+          ROT.stat.forEach(function(s){
+            if(s) s.used = 0;
+          });
+          ROT.saveStat();
+          renderKeyState();
+        }
+      });
+      resetBtn.__fixed = true;
+    }
+  })();
+  
+  console.log('[SR v7.3.9] Fixes applied successfully');
+})();
+</script>
+  
 </body>
 </html>
 
