@@ -1457,30 +1457,32 @@
 </script>
 
 <script>
-/* Light Rules v2 (Precision) — UI 변경 없음
- * - 리뷰: "제품 리뷰만" 엄격 분리(음식/영화·드라마 리뷰 제외)
- * - 연예: 우선순위 없이 다중 태깅(팬 / 예능 / 영화·드라마 하이라이트 / 소식·썰)
- * - 성능: 정규식 사전 컴파일, 단일 패스 처리
+/* Light Rules v2.2 (Unified)
+ * - 리뷰: "제품 리뷰만" 유지, 음식/요리/맛집 & 영화·드라마 리뷰는 제외/재분류
+ * - 영화·드라마 리뷰는 메인 카테고리를 '연예'로 재분류
+ * - 연예: 우선순위 없이 멀티 태깅(팬 / 예능 / 영화·드라마 하이라이트 / 소식·썰)
+ * - 네트워크 호출 0 / 쿼터 0 / UI 미변경
  */
 (function(){
-  if (window.__LIGHT_RULES_V2) return; window.__LIGHT_RULES_V2 = true;
+  if (window.__LIGHT_RULES_V22) return; window.__LIGHT_RULES_V22 = true;
 
   /* ============ 0) 설정 ============ */
   const CFG = {
-    // true: 음식/영화·드라마 리뷰는 '기타'로 재분류 (목록에서 자연히 제외)
-    // false: 재분류하지 않고 flags만 세팅(필요 시 외부 필터로 숨김)
+    // true: '리뷰'인데 제품 리뷰가 아니면 '기타'로 재분류(목록에서 자연히 빠짐)
+    // false: 재분류 대신 v.flags에만 표시(외부 필터에서 숨길 때 사용)
     strictReviewOnly: true,
 
-    // 디버깅 로그 (콘솔에서 샘플 확인용)
+    // true: '영화·드라마 리뷰'를 '연예'로 자동 재분류
+    reclassMovieDramaReviewsToEntertainment: true,
+
+    // 콘솔 샘플 로그 (디버깅용)
     debugLogSample: false
   };
 
   /* ============ 1) 공통 유틸 ============ */
   function norm(s=''){
-    // 소문자 + 공백 정리 + 특수문자 단순화
     s = (s||'').toString().toLowerCase();
-    s = s.replace(/[\u200B-\u200D\uFEFF]/g,'');  // zero-width
-    s = s.replace(/[【】\[\](){},/\\|~^$*+?.:;!'"`<>@#%&_-]+/g,' ');
+    s = s.replace(/[\u200B-\u200D\uFEFF]/g,'');  // zero-width 제거
     s = s.replace(/\s+/g,' ').trim();
     return s;
   }
@@ -1491,121 +1493,80 @@
   }
 
   /* ============ 2) 리뷰 정제 ============ */
-  // 포함(+): 제품 리뷰/사용기 맥락
-  const RV_POS = new RegExp([
-    '리뷰','사용기','언박싱','언팩','개봉기','후기','비교','추천','체험단',
-    '하자','불량','테스트','벤치','스펙','사양','가격','쿠폰','할인','구매','가성비',
-    '설치기','펌웨어','업데이트','성능','배터리','충전','내구성','내장','외장','모델명'
-  ].join('|'),'i');
+  // 포함(+): 리뷰/사용기 맥락 신호
+  const RV_POS = /(리뷰|사용기|언박싱|언팩|개봉기|후기|비교|추천|체험단|하자|불량|테스트|벤치|스펙|사양|가격|쿠폰|구매|가성비|설치기|업데이트|성능|배터리|충전)/i;
 
-  // 제품 카테고리 키워드(가점용)
-  const RV_PRODUCT_HINT = new RegExp([
-    '스마트폰','휴대폰','아이폰','갤럭시','노트북','맥북','태블릿','아이패드',
-    '이어폰','헤드폰','에어팟','버즈','마우스','키보드','모니터','tv','프로젝터',
-    '냉장고','에어컨','공기청정기','청소기','로봇청소기','세탁기','건조기','청음',
-    '카메라','미러리스','dslr','렌즈','드론','짐벌','마이크','스피커','앰프',
-    '자동차','전기차','하이브리드','dashcam|블랙박스','타이어',
-    '캠핑','텐트','의자','책상','게이밍','골프채','낚시','자전거','헬멧',
-    '신발','가방','지갑','시계','패션','의류'
-  ].join('|'),'i');
+  // 제품 힌트(가점)
+  const RV_PRODUCT_HINT = /(스마트폰|휴대폰|아이폰|갤럭시|노트북|맥북|태블릿|아이패드|이어폰|헤드폰|모니터|tv|프로젝터|냉장고|에어컨|청소기|세탁기|건조기|카메라|렌즈|드론|마이크|스피커|자동차|블랙박스|타이어|게이밍|골프채|자전거|시계|가방|의류)/i;
 
-  // 제외(–): 음식/영화·드라마 리뷰류 (음식·요리·관람 감상/해석/결말 등)
-  const RV_NEG_FOOD = new RegExp([
-    '먹방','맛집','레시피','식당','카페','쿠킹','요리','조리','푸드','빵집','디저트','카츠','라멘','초밥','회','숙성','포차','술집','주점'
-  ].join('|'),'i');
+  // 제외(–): 음식/요리/맛집 리뷰
+  const RV_NEG_FOOD = /(먹방|맛집|레시피|식당|카페|요리|쿠킹|디저트|라멘|초밥|포차|술집)/i;
 
-  const RV_NEG_CINEMA = new RegExp([
-    '(영화|드라마|시리즈|예능\\s*프로그램|애니|웹툰|웹드라마|OTT|넷플릭스|디즈니\\+|티빙|웨이브|쿠팡플레이)',
-    '.*(리뷰|해석|결말|평론|관람기|시사회|감상|후기|스포|줄거리|명장면|해설|분석|평점|쿠키(영상)?)'
-  ].join('|'),'i');
-
-  function isProductReview(bag){
-    // 음식/영드 리뷰 신호가 하나라도 있으면 즉시 제외
-    if (RV_NEG_FOOD.test(bag) || RV_NEG_CINEMA.test(bag)) return false;
-    // 포함 신호가 있고(리뷰 맥락) + 제품 힌트가 있으면 강한 긍정
-    if (RV_POS.test(bag) && RV_PRODUCT_HINT.test(bag)) return true;
-    // 포함 신호만 있어도 우선 포함(너무 보수적이면 여기 false로 바꿔도 됨)
-    return RV_POS.test(bag);
-  }
+  // 제외(–): 영화·드라마 리뷰/감상/해석 등
+  const RV_NEG_CINEMA = new RegExp(
+    '(영화|드라마|시리즈|웹드라마|OTT|넷플릭스|디즈니\\+|티빙|웨이브|쿠팡플레이).*'
+    + '(리뷰|해석|결말|평론|관람기|시사회|감상|후기|스포|줄거리|명장면|해설|분석|평점|쿠키(영상)?)','i'
+  );
 
   function reviewSubtype(bag){
     if (RV_NEG_FOOD.test(bag)) return 'food';
     if (RV_NEG_CINEMA.test(bag)) return 'movie/series';
-    if (isProductReview(bag))    return 'product';
+    if (RV_POS.test(bag) && (RV_PRODUCT_HINT.test(bag) || /제품|모델|사양|스펙/.test(bag))) return 'product';
+    if (RV_POS.test(bag)) return 'product'; // 느슨 허용(원하면 보수적으로 'other'로)
     return 'other';
   }
+  function isProductReview(bag){ return reviewSubtype(bag) === 'product'; }
 
-  /* ============ 3) 연예 멀티 태깅(강화) ============ */
-  // 팬
-  const R_FAN = new RegExp([
-    '팬캠','fancam','직캠','직찍','focus|포커스','face\\s?cam','stage\\s?mix','교차편집',
-    '응원법','fanchant','엔딩요정','ending\\s?fairy','member\\s?focus','one\\s?take'
-  ].join('|'),'i');
-
-  // 예능: 키워드 + 프로그램명 사전
-  const R_VAR_KW = new RegExp([
-    '하이라이트','레전드','모음','웃긴','빵터짐','컷\\b','편집본','요약','스페셜','NG','미공개','비하인드'
-  ].join('|'),'i');
-
-  const R_VAR_SHOW = new RegExp([
-    '런닝맨','나혼산|나\\s?혼자\\s?산다','유퀴즈','라디오스타','무한도전','미우새|미운\\s?우리\\s?새끼',
-    '놀면뭐하니','1박2일','신서유기','코빅|코미디\\s?빅리그','아는형님','전지적\\s?참견\\s?시점','복면가왕'
-  ].join('|'),'i');
-
-  // 영화·드라마 하이라이트
-  const R_FILMDR = new RegExp([
-    '(영화|드라마|시리즈|웹드라마|OTT|넷플릭스|디즈니\\+|티빙|웨이브|쿠팡플레이)',
-    '.*(하이라이트|명장면|클립|컷\\b|티저|예고|미리보기|명대사|키스신|액션신|ost|스틸)'
-  ].join('|'),'i');
-
-  // 소식·썰: 키워드 + 매체명
-  const R_NEWS_KW = new RegExp([
-    '썰','소식','열애|열애설','결별|결별설','논란','단독','속보','입장','해명','정리','해설',
-    '사실무근','사과','복귀','하차','합류','결혼','출산','병역|입대','소속사','전속계약|전속해지','분쟁|소송'
-  ].join('|'),'i');
-
-  const R_NEWS_MEDIA = new RegExp([
-    '디스패치','osen','스포츠조선','스포츠서울','마이데일리','텐아시아','스포티비뉴스','뉴스엔','엑스포츠뉴스',
-    'jtbc\\s?연예','mbc\\s?연예','sbs\\s?연예','ytn\\s?star','헤럴드pop'
-  ].join('|'),'i');
+  /* ============ 3) 연예 멀티 태깅(우선순위 없음) ============ */
+  const R_FAN = /(팬캠|fancam|직캠|직찍|face\s?cam|focus|member\s?focus|stage\s?mix|교차편집|응원법|fanchant|엔딩요정|ending\s?fairy)/i;
+  const R_VAR_KW = /(하이라이트|레전드|모음|웃긴|빵터짐|컷\b|편집본|요약|스페셜|비하인드|ng)/i;
+  const R_VAR_SHOW = /(런닝맨|나혼산|나\s*혼자\s*산다|유퀴즈|라디오스타|무한도전|미우새|놀면뭐하니|1박2일|신서유기|코빅|아는형님|전지적\s?참견\s?시점|복면가왕)/i;
+  const R_FILMDR = /(영화|드라마|시리즈|웹드라마|ott).*(하이라이트|명장면|클립|컷\b|티저|예고|미리보기|명대사|키스신|액션신|ost|스틸)|\b명장면\b|\b명대사\b/i;
+  const R_NEWS = /(썰|소식|열애|열애설|결별|결별설|논란|단독|속보|입장|해명|정리|해설|사실무근|사과|복귀|하차|합류|소속사|전속계약|분쟁|소송|병역|입대|결혼|출산)/i;
 
   function entSubs(bag){
     const out = [];
     if (R_FAN.test(bag)) out.push('팬');
     if (R_VAR_KW.test(bag) || R_VAR_SHOW.test(bag)) out.push('예능');
-    if (R_FILMDR.test(bag)) out.push('영화/드라마 하이라이트');
-    if (R_NEWS_KW.test(bag) || R_NEWS_MEDIA.test(bag)) out.push('소식/썰');
+    if (R_FILMDR.test(bag) || /영화\s*리뷰|드라마\s*리뷰/.test(bag)) out.push('영화/드라마 하이라이트'); // 리뷰도 포함
+    if (R_NEWS.test(bag)) out.push('소식/썰');
     return Array.from(new Set(out.length ? out : ['기타']));
   }
 
   /* ============ 4) 렌더 파이프라인에 얇게 주입 ============ */
-  const _renderTable = window.renderTable;
+  const _renderTable = window.renderTable || function(l){ return l; };
   window.renderTable = function(list){
     try{
       (list||[]).forEach(v=>{
         const bag = bagOf(v);
 
-        // A) 리뷰: 제품 리뷰만 유지
+        // A) 리뷰 처리
         if (v.mainCat === '리뷰') {
           const subtype = reviewSubtype(bag);
           v.flags = v.flags || {}; v.flags.reviewType = subtype;
-          if (CFG.strictReviewOnly && subtype !== 'product') {
-            v.mainCat = '기타'; // UI는 그대로, 재분류만
+
+          // 영화·드라마 리뷰 → 연예로 재분류
+          if (CFG.reclassMovieDramaReviewsToEntertainment && subtype === 'movie/series') {
+            v._wasReview = true;
+            v.mainCat = '연예';
+          } else if (CFG.strictReviewOnly && subtype !== 'product') {
+            // 제품 리뷰가 아니면 기타로 재분류(엄격 모드)
+            v.mainCat = '기타';
           }
         }
 
-        // B) 연예: 멀티 태깅(우선순위 없음)
+        // B) 연예 멀티 태깅(재분류된 케이스 포함)
         if (v.mainCat === '연예') {
           const subs = entSubs(bag);
-          v.entSubs = subs;             // 배열 (필터·집계에 바로 사용 가능)
-          v.entSub  = subs.join(' · '); // 문자열(표시용, 지금은 UI 미사용)
+          v.entSubs = subs;             // 배열(필터/집계에 유용)
+          v.entSub  = subs.join(' · '); // 문자열(표시용; 현재 UI는 그대로)
         }
 
         if (CFG.debugLogSample && Math.random()<0.003) {
-          console.log('[LRv2 sample]', {id:v.id||v.videoId, main:v.mainCat, entSubs:v.entSubs, review:v.flags?.reviewType, title:v.title});
+          console.log('[LR v2.2 sample]', {id:v.id||v.videoId, main:v.mainCat, review:v.flags?.reviewType, entSubs:v.entSubs, title:v.title});
         }
       });
-    } catch(e){ console.warn('[LightRules v2] patch error', e); }
+    } catch(e){ console.warn('[LightRules v2.2] patch error', e); }
     return _renderTable.apply(this, arguments);
   };
 })();
