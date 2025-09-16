@@ -1572,6 +1572,230 @@
 })();
 </script>
 
+  <script>
+/* Discover-Hot v2 — period-based, seedless, randomized top-N
+ * UI 불변 / 네트워크 최소 / renderTable 1회 호출 / Light Rules v2.2와 호환
+ */
+(function(){
+  if (window.__DISCOVER_HOT_V2) return; window.__DISCOVER_HOT_V2 = true;
+
+  /* =============== 0) 설정 =============== */
+  const CFG = {
+    candidateMultiplier: 4,    // 상위 풀 크기 = N * k (무작위 추출 풀)
+    perSearchPage: 50,         // search.list 한 번에 요청할 최대 수(50 권장)
+    maxSearchCalls: 6,         // search.list 최대 호출수(쿼터 가드)
+    useTrendingFallback: true, // 기간 결과가 빈약할 때 트렌딩 보조(있으면 1유닛/호출)
+    regionCode: 'KR',          // 트렌딩 보조용
+    debug: false               // 콘솔 샘플 로그
+  };
+
+  /* =============== 1) 헬퍼 =============== */
+  const $ = (s, r=document) => r.querySelector(s);
+  const T = s => (s && s.value ? s.value.trim() : '').trim();
+
+  function toISO(d){ try{ return new Date(d).toISOString(); }catch(_){ return null; } }
+  function daysSince(iso){ const t=new Date(iso||Date.now()).getTime(); return Math.max(1,(Date.now()-t)/86400000); }
+  function isoDurToSec(iso){
+    if(!iso) return null; const m=iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
+    if(!m) return null; return (m[1]|0)*3600+(m[2]|0)*60+(m[3]|0);
+  }
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  const log10 = x => Math.log(x>0?x:1)/Math.LN10;
+
+  /* =============== 2) 기간/길이/개수 읽기 =============== */
+  function readDateRange(){
+    // 폭넓게 추정: id/name/data-attr에서 기간을 읽음. 없으면 최근 7일.
+    const cand = [
+      ['#startDate','#endDate'], ['#dateStart','#dateEnd'],
+      ['input[name="start"]','input[name="end"]'],
+      ['input[name="from"]','input[name="to"]'],
+      ['input[data-start]','input[data-end]']
+    ];
+    for(const [s,e] of cand){
+      const S=$(s), E=$(e); if(S && E && (T(S) || T(E))){
+        const start = T(S) || new Date(Date.now()-6*86400000).toISOString().slice(0,10);
+        const end   = T(E) || new Date().toISOString().slice(0,10);
+        return {startISO: toISO(start), endISO: toISO(end)};
+      }
+    }
+    // fallback: 최근 7일
+    const end = new Date(); const start = new Date(Date.now()-6*86400000);
+    return {startISO: start.toISOString(), endISO: end.toISOString()};
+  }
+  function readDuration(){
+    const sel = $('select#duration, select[name="duration"], select[data-duration], select');
+    const v = (sel && (sel.value||'').toLowerCase()) || '';
+    if(/short|숏|쇼츠|짧/.test(v)) return 'short';
+    if(/medium|중간/.test(v))      return 'medium';
+    if(/long|롱|길/.test(v))       return 'long';
+    return 'any';
+  }
+  function readCount(){
+    const n = $('input#count, input#limit, input[name="count"], input[name="limit"], input[type="number"]');
+    return Math.max(1, Math.min(200, parseInt(n && n.value ? n.value : 50, 10) || 50));
+  }
+
+  /* =============== 3) 점수(Hotness) =============== */
+  // 조회수, 속도(views/day), 참여(좋아요+댓글), 신선도(최근일수) 가중 조합
+  function hotness(v){
+    const views = +(v.viewCount||0);
+    const likes = +(v.likeCount||0);
+    const cmts  = +(v.commentCount||0);
+    const ageD  = daysSince(v.publishedAt);
+    const vel   = views/ageD;
+    const freshness = Math.max(0.5, 1 - Math.min(30, ageD)/60); // 0.5~1.0
+    return 0.58*log10(1+views) + 0.35*log10(1+vel) + 0.07*log10(1+likes+cmts) + 0.2*freshness;
+  }
+
+  /* =============== 4) API 래퍼 사용 =============== */
+  async function ytSearchPeriod({q, videoDuration, publishedAfter, publishedBefore, maxResults}){
+    // 앱의 기존 래퍼가 객체 파라미터를 받는다고 가정
+    const params = {
+      q: q || '', type:'video', order:'viewCount',
+      videoDuration: (videoDuration==='any') ? undefined : videoDuration,
+      publishedAfter, publishedBefore,
+      maxResults: Math.min(CFG.perSearchPage, Math.max(5, maxResults||CFG.perSearchPage)),
+      relevanceLanguage: 'ko'
+    };
+    return await window.ytSearch(params);
+  }
+  async function ytVideos(ids){
+    if(!ids.length) return [];
+    const chunk = (arr,s)=>arr.reduce((r,_,i)=>(i%s? r[r.length-1].push(arr[i]) : r.push([arr[i]]), r),[]);
+    const out=[]; const batches = chunk(ids.slice(0, CFG.perSearchPage*3), 50); // 최대 150개(3회)
+    for(const b of batches){
+      const rows = await window.ytVideos(b, {part:'snippet,contentDetails,statistics'});
+      rows.forEach(x=>out.push(x));
+    }
+    return out;
+  }
+  async function ytTrendingKR(limit=100){
+    // 앱에 mostPopular 래퍼가 있다면 사용하고, 없으면 skip
+    if(typeof window.ytMostPopular!=='function') return [];
+    const rows = await window.ytMostPopular({ regionCode: CFG.regionCode, maxResults: Math.min(limit, 50), part:'snippet,contentDetails,statistics' });
+    return Array.isArray(rows)? rows : (rows?.items || []);
+  }
+
+  /* =============== 5) 길이 필터 =============== */
+  function passDuration(sec, want){
+    if(want==='any') return true;
+    if(sec==null)    return false; // 정보 없으면 제외(정확도 우선)
+    if(want==='short')  return sec<=240;
+    if(want==='medium') return sec>240 && sec<=1200;
+    if(want==='long')   return sec>1200;
+    return true;
+  }
+
+  /* =============== 6) 디스커버 본체 =============== */
+  async function runDiscoverHot(){
+    if(typeof window.isQuotaLocked==='function' && window.isQuotaLocked()){
+      (window.toast||alert)('오늘 쿼터 소진 – 디스커버는 내일 00:00(Pacific) 이후 이용 가능');
+      return;
+    }
+    const N = readCount();
+    const wantDur = readDuration();
+    const {startISO, endISO} = readDateRange();
+
+    const targetCandidates = Math.min(200, Math.max(N*CFG.candidateMultiplier, N+20));
+    const perCall = CFG.perSearchPage;
+    const needCalls = Math.min(CFG.maxSearchCalls, Math.ceil(targetCandidates/perCall));
+
+    const idSet = new Set();
+
+    // 기간 기반 전역 탐색(키워드 없이 order=viewCount로 폭 넓게)
+    for(let i=0;i<needCalls && idSet.size<targetCandidates;i++){
+      try{
+        const resp = await ytSearchPeriod({
+          q: '', videoDuration: (wantDur==='any'? undefined : wantDur),
+          publishedAfter: startISO, publishedBefore: endISO,
+          maxResults: perCall
+        });
+        const items = (resp && resp.items) || resp || [];
+        for(const it of items){
+          const id = (it.id && (it.id.videoId||it.id)) || it.videoId || it;
+          if(id) idSet.add(id);
+        }
+      }catch(e){ console.warn('[discover] search fail', e); }
+    }
+
+    // 보조 경로: 기간 결과가 빈약할 때 트렌딩 섞기(초저비용)
+    if (CFG.useTrendingFallback && idSet.size < Math.min(60, targetCandidates/2)){
+      try{
+        const tr = await ytTrendingKR(50);
+        tr.forEach(x=>{
+          const vid = (x.id && x.id.videoId) || x.id;
+          if(vid) idSet.add(vid);
+        });
+      }catch(e){ console.warn('[discover] trending fallback fail', e); }
+    }
+
+    if(!idSet.size){
+      (window.toast||alert)('조건에 맞는 후보가 부족합니다. 기간을 넓히거나 길이=Any로 시도해 보세요.');
+      return;
+    }
+
+    // 상세 보강
+    const hydrated = await ytVideos(Array.from(idSet));
+    const rows = hydrated.map(v=>{
+      const s=v.snippet||{}; const st=v.statistics||{}; const cd=v.contentDetails||{};
+      const durSec = isoDurToSec(cd.duration);
+      return {
+        id: v.id?.videoId || v.id,
+        title: s.title, channelTitle: s.channelTitle,
+        publishedAt: s.publishedAt, thumbnails: s.thumbnails,
+        viewCount: +(st.viewCount||0), likeCount: +(st.likeCount||0), commentCount:+(st.commentCount||0),
+        durationISO: cd.duration, durationSec: durSec
+      };
+    }).filter(v=>passDuration(v.durationSec, wantDur));
+
+    if(!rows.length){
+      (window.toast||alert)('선택한 길이와 기간의 교집합이 거의 없습니다. 조건을 완화해 주세요.');
+      return;
+    }
+
+    // 점수화 → 정렬 → 상위 풀 → 무작위 N
+    rows.forEach(v=>v.__hot = hotness(v));
+    rows.sort((a,b)=> b.__hot - a.__hot);
+
+    const pool = rows.slice(0, Math.min(rows.length, Math.max(N*CFG.candidateMultiplier, N+20)));
+    shuffle(pool);
+    const pick = pool.slice(0, N);
+
+    // 앱 상태/렌더
+    try{ window.STATE = window.STATE||{}; window.STATE.videos = pick; }catch(_){}
+    if(typeof window.renderTable==='function') window.renderTable(pick);
+    if(CFG.debug) console.log('[discover] N=',N,'rows=',rows.length,'pick=',pick.slice(0,3));
+  }
+
+  /* =============== 7) 검색 트리거 가로채기 (키워드 비었을 때만) =============== */
+  function bindTrigger(){
+    const q = $('input#q, input[name="q"], input[name="query"], input[placeholder*="찾을"], input[placeholder*="검색"]');
+    const btn = $('#btnSearch, button[type="submit"], button.search, .search button');
+    const form = q && q.form;
+    const handle = e=>{
+      try{
+        const val = (q && q.value ? q.value.trim() : '');
+        if(!val){ e.preventDefault(); e.stopPropagation(); runDiscoverHot(); return false; }
+      }catch(_){}
+      return true;
+    };
+    if(btn && !btn.__dhBound){ btn.__dhBound=true; btn.addEventListener('click', e=>{ if(handle(e)===false) return; }); }
+    if(form && !form.__dhBound){ form.__dhBound=true; form.addEventListener('submit', e=>{ if(handle(e)===false) return; }); }
+    if(!btn && !form && !window.__dhKey){
+      window.__dhKey=true;
+      window.addEventListener('keydown', e=>{
+        if(e.key==='Enter' && q && document.activeElement===q && !q.value.trim()){
+          e.preventDefault(); runDiscoverHot();
+        }
+      }, true);
+    }
+  }
+  bindTrigger();
+  const mo = new MutationObserver(bindTrigger);
+  mo.observe(document.body, {childList:true, subtree:true});
+})();
+</script>
+
   
 </body>
 </html>
