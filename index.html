@@ -1135,8 +1135,12 @@
         // 성공 알림
         const notice = document.createElement('div');
         notice.className = 'seedless-notice';
+        
+        // 카테고리 수 계산
+        const categoryCount = [...new Set(finalResults.map(v => v._category).filter(Boolean))].length;
+        
         notice.innerHTML = `
-          <b>✨ Seedless 모드</b> - ${Object.keys(stats || {}).length}개 카테고리에서 인기 영상 자동 수집<br>
+          <b>✨ Seedless 모드</b> - ${categoryCount}개 카테고리에서 인기 영상 자동 수집<br>
           <small>수집: ${shorts.length}개 → 선별: ${finalResults.length}개 (조회수 순)</small>
         `;
         const wrap = $('.wrap');
