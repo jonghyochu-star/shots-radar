@@ -96,7 +96,6 @@
     /* v7.4.2 styles */
     #keyState{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
     #keyState > *{ margin:0 !important; }
-    .quota-flags{ display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; margin-left:8px; }
     .quota-flag{ display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #2a3a4a; background:#0c141c; color:#9fb2c4; }
     .quota-flag.online{ color:#00d084 !important; border-color:#1c3a24 !important; background:#0c1f14 !important; font-weight:700 !important; }
     .quota-flag.offline{ color:#ffb8b8 !important; border-color:#4a1f1f !important; background:#1c0c0c !important; font-weight:700 !important; }
@@ -135,8 +134,10 @@
           <input id="quotaLimit" type="number" min="1000" step="100" value="10000" style="width:120px" aria-label="일일 한도" autocomplete="off"/>
           <button id="quotaApply" class="ghost">적용</button>
           <span id="quotaStat" class="pill">API 사용량(오늘) 0 / 10000 (0%)</span>
+        </div>
+        <div class="row" style="gap:8px;margin-top:8px">
           <button id="quotaReset" class="ghost">사용량 초기화</button>
-          <span id="quotaStateFlag" class="quota-flag online" style="margin-left:8px">상태: <b>ONLINE</b></span>
+          <span id="quotaStateFlag" class="quota-flag online">상태: <b>ONLINE</b></span>
         </div>
         <div id="quotaBar" class="qbar"><div class="fill" style="width:0%"></div></div>
         <!-- 키 회전 상태 표시 -->
