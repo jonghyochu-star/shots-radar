@@ -112,7 +112,7 @@
     <div class="row" style="justify-content:space-between">
       <div>
         <h1>Shorts Radar — <span style="color:#7a8a9a">통합판</span> <span style='color:#7a8a9a;font-size:12px;margin-left:8px'>v7.4.2</span></h1>
-        <div class="sub">라벨 한글화 · S1 확장 지표/필터/정렬 · S2 채널 모달 · Excel Export · 워치리스트 스냅샷(Δ24h)</div>
+        <div class="sub">라벨 한글화 · S1 확장 지표/필터/정렬 · S2 채널 모달 · S3 장기 트렌드 · Seedless 카테고리 · Excel Export · 워치리스트 스냅샷(Δ24h)</div>
       </div>
       <div class="row">
         <button id="exportXlsx" class="ghost">Excel</button>
@@ -265,7 +265,7 @@
           <thead>
             <tr>
               <th>☆</th>
-              <th>인네일</th>
+              <th>썸네일</th>
               <th>제목</th>
               <th>채널</th>
               <th>업로드일</th>
@@ -330,7 +330,7 @@
   </div>
 
 <script>
-// ========== SHORTS RADAR v7.4.2 WITH FIXED CATEGORIES ==========
+// ========== SHORTS RADAR v7.4.2 COMPLETE WITH CATEGORIES ==========
 (function(){
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -343,27 +343,46 @@
   const hms = sec => { sec=+sec|0; const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return (h? h+':':'') + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); };
   function uniq(arr){ return [...new Set(arr)]; }
 
-  // ========== 카테고리 정의 (수정됨) ==========
+  // ========== 카테고리 정의 (v7.4.1 신기능) ==========
   const YOUTUBE_CATEGORIES = {
     // 공식 카테고리 (Category ID 사용)
-    official: [
-      { id: '10', name: '음악', weight: 3 },
-      { id: '20', name: '게임', weight: 3 },
-      { id: '24', name: '엔터', weight: 3 },
-      { id: '22', name: '인물블로그', weight: 3 },
-      { id: '23', name: '코미디', weight: 2 },
-      { id: '25', name: '뉴스정치', weight: 2 },
-      { id: '17', name: '스포츠', weight: 2 },
-      { id: '26', name: '노하우', weight: 2 },
-      { id: '1', name: '영화애니', weight: 1 },
-      { id: '15', name: '애완동물', weight: 1 }
-    ],
+    official: {
+      '10': { name: '음악', weight: 3, shortsFriendly: true },
+      '20': { name: '게임', weight: 3, shortsFriendly: true },
+      '24': { name: '엔터테인먼트', weight: 3, shortsFriendly: true },
+      '22': { name: '인물/블로그', weight: 3, shortsFriendly: true },
+      '23': { name: '코미디', weight: 2, shortsFriendly: true },
+      '25': { name: '뉴스/정치', weight: 2, shortsFriendly: true },
+      '17': { name: '스포츠', weight: 2, shortsFriendly: true },
+      '26': { name: '노하우/스타일', weight: 2, shortsFriendly: true },
+      '1': { name: '영화/애니메이션', weight: 1, shortsFriendly: true },
+      '15': { name: '애완동물', weight: 1, shortsFriendly: true }
+    },
+    
     // 커스텀 카테고리 (키워드 검색)
-    custom: [
-      { name: '시니어', keywords: ['시니어', '실버', '노년', '5060', '중년'], weight: 2 },
-      { name: '오피셜', keywords: ['공식', 'official', 'MV', '뮤직비디오'], weight: 2 },
-      { name: '밀리터리', keywords: ['밀리터리', '군사', '국방', '무기'], weight: 2 }
-    ]
+    custom: {
+      'senior': {
+        name: '시니어',
+        weight: 2,
+        keywords: ['시니어', '실버', '노년', '5060', '6070', '중년', '건강체조', '노인복지'],
+        channels: [],
+        shortsFriendly: true
+      },
+      'official': {
+        name: '오피셜',
+        weight: 2,
+        keywords: ['공식', 'official', 'MV', 'M/V', '뮤직비디오', 'Official Video', 'VEVO'],
+        channels: [],
+        shortsFriendly: true
+      },
+      'military': {
+        name: '밀리터리',
+        weight: 2,
+        keywords: ['밀리터리', '군사', '국방', '육군', '해군', '공군', '해병대', '무기', '전투기', 'K2', '군대'],
+        channels: [],
+        shortsFriendly: true
+      }
+    }
   };
 
   // ---------- 상태 ----------
@@ -387,12 +406,12 @@
     catch(_){ const d=new Date(); d.setHours(24,0,0,0); return d.toISOString(); }
   }
 
-  // ---------- 키 회전(로컬) ----------
+  // ---------- 키 회전(로컬) - v7.4.0 개선 ----------
   const ROT = {
     keys: [],
     idx: 0,
     stat: [],
-    lastMarkTime: 0,
+    lastMarkTime: 0, // 중복 방지용
     
     load(){
       const arr = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
@@ -408,10 +427,8 @@
       if(savedDate !== todayLA){ 
         save('sr_keyStatDate', todayLA); 
         save('sr_keyStat', {}); 
-        this.stat = this.keys.map(() => ({ok:0, fail:0, blocked:false, used:0}));
-      } else {
-        this.stat = this.keys.map((k,i) => savedStat[k] || {ok:0, fail:0, blocked:false, used:0});
       }
+      this.stat = this.keys.map((k,i) => savedStat[k] || {ok:0, fail:0, blocked:false, used:0});
       
       renderKeyState();
     },
@@ -443,7 +460,7 @@
     
     markOk(){ 
       const now = Date.now();
-      if(now - this.lastMarkTime < 500) return;
+      if(now - this.lastMarkTime < 500) return; // 중복 방지
       this.lastMarkTime = now;
       
       if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false, used:0};
@@ -454,7 +471,7 @@
     
     markFail(){ 
       const now = Date.now();
-      if(now - this.lastMarkTime < 500) return;
+      if(now - this.lastMarkTime < 500) return; // 중복 방지
       this.lastMarkTime = now;
       
       if(!this.stat[this.idx]) this.stat[this.idx] = {ok:0, fail:0, blocked:false, used:0};
@@ -516,7 +533,7 @@
     ROT.idx = i;
     localStorage.setItem('sr_curIdx', String(i));
     renderKeyState();
-    renderQuota();
+    renderQuota(); // 키 변경시 쿼터 표시 업데이트
   };
 
   // API 호출
@@ -561,6 +578,7 @@
           const data = await res.json();
           if(quotaInc){ 
             incQuota(quotaInc); 
+            // 키별 사용량 증가
             if(!ROT.stat[ROT.idx]) ROT.stat[ROT.idx] = {ok:0, fail:0, blocked:false, used:0};
             ROT.stat[ROT.idx].used = (ROT.stat[ROT.idx].used || 0) + quotaInc;
             ROT.saveStat();
@@ -603,6 +621,7 @@
   function resetQuota(){ 
     const q={date:todayStr(), used:0, limit:getQuota().limit}; 
     saveQuota(q); 
+    // 키별 사용량도 초기화
     if(ROT.stat){
       ROT.stat.forEach(s => { if(s) s.used = 0; });
       ROT.saveStat();
@@ -612,13 +631,15 @@
     renderKeyState();
   }
   
+  // v7.4.0 개선된 renderQuota
   function renderQuota(){ 
     const q=getQuota(); 
     const pct=Math.min(100, Math.round((q.used/(q.limit||1))*100)); 
     
+    // 현재 키 사용량
     let keyInfo = '';
-    if(ROT.keys.length > 0 && ROT.stat[ROT.idx]){
-      const keyUsed = ROT.stat[ROT.idx].used || 0;
+    if(ROT.keys.length > 0){
+      const keyUsed = (ROT.stat[ROT.idx] && ROT.stat[ROT.idx].used) || 0;
       keyInfo = ` [KEY${ROT.idx+1}: ${keyUsed}]`;
     }
     
@@ -664,7 +685,7 @@
     el.innerHTML = '상태: <b>' + (offline ? 'OFFLINE(쿼터 소진)' : 'ONLINE') + '</b>';
   }
 
-  // ---------- API (수정됨) ----------
+  // ---------- API ----------
   async function ytSearch({q, channelId, publishedAfter, regionCode, maxResults, pageToken, lang, durBucket, order, videoCategoryId}){
     const params = new URLSearchParams({
       part:'snippet', 
@@ -681,7 +702,7 @@
     if(channelId) params.set('channelId', channelId);
     if(pageToken) params.set('pageToken', pageToken);
     if(durBucket) params.set('videoDuration', durBucket);
-    if(videoCategoryId) params.set('videoCategoryId', videoCategoryId); // 추가됨
+    if(videoCategoryId) params.set('videoCategoryId', videoCategoryId);
     
     const url = `https://www.googleapis.com/youtube/v3/search?${params.toString()}`;
     return fetchWithRotate(url, 100);
@@ -693,94 +714,89 @@
     return fetchWithRotate(url, 1);
   }
   
-  // ========== Seedless 카테고리별 수집 (수정됨) ==========
-  async function ytSearchSeedlessShorts({regionCode='KR', lang='ko', publishedAfter, maxResults=80}){
+  // ========== Seedless 카테고리별 수집 (v7.4.1 신기능) ==========
+  async function ytSearchSeedlessShorts({regionCode, lang, publishedAfter, maxResults=80}){
     console.log('🎯 카테고리별 상위 영상 수집 시작...');
-    console.log(`  지역: ${regionCode}, 언어: ${lang}`);
     
     const allItems = [];
     const stats = {};
     
-    // 전체 가중치 계산
-    const allCategories = [...YOUTUBE_CATEGORIES.official, ...YOUTUBE_CATEGORIES.custom];
+    // 공식 카테고리
+    const officialCats = Object.entries(YOUTUBE_CATEGORIES.official)
+      .filter(([id, cat]) => cat.shortsFriendly)
+      .map(([id, cat]) => ({id, ...cat, type: 'official'}));
+    
+    // 커스텀 카테고리
+    const customCats = Object.entries(YOUTUBE_CATEGORIES.custom)
+      .filter(([id, cat]) => cat.shortsFriendly)
+      .map(([id, cat]) => ({id, ...cat, type: 'custom'}));
+    
+    // 전체 카테고리
+    const allCategories = [...officialCats, ...customCats];
     const totalWeight = allCategories.reduce((sum, cat) => sum + cat.weight, 0);
     
-    // 공식 카테고리 수집
-    for(const cat of YOUTUBE_CATEGORIES.official){
-      const targetCount = Math.ceil((cat.weight / totalWeight) * maxResults * 1.5);
-      console.log(`📂 ${cat.name} (ID: ${cat.id}) - 목표: ${targetCount}개`);
+    console.log(`📊 총 ${allCategories.length}개 카테고리 (공식: ${officialCats.length}, 커스텀: ${customCats.length})`);
+    
+    // 카테고리별 수집
+    for(const cat of allCategories){
+      const targetCount = Math.max(3, Math.floor((cat.weight / totalWeight) * maxResults));
+      console.log(`🔍 ${cat.name} ${cat.type === 'custom' ? '(커스텀)' : ''} - 목표: ${targetCount}개`);
       
       try{
-        const res = await ytSearch({
-          videoCategoryId: cat.id,
-          order: 'viewCount',
-          regionCode: regionCode,
-          relevanceLanguage: lang,
-          publishedAfter: publishedAfter,
-          maxResults: targetCount,
-          durBucket: 'short'
-        });
+        let categoryItems = [];
         
-        const items = (res.items || []).slice(0, targetCount);
-        items.forEach(item => {
-          item._category = cat.name;
-        });
+        if(cat.type === 'official'){
+          // 공식 카테고리: videoCategoryId 사용
+          const res = await ytSearch({
+            order: 'viewCount',
+            maxResults: Math.min(50, targetCount * 2),
+            regionCode: regionCode,
+            lang: lang,
+            durBucket: 'short',
+            videoCategoryId: cat.id,
+            publishedAfter: publishedAfter
+          });
+          categoryItems = res.items || [];
+          
+        } else {
+          // 커스텀 카테고리: 키워드 검색
+          for(const keyword of cat.keywords.slice(0, 3)){
+            const res = await ytSearch({
+              q: keyword,
+              order: 'viewCount',
+              maxResults: Math.min(20, Math.ceil(targetCount / 3)),
+              regionCode: regionCode,
+              lang: lang,
+              durBucket: 'short',
+              publishedAfter: publishedAfter
+            });
+            categoryItems.push(...(res.items || []));
+          }
+        }
         
-        allItems.push(...items);
-        stats[cat.name] = items.length;
-        console.log(`  ✅ ${items.length}개 수집`);
+        // 중복 제거 및 카테고리 태그 추가
+        const uniqueIds = new Set();
+        const uniqueItems = [];
+        
+        for(const item of categoryItems){
+          const videoId = item.id?.videoId;
+          if(videoId && !uniqueIds.has(videoId)){
+            uniqueIds.add(videoId);
+            item._category = cat.name;
+            uniqueItems.push(item);
+          }
+        }
+        
+        allItems.push(...uniqueItems.slice(0, targetCount));
+        stats[cat.name] = uniqueItems.length;
+        console.log(`✅ ${cat.name}: ${uniqueItems.length}개 수집`);
         
       } catch(e){
-        console.error(`  ❌ ${cat.name} 실패:`, e.message);
+        console.warn(`❌ ${cat.name} 수집 실패:`, e.message);
         stats[cat.name] = 0;
       }
       
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    
-    // 커스텀 카테고리 수집
-    for(const cat of YOUTUBE_CATEGORIES.custom){
-      const targetCount = Math.ceil((cat.weight / totalWeight) * maxResults);
-      console.log(`🔧 ${cat.name} (커스텀) - 목표: ${targetCount}개`);
-      
-      let categoryItems = [];
-      
-      for(const keyword of cat.keywords.slice(0, 2)){
-        try{
-          const res = await ytSearch({
-            q: keyword,
-            order: 'viewCount',
-            regionCode: regionCode,
-            relevanceLanguage: lang,
-            publishedAfter: publishedAfter,
-            maxResults: Math.ceil(targetCount / 2),
-            durBucket: 'short'
-          });
-          
-          categoryItems.push(...(res.items || []));
-          
-        } catch(e){
-          console.warn(`    ⚠️ "${keyword}" 검색 실패`);
-        }
-      }
-      
-      // 중복 제거 및 카테고리 태그 추가
-      const uniqueIds = new Set();
-      const uniqueItems = [];
-      
-      for(const item of categoryItems){
-        const videoId = item.id?.videoId;
-        if(videoId && !uniqueIds.has(videoId)){
-          uniqueIds.add(videoId);
-          item._category = cat.name;
-          uniqueItems.push(item);
-        }
-      }
-      
-      allItems.push(...uniqueItems.slice(0, targetCount));
-      stats[cat.name] = uniqueItems.length;
-      console.log(`  ✅ ${uniqueItems.length}개 수집`);
-      
+      // API 부하 방지
       await new Promise(resolve => setTimeout(resolve, 100));
     }
     
@@ -797,23 +813,10 @@
   }
   
   function isShort(snippet, contentDetails, minSec, maxSec){
-    const m = (contentDetails?.duration||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-    
-    if(m){
-      const hours = Number(m[1]||0);
-      const minutes = Number(m[2]||0);
-      const seconds = Number(m[3]||0);
-      const sec = hours * 3600 + minutes * 60 + seconds;
-      
-      // 1시간 이상은 무조건 롱폼
-      if(hours > 0) return false;
-      
-      if(sec > 0){
-        return (sec >= (minSec||0)) && (sec <= (maxSec||62));
-      }
-    }
-    
+    const m = (contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+    const sec = (m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0);
     const hashtag = (snippet?.title + ' ' + (snippet?.description||'')).toLowerCase().includes('#shorts');
+    if(sec>0){ return (sec>= (minSec||0)) && (sec <= (maxSec||1e9)); }
     return hashtag;
   }
 
@@ -871,7 +874,7 @@
     if(!STATE.colVis) STATE.colVis = load('sr_cols', null) || defaultColVis();
     const holder = $('#colToggles'); holder.innerHTML='';
     const keys = Object.keys(STATE.colVis);
-    const labels = {bookmark:'☆', thumb:'인네일', title:'제목', channel:'채널', uploadedAt:'업로드일', length:'길이', views:'조회', likes:'좋아요', comments:'댓글', vel:'속도', er:'반응률 (‰)', fresh:'신선도', viewMult:'조회 배율', velMult:'속도 배율', impact:'임팩트', delta:'Δ24h', pick:'종합'};
+    const labels = {bookmark:'☆', thumb:'썸네일', title:'제목', channel:'채널', uploadedAt:'업로드일', length:'길이', views:'조회', likes:'좋아요', comments:'댓글', vel:'속도', er:'반응률 (‰)', fresh:'신선도', viewMult:'조회 배율', velMult:'속도 배율', impact:'임팩트', delta:'Δ24h', pick:'종합'};
     keys.forEach(k=>{
       const id='vis_'+k; const w=document.createElement('label'); w.style.display='flex'; w.style.alignItems='center'; w.style.gap='6px'; w.className='hint';
       w.innerHTML = `<input type="checkbox" id="${id}" ${STATE.colVis[k]?'checked':''}/> ${labels[k]||k}`;
@@ -964,6 +967,7 @@
   function setSummary(all, filtered){
     const avg = (arr,fn)=> arr.reduce((s,x)=>s+fn(x),0)/Math.max(1,arr.length);
     
+    // 카테고리 분포 계산
     const categoryDist = {};
     all.forEach(v => {
       const cat = v._category || '기타';
@@ -977,6 +981,7 @@
       `<span class="pill">평균 반응률 <b>${avg(all,x=>x._d.er).toFixed(2)}</b>‰</span>`
     ];
     
+    // 카테고리 분포 추가 (상위 5개만)
     if(Object.keys(categoryDist).length > 0){
       const topCats = Object.entries(categoryDist)
         .sort((a, b) => b[1] - a[1])
@@ -997,7 +1002,7 @@
     $('#bestTimes').innerHTML = out || '<span class="hint">데이터가 부족합니다.</span>';
   }
 
-  // ---------- 실행 파이프라인 (수정됨) ----------
+  // ---------- 실행 파이프라인 ----------
   async function run(){
     if(!ROT.keys.length) return alert('API 키가 필요합니다. 상단에 여러 키를 붙여넣고 [키 저장]을 눌러주세요.');
     const days = +$('#days').value||7;
@@ -1027,7 +1032,7 @@
           regionCode: region,
           lang: lang,
           publishedAfter: publishedAfter,
-          maxResults: maxResults * 2
+          maxResults: maxResults * 3 // 더 많이 수집 후 필터링
         });
         
         // 중복 제거
@@ -1093,7 +1098,7 @@
     if(q){
       let next=null;
       do{
-        const res = await ytSearch({q, publishedAfter, regionCode:region, relevanceLanguage:lang, maxResults, pageToken:next, durBucket});
+        const res = await ytSearch({q, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
@@ -1101,7 +1106,7 @@
     for(const ch of chanIds){
       let next=null;
       do{
-        const res = await ytSearch({channelId:ch, publishedAfter, regionCode:region, relevanceLanguage:lang, maxResults, pageToken:next, durBucket});
+        const res = await ytSearch({channelId:ch, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
@@ -1120,14 +1125,14 @@
   }
 
   // ---------- S2: Channel Modal ----------
-  let __lastChannel = null;
+  let __lastChannel = null; // 마지막 열린 채널 정보 저장
   
   async function listChannelRecentVideos(channelId, n=50){
     let items=[], next=null;
     const region = $('#region')?.value||undefined;
     const lang = $('#lang')?.value||undefined;
     do{
-      const data = await ytSearch({channelId, order:'date', maxResults:50, pageToken:next, regionCode:region, relevanceLanguage:lang});
+      const data = await ytSearch({channelId, order:'date', maxResults:50, pageToken:next, regionCode:region, lang});
       (data.items||[]).forEach(x=> items.push(x));
       next = data.nextPageToken;
     }while(next && items.length < n);
@@ -1144,7 +1149,7 @@
   function fmtWon(n){ n=Number(n||0); return '₩'+n.toLocaleString('ko-KR'); }
 
   async function openChannelModal(cid, ctitle){
-    __lastChannel = {cid, title: ctitle};
+    __lastChannel = {cid, title: ctitle}; // 저장
     
     const m = document.getElementById('channelModal');
     const body = document.getElementById('chBody');
@@ -1228,6 +1233,7 @@
   document.getElementById('channelModal').addEventListener('click', (ev)=>{ if(ev.target.id==='channelModal') closeChannelModal(); });
   document.addEventListener('keydown', (ev)=>{ if(ev.key==='Escape') closeChannelModal(); });
 
+  // 모달 새로고침 버튼 이벤트
   document.getElementById('chRefresh').addEventListener('click', function(){
     if(isQuotaLocked()){
       alert('오늘 쿼터 소진 - 내일 00:00 이후 가능');
@@ -1239,18 +1245,22 @@
       return;
     }
     
+    // 버튼 상태 변경
     const btn = this;
     const originalText = btn.textContent;
     btn.textContent = '새로고침 중...';
     btn.disabled = true;
     
+    // 로딩 표시
     const loading = document.getElementById('chLoading');
     const body = document.getElementById('chBody');
     if(loading) loading.style.display = '';
     if(body) body.style.display = 'none';
     
+    // 모달 다시 열기
     setTimeout(function(){
       openChannelModal(__lastChannel.cid, __lastChannel.title || '');
+      // 버튼 복구
       setTimeout(function(){
         btn.textContent = originalText;
         btn.disabled = false;
@@ -1297,7 +1307,7 @@
     XLSX.writeFile(wb, `shorts_radar_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
-  // ---------- S3: 장기 트렌드 ----------
+  // ---------- S3: 장기 트렌드 (원본 복구) ----------
   async function loadTrendData(){
     const candidates = [
       'public/kw-trend.json',
@@ -1327,236 +1337,208 @@
     console.error('Trend load failed. Last:', lastUrl, lastErr);
     throw lastErr || new Error('trend load failed');
   }
-  
-  function renderLongTrend(tData){
-    const metric = $('#ltMetric').value||'ema28';
-    const days = +($('#ltDays').value||180);
-    const minN = +($('#ltMinN').value||10);
-    const smoothing = $('#ltSmoothing').checked;
-    
-    const kws = Object.keys(tData);
-    const today = new Date();
-    const start = new Date(today - days*24*3600*1000);
-    
-    // 날짜 배열 생성
-    const dates = [];
-    for(let d = new Date(start); d <= today; d.setDate(d.getDate()+1)){
-      dates.push(d.toISOString().slice(0,10));
-    }
-    
-    // 키워드별 데이터 처리
-    const series = [];
-    kws.forEach(kw => {
-      const arr = tData[kw];
-      const points = dates.map(dt => {
-        const item = arr.find(x => x.date === dt);
-        if(!item) return null;
-        if(metric === 'views') return item.views || 0;
-        if(metric === 'ema28') return item.ema28 || 0;
-        if(metric === 'score') return item.score || 0;
-        return 0;
-      });
-      
-      // 최소 표본 체크
-      const validCount = points.filter(p => p !== null).length;
-      if(validCount < minN) return;
-      
-      // 스무딩
-      let smoothed = [...points];
-      if(smoothing){
-        for(let i=1; i<smoothed.length; i++){
-          if(smoothed[i] !== null && smoothed[i-1] !== null){
-            smoothed[i] = smoothed[i]*0.7 + smoothed[i-1]*0.3;
-          }
-        }
-      }
-      
-      series.push({
-        label: kw,
-        data: smoothed,
-        borderWidth: 2,
-        pointRadius: 0,
-        tension: 0.1
-      });
-    });
-    
-    // 차트 렌더링
-    const ctx = $('#ltChart').getContext('2d');
-    if(window.__ltChartInstance){
-      window.__ltChartInstance.destroy();
-    }
-    
-    window.__ltChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: dates,
-        datasets: series
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context){
-                return context.dataset.label + ': ' + (context.parsed.y||0).toFixed(0);
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: '#1e2a36' },
-            ticks: { color: '#7a8a9a' }
-          },
-          y: {
-            grid: { color: '#1e2a36' },
-            ticks: { color: '#7a8a9a' }
-          }
-        }
-      }
-    });
-    
-    // Pills 렌더링
-    $('#ltPills').innerHTML = series.map((s, i) => 
-      `<span class="pill" data-idx="${i}" onclick="window._toggleSeries(${i})">${s.label}</span>`
-    ).join('');
-    
-    // 상승 키워드 계산
-    const risers = [];
-    kws.forEach(kw => {
-      const arr = tData[kw];
-      const recent = arr.slice(-7);
-      const prev = arr.slice(-14, -7);
-      
-      if(recent.length < 3 || prev.length < 3) return;
-      
-      const recentAvg = recent.reduce((s, x) => s + (x.views||0), 0) / recent.length;
-      const prevAvg = prev.reduce((s, x) => s + (x.views||0), 0) / prev.length;
-      
-      if(prevAvg > 0){
-        const growth = ((recentAvg - prevAvg) / prevAvg) * 100;
-        risers.push({kw, growth});
-      }
-    });
-    
-    risers.sort((a, b) => b.growth - a.growth);
-    const top5 = risers.slice(0, 5);
-    
-    $('#ltRisers').innerHTML = top5.map(r => 
-      `<span class="pill">${r.kw} <b>+${r.growth.toFixed(0)}%</b></span>`
-    ).join('');
-    
-    // 카테고리 점유율 차트
-    const shareCtx = $('#ltShare').getContext('2d');
-    if(window.__ltShareInstance){
-      window.__ltShareInstance.destroy();
-    }
-    
-    const categories = {};
-    series.forEach(s => {
-      const lastValue = s.data.filter(v => v !== null).pop() || 0;
-      categories[s.label] = lastValue;
-    });
-    
-    window.__ltShareInstance = new Chart(shareCtx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(categories),
-        datasets: [{
-          data: Object.values(categories),
-          backgroundColor: ['#2a6fff', '#62d26f', '#ffb84d', '#ff6b6b', '#9c88ff', '#54a0ff']
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { color: '#e8f0f7', font: { size: 11 } }
-          }
-        }
-      }
-    });
-    
-    // 업데이트 시간
-    $('#ltUpdate').textContent = window.__LT_LASTMOD__ || new Date().toLocaleString('ko-KR');
-    
-    // 검증 정보
-    let totalPoints = 0, missingPoints = 0;
-    series.forEach(s => {
-      s.data.forEach(v => {
-        totalPoints++;
-        if(v === null) missingPoints++;
-      });
-    });
-    
-    const missingPct = totalPoints > 0 ? (missingPoints / totalPoints * 100) : 0;
-    
-    $('#ltValidation').innerHTML = [
-      `<span class="pill">표본수: <b>${series.length}</b>개 키워드</span>`,
-      `<span class="pill">결측 비중: <b>${missingPct.toFixed(1)}%</b></span>`,
-      `<span class="pill">일 조회합 범위: <b>0 ~ ${Math.max(...series.flatMap(s => s.data.filter(v => v !== null))).toFixed(0)}</b></span>`,
-      `<span class="pill">사용 키워드: <b>${series.length}</b>개</span>`,
-      `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__ || '-'}</code></span>`
-    ].join(' ');
-  }
-  
-  window._toggleSeries = function(idx){
-    if(!window.__ltChartInstance) return;
-    const meta = window.__ltChartInstance.getDatasetMeta(idx);
-    meta.hidden = !meta.hidden;
-    window.__ltChartInstance.update();
-    
-    const pill = document.querySelector(`#ltPills [data-idx="${idx}"]`);
-    if(pill){
-      pill.classList.toggle('off');
-    }
-  };
-  
-  async function initLongTrend(){
-    try{
-      const data = await loadTrendData();
-      renderLongTrend(data);
-    }catch(e){
-      console.error('Long trend init failed:', e);
-      $('#ltChart').parentElement.innerHTML = '<div style="color:#ffb84d;padding:20px">트렌드 데이터 로드 실패</div>';
-    }
-  }
-  
-  // 장기 트렌드 이벤트 핸들러
-  $('#ltReload').addEventListener('click', async () => {
-    try{
-      const data = await loadTrendData();
-      renderLongTrend(data);
-    }catch(e){
-      alert('트렌드 데이터 로드 실패: ' + e.message);
-    }
-  });
-  
-  ['ltMetric', 'ltDays', 'ltMinN', 'ltSmoothing'].forEach(id => {
-    const el = $('#' + id);
-    if(el){
-      el.addEventListener('change', async () => {
-        try{
-          const data = await loadTrendData();
-          renderLongTrend(data);
-        }catch(e){
-          console.error('Trend render failed:', e);
-        }
-      });
-    }
-  });
 
-  // ---------- 스냅샷 ----------
+  function ema(arr, period){
+    const k = 2/(period+1);
+    let prev = arr[0]||0; const out=[prev];
+    for(let i=1;i<arr.length;i++){ prev = arr[i]*k + prev*(1-k); out.push(prev); }
+    return out;
+  }
+  function zscore(xs, win=28){
+    const out=[];
+    for(let i=0;i<xs.length;i++){
+      const s = Math.max(0, i-win+1);
+      const seg = xs.slice(s, i+1);
+      const m = seg.reduce((a,b)=>a+b,0)/seg.length;
+      const v = seg.reduce((a,b)=>a+(b-m)*(b-m),0)/Math.max(1,(seg.length-1));
+      const sd = Math.sqrt(v)||1e-9;
+      out.push((xs[i]-m)/sd);
+    }
+    return out;
+  }
+  const sumArr = a => a.reduce((x,y)=>x+y,0);
+  let ltChart=null, ltShare=null;
+  function destroyLT(){ try{ltChart?.destroy();}catch(e){} try{ltShare?.destroy();}catch(e){} }
+
+  async function buildLongTrend(){
+    let data;
+    try{ data = await loadTrendData(); }catch(e){
+      const u = document.getElementById('ltUpdate'); if(u) u.textContent='로드 실패'; console.error(e); return;
+    }
+    const DAYS = +document.getElementById('ltDays').value||180;
+    const MINN = +document.getElementById('ltMinN').value||10;
+    const metric = document.getElementById('ltMetric').value;
+    const smoothing = document.getElementById('ltSmoothing').checked;
+
+    const u = document.getElementById('ltUpdate');
+    if(u){
+      const iso = (data.updatedAt||'').trim();
+      const lm  = window.__LT_LASTMOD__;
+      let dt=null;
+      if(iso && /T|\d{2}:\d{2}/.test(iso)) {
+        dt = new Date(iso);
+      } else if(lm){
+        dt = new Date(lm);
+      } else if(iso){
+        dt = new Date(iso+'T00:00:00Z');
+      }
+      if(dt && !isNaN(+dt)){
+        const y=dt.getFullYear(), m=String(dt.getMonth()+1).padStart(2,'0'), d=String(dt.getDate()).padStart(2,'0');
+        const hh=String(dt.getHours()).padStart(2,'0'), mm=String(dt.getMinutes()).padStart(2,'0');
+        u.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+      }else{
+        u.textContent = iso || '-';
+      }
+    }
+
+    const keys = Object.keys(data.series||{});
+    const palettes = {}; keys.forEach((k,i)=> palettes[k]=`hsl(${(i*47)%360} 70% 60%)`);
+
+    const daySet = new Set();
+    for(const k of keys){ (data.series[k]||[]).forEach(p=>daySet.add(p.d)); }
+    const labelsAll = [...daySet].sort();
+    const labels = labelsAll.slice(-DAYS);
+    const idx = {}; labels.forEach((d,i)=> idx[d]=i);
+
+    const ds = {};
+    for(const k of keys){
+      const arr = new Array(labels.length).fill(0);
+      const n   = new Array(labels.length).fill(0);
+      for(const p of (data.series[k]||[])){
+        if(!(p.d in idx)) continue;
+        const i = idx[p.d];
+        arr[i] += +p.views||0;
+        n[i]   += +p.n||0;
+      }
+      const recentN = sumArr(n.slice(-14)) / Math.max(1, Math.min(14, n.slice(-14).length));
+      if(recentN < MINN) continue;
+      const ema28 = smoothing? ema(arr, 28) : arr;
+      const ema7  = smoothing? ema(arr, 7) : arr;
+      const M = ema7.map((v,i)=> (ema28[i]>0? (v/Math.max(ema28[i],1e-9)-1)*100 : 0));
+      const A = M.map((v,i)=> v - (i>=7 ? M[i-7] : 0));
+      const zM = zscore(M, 28), zA = zscore(A, 28);
+      const score = zM.map((z,i)=> z*0.55 + (zA[i]||0)*0.25);
+      ds[k] = { views:arr, ema28, score, n };
+    }
+    const usableKeys = Object.keys(ds).sort((a,b)=> (ds[b].score.at(-1)||0)-(ds[a].score.at(-1)||0));
+    
+    (function(){
+      const __sr_sumArr = (arr)=>arr.reduce((a,b)=>a+(+b||0),0);
+      const __sr_last7  = (arr)=>arr.slice(Math.max(0, arr.length-7));
+      if (!Array.isArray(window.shareCounts) || !window.shareCounts.length){
+        window.shareCounts = (usableKeys || []).map(k => __sr_sumArr(__sr_last7(ds[k].views || [])));
+      }
+    })();
+    
+    const tot = (Array.isArray(window.shareCounts)? window.shareCounts.reduce((a,b)=>a+(+b||0),0) : 0) || 1;
+
+    const datasets = usableKeys.map(k=> ({
+      label:k, borderColor:palettes[k],
+      data: (metric==='views'? ds[k].views : metric==='ema28'? ds[k].ema28 : ds[k].score),
+      borderWidth:2, tension:0.25, pointRadius:0, pointHoverRadius:0, hitRadius:6, showLine:true, spanGaps:false, hidden:false
+    }));
+
+    const pills = document.getElementById('ltPills');
+    if(pills){ pills.innerHTML = usableKeys.map(k=> `<span class="pill" data-key="${k}">${k}</span>`).join('');
+      pills.querySelectorAll('.pill').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          const k = el.dataset.key; const dsObj = ltChart.data.datasets.find(d=> d.label===k);
+          dsObj.hidden = !dsObj.hidden; el.classList.toggle('off', dsObj.hidden); ltChart.update();
+        });
+      });
+    }
+
+    destroyLT();
+    ltChart = new Chart(document.getElementById('ltChart'), {
+      type:'line',
+      data:{ labels, datasets },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{ tooltip:{ itemSort:(a,b)=>{ const by=(b?.parsed?.y ?? b?.raw ?? 0); const ay=(a?.parsed?.y ?? a?.raw ?? 0); return by-ay; } },  legend:{display:false}, decimation:{enabled:true, algorithm:'min-max'} },
+        elements:{ point:{ radius:0, hoverRadius:0, hitRadius:6 }, line:{ tension:0.25, borderWidth:2 } },
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,0.04)'}},
+          y:{grid:{color:'rgba(255,255,255,0.04)'},
+             ticks:{ callback:v=> v>=1e6? (v/1e6).toFixed(1)+'M' : (v>=1e3? (v/1e3).toFixed(0)+'k' : (v.toFixed?v.toFixed(0):v)) } }
+        }
+      }
+    });
+
+    function sumRange(arr, days, eps){
+      const L = arr.length; const mid=Math.max(0,L-days); const start=Math.max(0,L-days*2);
+      const prev = sumArr(arr.slice(start, mid)); const now = sumArr(arr.slice(mid, L));
+      if (prev < (eps||1000)) return {prev, now, label:'NEW'};
+      const pct = Math.round(Math.max(-99, Math.min(999, (now - prev) / Math.max(prev,1) * 100)));
+      const label = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
+      return {prev, now, label};
+    }
+    const rises = usableKeys.map(k=> ({k, ...sumRange(ds[k].views, 7, 1000)}))
+                            .sort((a,b)=> b.now - a.now).slice(0,5);
+    const risers = document.getElementById('ltRisers');
+    if(risers) risers.innerHTML = rises.map((r,i)=> `<span class="pill"><b>${i+1}. ${r.k}</b> <i>${r.label}</i> <small>${fmt(r.now)}</small></span>`).join('');
+    
+    ltShare = new Chart(document.getElementById('ltShare'), {
+      type:'bar',
+      data:{ labels:usableKeys, datasets:[{label:'최근 30일 표본 비중(%)', data: shareCounts.map(x=> Math.round(x/tot*100))}] },
+      options:{ responsive:true, maintainAspectRatio:false, layout:{padding:{top:4,right:8,bottom:0,left:8}},
+        plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:100, grid:{color:'rgba(255,255,255,0.06)'}}} }
+    });
+    
+    try{
+      const vEl = document.getElementById('ltValidation');
+      const eEl = document.getElementById('ltEndpoint');
+      
+      const L = labels.length;
+      const DAYS_CHECK = Math.min(30, L);
+      const startIdx = L - DAYS_CHECK;
+      
+      const totalViewsByDay  = Array(DAYS_CHECK).fill(0);
+      const totalSampleByDay = Array(DAYS_CHECK).fill(0);
+      
+      let nonZero = 0;
+      const expected = usableKeys.length * DAYS_CHECK;
+      
+      for (const k of usableKeys) {
+        const vArr = ds[k].views.slice(startIdx, startIdx + DAYS_CHECK);
+        const nArr = ds[k].n.slice(startIdx, startIdx + DAYS_CHECK);
+        for (let i = 0; i < DAYS_CHECK; i++) {
+          const v = +vArr[i] || 0;
+          const n = +nArr[i] || 0;
+          totalViewsByDay[i]  += v;
+          totalSampleByDay[i] += n;
+          if (v > 0) nonZero++;
+        }
+      }
+      
+      const sampleN   = totalSampleByDay.reduce((a,b)=>a+b,0);
+      const sumViews  = totalViewsByDay.reduce((a,b)=>a+b,0);
+      const avgSample = Math.round(sampleN / DAYS_CHECK);
+      const avgViews  = Math.round(sumViews / DAYS_CHECK);
+      
+      const minV = Math.round(Math.min(...totalViewsByDay));
+      const maxV = Math.round(Math.max(...totalViewsByDay));
+      
+      const miss = expected > 0 ? Math.max(0, 1 - nonZero / expected) : 1;
+      
+      if (vEl) {
+        vEl.innerHTML = [
+          `<span class="pill">표본수: ${sampleN.toLocaleString()}</span>`,
+          `<span class="pill">일평균 표본수: ${avgSample.toLocaleString()}</span>`,
+          `<span class="pill ${miss>0.4?'danger':(miss>0.2?'warn':'')}">결측 비중: ${Math.round(miss*100)}%</span>`,
+          `<span class="pill">일 조회합 범위: ${minV.toLocaleString()} ~ ${maxV.toLocaleString()}</span>`,
+          `<span class="pill">일평균 조회수: ${avgViews.toLocaleString()}</span>`,
+          `<span class="pill">사용 키워드: ${usableKeys.length}</span>`,
+          `<span class="pill">엔드포인트: <code>${window.__LT_ENDPOINT__ || 'sample'}</code></span>`
+        ].join(' ');
+      }
+      
+      if (eEl) eEl.textContent = window.__LT_ENDPOINT__ || '-';
+    }catch(e){ console.warn('validation error', e); }
+  }
+  setTimeout(()=>{ const btn = document.getElementById('ltReload'); if(btn) btn.addEventListener('click', buildLongTrend); buildLongTrend(); },0);
+
+  // ---------- 스냅샷 v7.4.2 ----------
   function saveSnapshot(){
     try {
       if(!STATE.videos || !STATE.videos.length) return false;
@@ -1597,6 +1579,7 @@
         return false;
       }
       
+      // 24시간 이내 체크
       const age = Date.now() - snapshot.timestamp;
       if(age > 24 * 3600 * 1000) {
         console.log('[SR] Snapshot too old:', Math.round(age/3600000), 'hours');
@@ -1604,20 +1587,24 @@
         return false;
       }
       
+      // STATE 복원
       STATE.videos = snapshot.data.videos;
       STATE.filters = snapshot.data.filters || {};
       STATE.sortKey = snapshot.data.sortKey || 'uploadedAt';
       STATE.sortDir = snapshot.data.sortDir || 'desc';
       STATE.colVis = snapshot.data.colVis || STATE.colVis || {};
       
+      // UI 복원
       if($('#fMinER')) $('#fMinER').value = STATE.filters.minER || 0;
       if($('#fMinVX')) $('#fMinVX').value = STATE.filters.minVX || 0;
       if($('#fMinGrade')) $('#fMinGrade').value = STATE.filters.minGrade || 'ALL';
       if($('#sortKey')) $('#sortKey').value = STATE.sortKey;
       if($('#sortDir')) $('#sortDir').value = STATE.sortDir;
       
+      // 테이블 렌더링
       renderTable(STATE.videos);
       
+      // 복원 알림 표시
       const wrap = $('.wrap');
       if(wrap) {
         const notice = document.createElement('div');
@@ -1696,6 +1683,7 @@
     buildColToggles();
     applyColumnVisibility();
     
+    // 스냅샷 복원 시도
     setTimeout(function(){
       if(!STATE.videos || STATE.videos.length === 0){
         loadSnapshot();
@@ -1703,8 +1691,126 @@
     }, 100);
   })();
   
+  // 페이지 떠날 때 저장
   window.addEventListener('beforeunload', saveSnapshot);
   window.addEventListener('pagehide', saveSnapshot);
+})();
+</script>
+
+<!-- Light Rules v2.2 (원본 복구) -->
+<script>
+/* Light Rules v2.2 (Unified)
+ * - 리뷰: "제품 리뷰만" 유지, 음식/요리/맛집 & 영화·드라마 리뷰는 제외/재분류
+ * - 영화·드라마 리뷰는 메인 카테고리를 '연예'로 재분류
+ * - 연예: 우선순위 없이 멀티 태깅(팬 / 예능 / 영화·드라마 하이라이트 / 소식·찌)
+ * - 네트워크 호출 0 / 쿼터 0 / UI 미변경
+ */
+(function(){
+  if (window.__LIGHT_RULES_V22) return; window.__LIGHT_RULES_V22 = true;
+
+  /* ============ 0) 설정 ============ */
+  const CFG = {
+    // true: '리뷰'인데 제품 리뷰가 아니면 '기타'로 재분류(목록에서 자연히 빠짐)
+    // false: 재분류 대신 v.flags에만 표시(외부 필터에서 숨길 때 사용)
+    strictReviewOnly: true,
+
+    // true: '영화·드라마 리뷰'를 '연예'로 자동 재분류
+    reclassMovieDramaReviewsToEntertainment: true,
+
+    // 콘솔 샘플 로그 (디버깅용)
+    debugLogSample: false
+  };
+
+  /* ============ 1) 공통 유틸 ============ */
+  function norm(s=''){
+    s = (s||'').toString().toLowerCase();
+    s = s.replace(/[\u200B-\u200D\uFEFF]/g,'');  // zero-width 제거
+    s = s.replace(/\s+/g,' ').trim();
+    return s;
+  }
+  function bagOf(v){
+    const tags = Array.isArray(v?.tags) ? v.tags.join(' ')
+               : (typeof v?.tags === 'string' ? v.tags : '');
+    return norm([v?.title, v?.description, tags, v?.channelTitle, v?.channelDesc].join(' '));
+  }
+
+  /* ============ 2) 리뷰 정제 ============ */
+  // 포함(+): 리뷰/사용기 맥락 신호
+  const RV_POS = /(리뷰|사용기|언박싱|언팩|개봉기|후기|비교|추천|체험단|하울|불량|테스트|벤치|스펙|사양|가격|쿠폰|구매|가성비|설치기|업데이트|성능|배터리|충전)/i;
+
+  // 제품 힌트(가점)
+  const RV_PRODUCT_HINT = /(스마트폰|휴대폰|아이폰|갤럭시|노트북|맥북|태블릿|아이패드|이어폰|헤드폰|모니터|tv|프로젝터|냉장고|에어컨|청소기|세탁기|건조기|카메라|렌즈|드론|마이크|스피커|자동차|블랙박스|타이어|게이밍|골프채|자전거|시계|가방|의류)/i;
+
+  // 제외(−): 음식/요리/맛집 리뷰
+  const RV_NEG_FOOD = /(먹방|맛집|레시피|식당|카페|요리|쿠킹|디저트|라면|초밥|포차|술집)/i;
+
+  // 제외(−): 영화·드라마 리뷰/감상/해설 등
+  const RV_NEG_CINEMA = new RegExp(
+    '(영화|드라마|시리즈|웹드라마|OTT|넷플릭스|디즈니\\+|티빙|웨이브|쿠팡플레이).*'
+    + '(리뷰|해설|결말|평론|관람기|시사회|감상|후기|스포|줄거리|명장면|해설|분석|평점|쿠키(영상)?)','i'
+  );
+
+  function reviewSubtype(bag){
+    if (RV_NEG_FOOD.test(bag)) return 'food';
+    if (RV_NEG_CINEMA.test(bag)) return 'movie/series';
+    if (RV_POS.test(bag) && (RV_PRODUCT_HINT.test(bag) || /제품|모델|사양|스펙/.test(bag))) return 'product';
+    if (RV_POS.test(bag)) return 'product'; // 느슨 허용(원하면 보수적으로 'other'로)
+    return 'other';
+  }
+  function isProductReview(bag){ return reviewSubtype(bag) === 'product'; }
+
+  /* ============ 3) 연예 멀티 태깅(우선순위 없음) ============ */
+  const R_FAN = /(팬캠|fancam|직캠|직찍|face\s?cam|focus|member\s?focus|stage\s?mix|교차편집|응원법|fanchant|엔딩요정|ending\s?fairy)/i;
+  const R_VAR_KW = /(하이라이트|레전드|모음|웃긴|빵터진|컷\b|편집본|요약|스페셜|비하인드|ng)/i;
+  const R_VAR_SHOW = /(런닝맨|나혼산|나\s*혼자\s*산다|유퀴즈|라디오스타|무한도전|미우새|놀면뭐하니|1박2일|신서유기|코빅|아는형님|전지적\s?참견\s?시점|복면가왕)/i;
+  const R_FILMDR = /(영화|드라마|시리즈|웹드라마|ott).*(하이라이트|명장면|클립|컷\b|티저|예고|미리보기|명대사|키스신|액션신|ost|스틸)|\b명장면\b|\b명대사\b/i;
+  const R_NEWS = /(찌|소식|열애|열애설|결별|결별설|논란|단독|속보|입장|해명|정리|해설|사실무근|사과|복귀|하차|합류|소속사|전속계약|분쟁|소송|병역|입대|결혼|출산)/i;
+
+  function entSubs(bag){
+    const out = [];
+    if (R_FAN.test(bag)) out.push('팬');
+    if (R_VAR_KW.test(bag) || R_VAR_SHOW.test(bag)) out.push('예능');
+    if (R_FILMDR.test(bag) || /영화\s*리뷰|드라마\s*리뷰/.test(bag)) out.push('영화/드라마 하이라이트'); // 리뷰도 포함
+    if (R_NEWS.test(bag)) out.push('소식/찌');
+    return Array.from(new Set(out.length ? out : ['기타']));
+  }
+
+  /* ============ 4) 렌더 파이프라인에 얇게 주입 ============ */
+  const _renderTable = window.renderTable || function(l){ return l; };
+  window.renderTable = function(list){
+    try{
+      (list||[]).forEach(v=>{
+        const bag = bagOf(v);
+
+        // A) 리뷰 처리
+        if (v.mainCat === '리뷰') {
+          const subtype = reviewSubtype(bag);
+          v.flags = v.flags || {}; v.flags.reviewType = subtype;
+
+          // 영화·드라마 리뷰 → 연예로 재분류
+          if (CFG.reclassMovieDramaReviewsToEntertainment && subtype === 'movie/series') {
+            v._wasReview = true;
+            v.mainCat = '연예';
+          } else if (CFG.strictReviewOnly && subtype !== 'product') {
+            // 제품 리뷰가 아니면 기타로 재분류(엄격 모드)
+            v.mainCat = '기타';
+          }
+        }
+
+        // B) 연예 멀티 태깅(재분류된 케이스 포함)
+        if (v.mainCat === '연예') {
+          const subs = entSubs(bag);
+          v.entSubs = subs;             // 배열(필터/집계에 유용)
+          v.entSub  = subs.join(' · '); // 문자열(표시용; 현재 UI는 그대로)
+        }
+
+        if (CFG.debugLogSample && Math.random()<0.003) {
+          console.log('[LR v2.2 sample]', {id:v.id||v.videoId, main:v.mainCat, review:v.flags?.reviewType, entSubs:v.entSubs, title:v.title});
+        }
+      });
+    } catch(e){ console.warn('[LightRules v2.2] patch error', e); }
+    return _renderTable.apply(this, arguments);
+  };
 })();
 </script>
   
