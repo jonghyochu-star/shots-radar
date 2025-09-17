@@ -165,7 +165,7 @@
         </div>
         <div class="category-hint">
           💡 <b>키워드 없이 검색</b>하면 카테고리별 인기 영상을 자동 수집합니다<br>
-          🔍 카테고리(16개): 음악, 게임, 유머, 동물, 스포츠, 댄스<br>
+          📋 카테고리(16개): 음악, 게임, 유머, 동물, 스포츠, 댄스<br>
           📺 연예, 영화, 드라마, AI, 예능, 시니어<br>
           🎯 국뽕, 오피셜, 리뷰, 정치
         </div>
@@ -444,6 +444,7 @@
       }
       this.saveStat();
       this.rotate();
+      renderQuotaStateFlag(); // 상태 플래그 업데이트 추가
     },
     
     resetKeyStats(){
@@ -460,6 +461,7 @@
     
     if (!ROT.keys.length){
       holder.innerHTML = '<span class="pill">키 상태: 없음</span>';
+      renderQuotaStateFlag(); // 상태 플래그 업데이트
       return;
     }
     
@@ -484,6 +486,8 @@
         </span>
       `;
     }).join('');
+    
+    renderQuotaStateFlag(); // 상태 플래그 업데이트
   }
 
   window._pickKey = function(i){
@@ -642,7 +646,14 @@
   function renderQuotaStateFlag(){
     const el = $('#quotaStateFlag');
     if(!el) return;
-    const offline = isQuotaLocked();
+    
+    // 모든 키가 차단되었는지 확인
+    let allKeysBlocked = false;
+    if(ROT.keys.length > 0){
+      allKeysBlocked = ROT.stat.every(s => s && s.blocked);
+    }
+    
+    const offline = isQuotaLocked() || allKeysBlocked;
     el.className = 'quota-flag ' + (offline ? 'offline' : 'online');
     el.innerHTML = '상태: <b>' + (offline ? 'OFFLINE(쿼터 소진)' : 'ONLINE') + '</b>';
   }
@@ -679,10 +690,10 @@
   // ========== Seedless 카테고리별 수집 (v7.4.2 - 16개 카테고리) ==========
   async function ytSearchSeedlessShorts({regionCode, lang, publishedAfter, maxResults=80}){
     console.log('🎯 Seedless 모드: 16개 카테고리별 수집');
-    console.log(`📍 설정: 지역=${regionCode}, 언어=${lang}, 목표=${maxResults}개`);
+    console.log(`🔍 설정: 지역=${regionCode}, 언어=${lang}, 목표=${maxResults}개`);
     
     const allVideos = [];
-    const stats = {};
+    const stats = {};  // ✅ 수정: stats 변수 선언 추가
     
     // 16개 카테고리 정의 (한국어/영어 키워드)
     const categories = [
@@ -718,7 +729,7 @@
       },
       { 
         name: '연예', 
-        keywords: regionCode === 'KR' ? ['연예 썰', '연예인 소식', '아이돌'] : ['celebrity news', 'kpop idol', 'entertainment'],
+        keywords: regionCode === 'KR' ? ['연예 짤', '연예인 소식', '아이돌'] : ['celebrity news', 'kpop idol', 'entertainment'],
         weight: 2 
       },
       { 
@@ -763,7 +774,7 @@
       },
       { 
         name: '정치', 
-        keywords: regionCode === 'KR' ? ['정치 뉴스', '정치 썰', '시사'] : ['politics', 'political news', 'news'],
+        keywords: regionCode === 'KR' ? ['정치 뉴스', '정치 짤', '시사'] : ['politics', 'political news', 'news'],
         weight: 1 
       }
     ];
@@ -1135,8 +1146,12 @@
         // 성공 알림
         const notice = document.createElement('div');
         notice.className = 'seedless-notice';
+        
+        // 카테고리 수 계산
+        const categoryCount = [...new Set(finalResults.map(v => v._category).filter(Boolean))].length;
+        
         notice.innerHTML = `
-          <b>✨ Seedless 모드</b> - ${Object.keys(stats || {}).length}개 카테고리에서 인기 영상 자동 수집<br>
+          <b>✨ Seedless 모드</b> - ${categoryCount}개 카테고리에서 인기 영상 자동 수집<br>
           <small>수집: ${shorts.length}개 → 선별: ${finalResults.length}개 (조회수 순)</small>
         `;
         const wrap = $('.wrap');
@@ -1151,7 +1166,60 @@
         
       } catch(e){
         console.error('❌ Seedless 모드 실패:', e);
-        // 실패 시 기본 검색으로
+        // 실패해도 수집된 데이터가 있으면 표시
+        if(allVideos && allVideos.length > 0){
+          // 중복 제거
+          const videoIds = [...new Set(allVideos.map(x => x.id?.videoId).filter(Boolean))];
+          console.log(`🎬 실패했지만 ${videoIds.length}개 영상 확보, 처리 진행`);
+          
+          // 상세 정보 가져오기
+          const videos = [];
+          for(let i = 0; i < videoIds.length; i += 50){
+            const batch = videoIds.slice(i, i + 50);
+            const res = await ytVideos(batch);
+            (res.items || []).forEach(v => {
+              const searchItem = allVideos.find(s => s.id?.videoId === v.id);
+              if(searchItem){
+                v._category = searchItem._category;
+              }
+              videos.push(v);
+            });
+          }
+          
+          const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
+          computeDerived(shorts);
+          
+          const sorted = shorts.sort((a, b) => {
+            const aViews = parseInt(a.statistics?.viewCount || 0);
+            const bViews = parseInt(b.statistics?.viewCount || 0);
+            return bViews - aViews;
+          });
+          
+          const finalResults = sorted.slice(0, maxResults);
+          STATE.videos = finalResults;
+          renderTable(STATE.videos);
+          
+          // 부분 성공 알림
+          const notice = document.createElement('div');
+          notice.className = 'seedless-notice';
+          const categoryCount = [...new Set(finalResults.map(v => v._category).filter(Boolean))].length;
+          notice.innerHTML = `
+            <b>⚠️ Seedless 부분 수집</b> - ${categoryCount}개 카테고리에서 영상 수집 (일부 실패)<br>
+            <small>수집: ${shorts.length}개 → 선별: ${finalResults.length}개</small>
+          `;
+          const wrap = $('.wrap');
+          if(wrap){
+            wrap.insertBefore(notice, wrap.children[3]);
+            setTimeout(() => {
+              notice.style.transition = 'opacity 0.5s';
+              notice.style.opacity = '0';
+              setTimeout(() => notice.remove(), 500);
+            }, 5000);
+          }
+          return;
+        }
+        
+        // 완전 실패 시 기본 검색으로 폴백
         const defaultQuery = 'shorts';
         $('#keywords').value = defaultQuery;
         alert('카테고리별 수집 실패. "shorts"로 기본 검색합니다.');
@@ -1231,6 +1299,58 @@
     document.getElementById('chTitle').textContent = ctitle || '채널 상세';
     linkHold.innerHTML = `<a class="badge-soft" target="_blank" href="https://www.youtube.com/channel/${cid}">채널로 열기 ↗</a>`;
 
+    // 쿼터 확인 - 소진되었으면 캐시된 데이터만 사용
+    const allKeysBlocked = ROT.keys.length > 0 && ROT.stat.every(s => s && s.blocked);
+    if(isQuotaLocked() || allKeysBlocked){
+      // 캐시된 데이터에서 채널 영상 찾기
+      const cachedVideos = STATE.videos.filter(v => v.snippet?.channelId === cid);
+      
+      if(cachedVideos.length > 0){
+        // 캐시 데이터로 표시
+        const shorts = cachedVideos.filter(v => {
+          const m = (v.contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+          const sec = (m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0);
+          const hashtag = (v.snippet?.title + ' ' + (v.snippet?.description||'')).toLowerCase().includes('#shorts');
+          return sec>0 ? (sec<=62) : hashtag;
+        });
+        
+        const avgVel = (sum(shorts, x=>x._d.vel)/Math.max(1,shorts.length)).toFixed(1);
+        const avgEr  = (sum(shorts, x=>x._d.er)/Math.max(1,shorts.length)).toFixed(2);
+        
+        kpi.innerHTML = [
+          `<div class="kpi-card"><div>구독자</div><b>-</b></div>`,
+          `<div class="kpi-card"><div>누적 조회</div><b>-</b></div>`,
+          `<div class="kpi-card"><div>총 영상</div><b>-</b></div>`,
+          `<div class="kpi-card"><div>캐시된 ${shorts.length}개 평균</div><b>속도 ${avgVel} · 반응률 ${avgEr}‰</b></div>`
+        ].join('');
+        
+        pat.innerHTML = `<span class="badge-soft">캐시 데이터 사용 중 (쿼터 소진)</span>`;
+        
+        const top = [...shorts].sort((a,b)=> (b._d.pick - a._d.pick) || (b._d.vel - a._d.vel)).slice(0,3);
+        best.innerHTML = top.map(v=>{
+          const sec = (v.contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+          const s = (sec? (Number(sec[1]||0)*60 + Number(sec[2]||0)) : 0);
+          return `<div class="best-card">
+            <a target="_blank" href="https://www.youtube.com/watch?v=${v.id}"><img class="best-thumb" src="${v.snippet.thumbnails?.medium?.url||''}"/></a>
+            <div>
+              <div style="font-weight:600;margin-bottom:4px">${escapeHtml(v.snippet.title||'')}</div>
+              <div class="meta-row">조회 ${(v.statistics.viewCount||0).toLocaleString('en-US')} · 속도 ${v._d.vel.toFixed(1)} · 반응률 ${v._d.er.toFixed(2)}‰ · ${new Date(v.snippet.publishedAt).toLocaleDateString('ko-KR')} · ${s}s</div>
+            </div>
+          </div>`;
+        }).join('');
+        
+        document.getElementById('revOut').textContent = '쿼터 소진으로 수익 계산 불가';
+        
+        load.style.display='none'; body.style.display='';
+        return;
+      } else {
+        load.style.display='none'; err.style.display='';
+        document.getElementById('chError').textContent = '쿼터가 소진되었고 이 채널의 캐시 데이터가 없습니다.';
+        return;
+      }
+    }
+    
+    // 쿼터가 있을 때 기존 로직
     try{
       if(!ROT.keys.length) throw new Error('API 키 필요');
       const meta = await ytChannels([cid]);
@@ -1821,7 +1941,7 @@
     if (RV_NEG_FOOD.test(bag)) return 'food';
     if (RV_NEG_CINEMA.test(bag)) return 'movie/series';
     if (RV_POS.test(bag) && (RV_PRODUCT_HINT.test(bag) || /제품|모델|사양|스펙/.test(bag))) return 'product';
-    if (RV_POS.test(bag)) return 'product'; // 느슨 허용(원하면 보수적으로 'other'로)
+    if (RV_POS.test(bag)) return 'product'; // 느슨한 허용(원하면 보수적으로 'other'로)
     return 'other';
   }
   function isProductReview(bag){ return reviewSubtype(bag) === 'product'; }
@@ -1829,7 +1949,7 @@
   /* ============ 3) 연예 멀티 태깅(우선순위 없음) ============ */
   const R_FAN = /(팬캠|fancam|직캠|직찍|face\s?cam|focus|member\s?focus|stage\s?mix|교차편집|응원법|fanchant|엔딩요정|ending\s?fairy)/i;
   const R_VAR_KW = /(하이라이트|레전드|모음|웃긴|빵터진|컷\b|편집본|요약|스페셜|비하인드|ng)/i;
-  const R_VAR_SHOW = /(런닝맨|나혼산|나\s*혼자\s*산다|유퀴즈|라디오스타|무한도전|미우새|놀면뭐하니|1박2일|신서유기|코빅|아는형님|전지적\s?참견\s?시점|복면가왕)/i;
+  const R_VAR_SHOW = /(런닝맨|나혼산|나\s*혼자\s*산다|유퀴즈|라디오스타|무한도전|미우새|놀면뭐하니|1박2일|신서유기|코빅|아는형님|전지\s?적\s?참견\s?시점|복면가왕)/i;
   const R_FILMDR = /(영화|드라마|시리즈|웹드라마|ott).*(하이라이트|명장면|클립|컷\b|티저|예고|미리보기|명대사|키스신|액션신|ost|스틸)|\b명장면\b|\b명대사\b/i;
   const R_NEWS = /(찌|소식|열애|열애설|결별|결별설|논란|단독|속보|입장|해명|정리|해설|사실무근|사과|복귀|하차|합류|소속사|전속계약|분쟁|소송|병역|입대|결혼|출산)/i;
 
