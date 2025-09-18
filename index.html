@@ -186,6 +186,15 @@
       <div id="bestTimes" class="row" style="margin-top:6px; flex-wrap:wrap"></div>
     </div>
 
+    <!-- 해시태그 트렌드 -->
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">🔥 해시태그 트렌드</h3>
+        <span class="hint">수집된 영상들의 인기 태그</span>
+      </div>
+      <div id="hashtagTrends" class="row" style="margin-top:6px; flex-wrap:wrap"></div>
+    </div>
+
     <!-- S3: 키워드 장기 트렌드 -->
     <div class="longdash" id="longDash">
       <div class="ctrls">
@@ -1007,6 +1016,93 @@
     $('#sortDir').addEventListener('change', ()=>{ STATE.sortDir=$('#sortDir').value; save('sr_sortDir', STATE.sortDir); renderTable(STATE.videos); });
   }
 
+  // ---------- 해시태그 트렌드 ----------
+  function extractHashtags(videos){
+    const hashtagMap = {};
+    
+    videos.forEach(v => {
+      // 제목과 설명에서 해시태그 추출
+      const text = `${v.snippet.title || ''} ${v.snippet.description || ''}`;
+      
+      // #으로 시작하는 단어들 찾기 (한글, 영어, 숫자 포함)
+      const hashtags = text.match(/#[가-힣a-zA-Z0-9_]+/g) || [];
+      
+      hashtags.forEach(tag => {
+        const normalizedTag = tag.toLowerCase();
+        if(!hashtagMap[normalizedTag]) {
+          hashtagMap[normalizedTag] = {
+            tag: tag,
+            count: 0,
+            videos: []
+          };
+        }
+        hashtagMap[normalizedTag].count++;
+        hashtagMap[normalizedTag].videos.push(v.id);
+      });
+    });
+    
+    // 빈도순으로 정렬
+    const sortedTags = Object.values(hashtagMap)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20); // 상위 20개만
+    
+    return sortedTags;
+  }
+  
+  function renderHashtagTrends(videos){
+    const holder = $('#hashtagTrends');
+    if(!holder) return;
+    
+    const hashtags = extractHashtags(videos);
+    
+    if(hashtags.length === 0) {
+      holder.innerHTML = '<span class="hint">수집된 영상에 해시태그가 없습니다.</span>';
+      return;
+    }
+    
+    // 상위 10개 태그 표시 (크기와 색상으로 빈도 표현)
+    const maxCount = Math.max(...hashtags.map(h => h.count));
+    
+    holder.innerHTML = hashtags.slice(0, 10).map(h => {
+      const ratio = h.count / maxCount;
+      const size = 12 + Math.round(ratio * 8); // 12px ~ 20px
+      const opacity = 0.6 + ratio * 0.4; // 0.6 ~ 1.0
+      
+      // 빈도에 따른 색상 결정
+      let bgColor, borderColor, textColor;
+      if(ratio > 0.7) {
+        bgColor = '#0f2b1a';
+        borderColor = '#1f4b2a';  
+        textColor = '#b9ffd0';
+      } else if(ratio > 0.4) {
+        bgColor = '#0e232f';
+        borderColor = '#214056';
+        textColor = '#bfe7ff';
+      } else {
+        bgColor = '#0e1620';
+        borderColor = '#213142';
+        textColor = '#a8b9cc';
+      }
+      
+      return `<span class="tag" 
+                    style="font-size:${size}px; 
+                           opacity:${opacity};
+                           background:${bgColor};
+                           border-color:${borderColor};
+                           color:${textColor};
+                           font-weight:${ratio > 0.5 ? '600' : '400'}"
+                    title="${h.count}개 영상에서 사용">
+                ${h.tag} 
+                <small style="opacity:0.7">(${h.count})</small>
+              </span>`;
+    }).join('');
+    
+    // 더 많은 태그가 있으면 표시
+    if(hashtags.length > 10) {
+      holder.innerHTML += `<span class="hint" style="margin-left:8px">+${hashtags.length - 10}개 더...</span>`;
+    }
+  }
+
   // ---------- 테이블 ----------
   function getSortValue(v,key){
     switch(key){
@@ -1064,6 +1160,7 @@
     applyColumnVisibility();
     setSummary(videos, filtered);
     renderBestTimes(videos);
+    renderHashtagTrends(videos); // 해시태그 트렌드 추가
   }
 
   // ---------- 요약/시간대 ----------
@@ -1893,6 +1990,7 @@
       
       // 테이블 렌더링
       renderTable(STATE.videos);
+      renderHashtagTrends(STATE.videos); // 스냅샷 로드 시에도 해시태그 트렌드 표시
       
       // 복원 알림 표시
       const wrap = $('.wrap');
