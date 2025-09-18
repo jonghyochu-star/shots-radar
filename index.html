@@ -693,87 +693,120 @@
     
     const allVideos = [];
     const stats = {};  // ✅ 수정: stats 변수 선언 추가
+    const failedCategories = []; // 실패한 카테고리 추적
     
     // 16개 카테고리 정의 (한국어/영어 키워드)
     const categories = [
       { 
         name: '음악', 
-        keywords: regionCode === 'KR' ? ['음악 쇼츠', 'kpop', '뮤직비디오'] : ['music shorts', 'music video', 'pop music'],
+        keywords: regionCode === 'KR' ? 
+          ['음악 쇼츠', 'kpop 쇼츠', '뮤직비디오 shorts', '노래 shorts'] : 
+          ['music shorts', 'music video shorts', 'pop music', 'song shorts'],
         weight: 3 
       },
       { 
         name: '게임', 
-        keywords: regionCode === 'KR' ? ['게임 쇼츠', '게임 하이라이트', '롤 매드무비'] : ['gaming shorts', 'gameplay', 'game clips'],
+        keywords: regionCode === 'KR' ? 
+          ['게임 쇼츠', '게임 하이라이트', '롤 매드무비', '게임 플레이'] : 
+          ['gaming shorts', 'gameplay shorts', 'game clips', 'gaming highlights'],
         weight: 3 
       },
       { 
         name: '유머', 
-        keywords: regionCode === 'KR' ? ['웃긴 영상', '유머 모음', '레전드 짤'] : ['funny shorts', 'meme', 'comedy'],
+        keywords: regionCode === 'KR' ? 
+          ['웃긴 영상', '유머 모음', '레전드 짤', '개그 쇼츠'] : 
+          ['funny shorts', 'meme compilation', 'comedy shorts', 'hilarious clips'],
         weight: 3 
       },
       { 
         name: '동물', 
-        keywords: regionCode === 'KR' ? ['강아지 고양이', '귀여운 동물', '펫튜브'] : ['cute animals', 'pets', 'dog cat'],
+        keywords: regionCode === 'KR' ? 
+          ['강아지 고양이', '귀여운 동물', '펫튜브', '동물 쇼츠'] : 
+          ['cute animals', 'pets shorts', 'dog cat', 'animal shorts'],
         weight: 2 
       },
       { 
         name: '스포츠', 
-        keywords: regionCode === 'KR' ? ['스포츠 하이라이트', '축구 골모음', '야구'] : ['sports highlights', 'football', 'basketball'],
+        keywords: regionCode === 'KR' ? 
+          ['스포츠 하이라이트', '축구 골모음', '야구 명장면', '스포츠 쇼츠'] : 
+          ['sports highlights', 'football shorts', 'basketball', 'sports clips'],
         weight: 2 
       },
       { 
         name: '댄스', 
-        keywords: regionCode === 'KR' ? ['댄스 챌린지', '춤 커버', '틱톡 댄스'] : ['dance challenge', 'dance cover', 'tiktok dance'],
+        keywords: regionCode === 'KR' ? 
+          ['댄스 챌린지', '춤 커버', '틱톡 댄스', '댄스 쇼츠'] : 
+          ['dance challenge', 'dance cover', 'tiktok dance', 'dance shorts'],
         weight: 2 
       },
       { 
         name: '연예', 
-        keywords: regionCode === 'KR' ? ['연예 짤', '연예인 소식', '아이돌'] : ['celebrity news', 'kpop idol', 'entertainment'],
+        keywords: regionCode === 'KR' ? 
+          ['연예 짤', '연예인 소식', '아이돌 쇼츠', '연예계'] : 
+          ['celebrity news', 'kpop idol', 'entertainment shorts', 'celebrity'],
         weight: 2 
       },
       { 
         name: '영화', 
-        keywords: regionCode === 'KR' ? ['영화 명장면', '영화 리뷰', '영화 추천'] : ['movie scenes', 'movie review', 'film clips'],
+        keywords: regionCode === 'KR' ? 
+          ['영화 명장면', '영화 리뷰', '영화 추천', '영화 쇼츠'] : 
+          ['movie scenes', 'movie review', 'film clips', 'movie shorts'],
         weight: 2 
       },
       { 
         name: '드라마', 
-        keywords: regionCode === 'KR' ? ['드라마 하이라이트', '드라마 명장면', '웹드라마'] : ['drama scenes', 'kdrama', 'tv shows'],
+        keywords: regionCode === 'KR' ? 
+          ['드라마 하이라이트', '드라마 명장면', '웹드라마', '드라마 쇼츠'] : 
+          ['drama scenes', 'kdrama shorts', 'tv shows', 'drama clips'],
         weight: 2 
       },
       { 
         name: 'AI', 
-        keywords: regionCode === 'KR' ? ['AI 영상', 'AI 생성', '인공지능'] : ['AI generated', 'AI video', 'artificial intelligence'],
+        keywords: regionCode === 'KR' ? 
+          ['AI 영상', 'AI 생성', '인공지능', 'AI 쇼츠'] : 
+          ['AI generated', 'AI video', 'artificial intelligence', 'AI shorts'],
         weight: 1 
       },
       { 
         name: '예능', 
-        keywords: regionCode === 'KR' ? ['예능 레전드', '런닝맨', '나혼산'] : ['variety show', 'korean variety', 'tv show funny'],
+        keywords: regionCode === 'KR' ? 
+          ['예능 레전드', '런닝맨 쇼츠', '나혼산', '예능 하이라이트'] : 
+          ['variety show', 'korean variety', 'tv show funny', 'variety shorts'],
         weight: 2 
       },
       { 
         name: '시니어', 
-        keywords: regionCode === 'KR' ? ['시니어', '5060', '중년 유튜브'] : ['senior', 'boomer', 'elderly'],
+        keywords: regionCode === 'KR' ? 
+          ['시니어 유튜브', '5060 영상', '중년 쇼츠', '실버 유튜브'] : 
+          ['senior content', 'boomer videos', 'elderly shorts', 'senior citizens'],
         weight: 1 
       },
       { 
         name: '국뽕', 
-        keywords: regionCode === 'KR' ? ['국뽕', '밀리터리', '한국 자랑'] : ['korean pride', 'military', 'korea amazing'],
+        keywords: regionCode === 'KR' ? 
+          ['국뽕 영상', '한국 자랑', '국가 자부심', '대한민국'] : 
+          ['korean pride', 'korea amazing', 'korean culture', 'korea best'],
         weight: 1 
       },
       { 
         name: '오피셜', 
-        keywords: regionCode === 'KR' ? ['공식 뮤직비디오', 'official', 'MV'] : ['official music video', 'official MV', 'VEVO'],
+        keywords: regionCode === 'KR' ? 
+          ['공식 뮤직비디오', 'official MV', '공식 영상', '오피셜'] : 
+          ['official music video', 'official MV', 'VEVO', 'official video'],
         weight: 1 
       },
       { 
         name: '리뷰', 
-        keywords: regionCode === 'KR' ? ['제품 리뷰', '언박싱', '사용기'] : ['product review', 'unboxing', 'tech review'],
+        keywords: regionCode === 'KR' ? 
+          ['제품 리뷰', '언박싱', '사용기', '리뷰 쇼츠'] : 
+          ['product review', 'unboxing', 'tech review', 'review shorts'],
         weight: 2 
       },
       { 
         name: '정치', 
-        keywords: regionCode === 'KR' ? ['정치 뉴스', '정치 짤', '시사'] : ['politics', 'political news', 'news'],
+        keywords: regionCode === 'KR' ? 
+          ['정치 뉴스', '정치 짤', '시사 쇼츠', '정치 영상'] : 
+          ['politics shorts', 'political news', 'news shorts', 'political clips'],
         weight: 1 
       }
     ];
@@ -786,46 +819,64 @@
     // 각 카테고리별로 수집
     for(let i = 0; i < categories.length; i++){
       const cat = categories[i];
-      const targetPerCategory = Math.max(2, Math.floor((cat.weight / totalWeight) * maxResults / 3)); // 카테고리당 목표
+      const targetPerCategory = 3; // 각 카테고리당 목표 3개
       
       console.log(`\n🔍 [${i+1}/${categories.length}] ${cat.name} (가중치:${cat.weight})`);
       
       const categoryVideos = [];
+      let successfulKeyword = null;
       
-      // 첫 번째 키워드로 검색
-      const keyword = cat.keywords[0];
-      
-      try{
-        console.log(`  검색: "${keyword}"`);
+      // 여러 키워드 시도 (실패 시 다음 키워드로)
+      for(let ki = 0; ki < cat.keywords.length && categoryVideos.length < targetPerCategory; ki++){
+        const keyword = cat.keywords[ki];
         
-        const res = await ytSearch({
-          q: keyword,
-          publishedAfter: publishedAfter,
-          regionCode: regionCode,
-          lang: lang,
-          maxResults: 10, // 더 많이 가져와서 선별 (기존 5 → 10)
-          order: 'viewCount' // 조회수 순
-        });
-        
-        if(res && res.items && res.items.length > 0){
-          // 상위 3개 선택 (더 확실하게)
-          const topItems = res.items.slice(0, Math.min(3, res.items.length));
+        try{
+          console.log(`  검색 ${ki+1}: "${keyword}"`);
           
-          topItems.forEach(item => {
-            item._category = cat.name;
-            categoryVideos.push(item);
+          const res = await ytSearch({
+            q: keyword,
+            publishedAfter: publishedAfter,
+            regionCode: regionCode,
+            lang: lang,
+            maxResults: 15, // 더 많이 가져와서 선별
+            order: 'viewCount' // 조회수 순
           });
           
-          console.log(`  ✅ ${topItems.length}개 수집`);
-          stats[cat.name] = topItems.length;
-        } else {
-          console.log(`  ⚠️ 결과 없음`);
-          stats[cat.name] = 0;
+          if(res && res.items && res.items.length > 0){
+            // 남은 필요 개수만큼만 추가
+            const needed = targetPerCategory - categoryVideos.length;
+            const topItems = res.items.slice(0, Math.min(needed, res.items.length));
+            
+            topItems.forEach(item => {
+              item._category = cat.name;
+              categoryVideos.push(item);
+            });
+            
+            if(categoryVideos.length > 0) successfulKeyword = keyword;
+            console.log(`    ✅ ${topItems.length}개 추가 (누적: ${categoryVideos.length}개)`);
+            
+            if(categoryVideos.length >= targetPerCategory) break;
+          } else {
+            console.log(`    ⚠️ 결과 없음`);
+          }
+          
+        } catch(e){
+          console.error(`    ❌ 오류:`, e.message);
         }
         
-      } catch(e){
-        console.error(`  ❌ 오류:`, e.message);
-        stats[cat.name] = 0;
+        // API 쿼터 보호
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // 결과 저장
+      stats[cat.name] = categoryVideos.length;
+      if(categoryVideos.length === 0){
+        failedCategories.push(cat.name);
+        console.log(`  ❌ ${cat.name} 수집 실패`);
+      } else if(categoryVideos.length < targetPerCategory){
+        console.log(`  ⚠️ ${cat.name} 부분 성공: ${categoryVideos.length}/${targetPerCategory}개`);
+      } else {
+        console.log(`  ✅ ${cat.name} 완료: ${categoryVideos.length}개`);
       }
       
       allVideos.push(...categoryVideos);
@@ -837,9 +888,17 @@
     console.log('\n' + '='.repeat(50));
     console.log('📊 카테고리별 수집 결과:');
     Object.entries(stats).forEach(([cat, count]) => {
-      console.log(`  ${cat}: ${count}개`);
+      const status = count === 0 ? '❌' : (count < 3 ? '⚠️' : '✅');
+      console.log(`  ${status} ${cat}: ${count}개`);
     });
+    if(failedCategories.length > 0){
+      console.log(`\n❌ 실패한 카테고리: ${failedCategories.join(', ')}`);
+    }
     console.log(`\n✨ 총 ${allVideos.length}개 영상 수집 완료`);
+    
+    // 실패 정보를 전역 변수에 저장 (요약에서 사용)
+    window.__seedlessFailedCategories = failedCategories;
+    window.__seedlessStats = stats;
     
     if(allVideos.length === 0){
       console.warn('⚠️ 영상 수집 실패. 키워드를 직접 입력해주세요.');
