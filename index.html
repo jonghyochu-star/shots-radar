@@ -1184,10 +1184,11 @@
           const batch = videoIds.slice(i, i + 50);
           const res = await ytVideos(batch);
           (res.items || []).forEach(v => {
-            // 카테고리 정보 복원
+            // 카테고리 정보 복원 - 중요!
             const searchItem = searchItems.find(s => s.id?.videoId === v.id);
-            if(searchItem){
+            if(searchItem && searchItem._category){
               v._category = searchItem._category;
+              console.log(`카테고리 복원: ${v.id} → ${v._category}`);
             }
             videos.push(v);
           });
@@ -1195,6 +1196,15 @@
         
         // Shorts 필터링
         const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
+        
+        // 카테고리 정보 확인 로그
+        const categoryCheck = {};
+        shorts.forEach(v => {
+          if(v._category) {
+            categoryCheck[v._category] = (categoryCheck[v._category] || 0) + 1;
+          }
+        });
+        console.log('📊 최종 카테고리 분포:', categoryCheck);
         console.log(`🎯 ${shorts.length}개 Shorts 필터링 완료`);
         
         // 지표 계산
