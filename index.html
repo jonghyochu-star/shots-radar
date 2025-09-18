@@ -896,14 +896,16 @@
     }
     console.log(`\n✨ 총 ${allVideos.length}개 영상 수집 완료`);
     
-    // 실패 정보를 전역 변수에 저장 (요약에서 사용)
-    window.__seedlessFailedCategories = failedCategories;
-    window.__seedlessStats = stats;
+    // 실패 정보를 전역 변수에 저장 (요약에서 사용) - 더 확실하게 저장
+    window.__seedlessStats = {...stats}; // 객체 복사로 저장
+    window.__seedlessFailedCategories = [...failedCategories]; // 배열 복사로 저장
     
     if(allVideos.length === 0){
       console.warn('⚠️ 영상 수집 실패. 키워드를 직접 입력해주세요.');
     }
     
+    // stats와 함께 반환
+    allVideos._seedlessStats = stats;
     return allVideos;
   }
   
@@ -1068,15 +1070,16 @@
   function setSummary(all, filtered){
     const avg = (arr,fn)=> arr.reduce((s,x)=>s+fn(x),0)/Math.max(1,arr.length);
     
-    // 카테고리 분포 계산 - 디버깅 추가
+    // 카테고리 분포 계산
     const categoryDist = {};
     all.forEach(v => {
       const cat = v._category || '기타';
       categoryDist[cat] = (categoryDist[cat] || 0) + 1;
     });
     
-    // 디버깅용 로그 (필요시 활성화)
-    // console.log('카테고리 분포:', categoryDist);
+    // 디버깅용 로그
+    console.log('setSummary - 카테고리 분포:', categoryDist);
+    console.log('setSummary - __seedlessStats:', window.__seedlessStats);
     
     const pills = [
       `<span class="pill">총 수집 <b>${all.length}</b></span>`,
@@ -1102,24 +1105,28 @@
         const collectedCategories = Object.keys(categoryDist).filter(cat => seedlessCategories.includes(cat));
         const totalAttempted = 16; // 고정값
         const totalCollected = collectedCategories.length;
+        
+        // 성공률 표시
         pills.push(`<span class="pill">✨ Seedless: ${totalCollected}/${totalAttempted}개 카테고리 성공</span>`);
         
-        // 실패한 카테고리 표시 추가
-        if(window.__seedlessStats){
+        // 실패한 카테고리 표시 - window.__seedlessStats 사용
+        if(window.__seedlessStats && typeof window.__seedlessStats === 'object'){
           const failedCats = [];
           const partialCats = [];
           
-          Object.entries(window.__seedlessStats).forEach(([cat, count]) => {
+          // 모든 Seedless 카테고리 확인
+          seedlessCategories.forEach(cat => {
+            const count = window.__seedlessStats[cat] || 0;
             if(count === 0) {
               failedCats.push(cat);
-            } else if(count < 3) {
+            } else if(count > 0 && count < 3) {
               partialCats.push(`${cat}(${count})`);
             }
           });
           
           // 실패한 카테고리가 있으면 표시
           if(failedCats.length > 0) {
-            pills.push(`<span class="pill blocked">❌ 실패: ${failedCats.join(', ')}</span>`);
+            pills.push(`<span class="pill" style="background:#4b1c16;border-color:#6b2c24;color:#ffcab3;">❌ 실패: ${failedCats.join(', ')}</span>`);
           }
           
           // 부분 수집 카테고리가 있으면 표시
