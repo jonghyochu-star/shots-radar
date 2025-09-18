@@ -368,17 +368,17 @@ function initDailySums(){
 
 // -------------------- 메인 --------------------
 async function main(){
-  // XLSX에서 수동 라벨 읽기(있으면 최우선)
-  if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_XLSX_PATH)) {
-    const map = await loadManualFromXLSX(CH_REVIEW_XLSX_PATH);
-    CH_MAN = { ...CH_MAN, ...map };
-  }
+ 
   // CSV도 지원 (엑셀에서 csv로 저장 덮어쓰기 한 경우)
   if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_CSV_PATH)) {
     const map = loadManualFromCSV(CH_REVIEW_CSV_PATH);
     CH_MAN = { ...CH_MAN, ...map };
   }
-
+ // XLSX에서 수동 라벨 읽기(있으면 최우선)
+  if (MANUAL_FROM_REVIEW_CSV && fs.existsSync(CH_REVIEW_XLSX_PATH)) {
+    const map = await loadManualFromXLSX(CH_REVIEW_XLSX_PATH);
+    CH_MAN = { ...CH_MAN, ...map };
+  }
   // 이전 시계열 로드
   let oldSeries={};
   try {
