@@ -330,7 +330,7 @@
   </div>
 
 <script>
-// ========== SHORTS RADAR v7.4.2 COMPLETE WITH CATEGORIES ==========
+// ========== SHORTS RADAR v7.4.2 PATCHED ==========
 (function(){
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -342,9 +342,6 @@
   const isoToSeconds = dur => { const m=(dur||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/); return m?(+(m[1]||0)*3600 + +(m[2]||0)*60 + +(m[3]||0)):0; };
   const hms = sec => { sec=+sec|0; const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return (h? h+':':'') + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); };
   function uniq(arr){ return [...new Set(arr)]; }
-
-  // ========== 카테고리 정의 제거 (videoCategoryId 문제로 인해 사용 안함) ==========
-  // v7.4.2: Seedless 모드를 키워드 기반으로 완전 전환
 
   // ---------- 상태 ----------
   let STATE = {
@@ -686,13 +683,13 @@
     return fetchWithRotate(url, 1);
   }
   
-  // ========== Seedless 카테고리별 수집 (v7.4.2 - 16개 카테고리) ==========
+  // ========== Seedless 카테고리별 수집 (v7.4.2 PATCHED) ==========
   async function ytSearchSeedlessShorts({regionCode, lang, publishedAfter, maxResults=80}){
     console.log('🎯 Seedless 모드: 16개 카테고리별 수집');
     console.log(`🔍 설정: 지역=${regionCode}, 언어=${lang}, 목표=${maxResults}개`);
     
     const allVideos = [];
-    const stats = {};  // ✅ 수정: stats 변수 선언 추가
+    const stats = {};  // 원본 수집 통계
     const failedCategories = []; // 실패한 카테고리 추적
     
     // 16개 카테고리 정의 (한국어/영어 키워드)
@@ -896,9 +893,9 @@
     }
     console.log(`\n✨ 총 ${allVideos.length}개 영상 수집 완료`);
     
-    // 실패 정보를 전역 변수에 저장 (요약에서 사용)
+    // 원본 통계 저장 (필터링 전)
+    window.__seedlessRawStats = {...stats};
     window.__seedlessFailedCategories = failedCategories;
-    window.__seedlessStats = stats;
     
     if(allVideos.length === 0){
       console.warn('⚠️ 영상 수집 실패. 키워드를 직접 입력해주세요.');
@@ -1021,19 +1018,25 @@
   }
   function rankGrade(g){ return ({'D':1,'C':2,'B':3,'A':4,'S':5}[g]||0); }
   function renderTable(videos){
+    // 디버깅: 카테고리 분포 확인
+    console.log('📋 renderTable 호출, 영상 수:', videos?.length || 0);
+    if(videos && videos.length > 0){
+      const withCategory = videos.filter(v => v._category);
+      console.log('🏷️ renderTable 카테고리 있는 영상:', withCategory.length);
+      
+      const categoryDist = {};
+      videos.forEach(v => {
+        if(v._category) {
+          categoryDist[v._category] = (categoryDist[v._category] || 0) + 1;
+        }
+      });
+      console.log('📊 renderTable 카테고리 분포:', categoryDist);
+    }
+    
     // 자동 스냅샷 저장
     if(Array.isArray(videos) && videos.length > 0){
       saveSnapshot();
     }
-    
-    // 카테고리 정보 확인
-    console.log('📋 renderTable 호출, 영상 수:', videos.length);
-    console.log('🏷️ renderTable 카테고리 있는 영상:', videos.filter(v => v._category).length);
-    const catDist = {};
-    videos.forEach(v => {
-      if(v._category) catDist[v._category] = (catDist[v._category] || 0) + 1;
-    });
-    console.log('📊 renderTable 카테고리 분포:', JSON.stringify(catDist));
     
     const tb = $('#tbody'); tb.innerHTML='';
     const f = STATE.filters;
@@ -1073,16 +1076,9 @@
     renderBestTimes(videos);
   }
 
-  // ---------- 요약/시간대 ----------
+  // ---------- 요약/시간대 (PATCHED) ----------
   function setSummary(all, filtered){
     const avg = (arr,fn)=> arr.reduce((s,x)=>s+fn(x),0)/Math.max(1,arr.length);
-    
-    // 카테고리 분포 계산
-    const categoryDist = {};
-    all.forEach(v => {
-      const cat = v._category || '기타';
-      categoryDist[cat] = (categoryDist[cat] || 0) + 1;
-    });
     
     const pills = [
       `<span class="pill">총 수집 <b>${all.length}</b></span>`,
@@ -1091,24 +1087,48 @@
       `<span class="pill">평균 반응률 <b>${avg(all,x=>x._d.er).toFixed(2)}</b>‰</span>`
     ];
     
-    // 카테고리 분포 상세 표시
-    if(Object.keys(categoryDist).length > 0){
-      // 모든 카테고리 표시 (수집된 것만)
-      const categories = Object.entries(categoryDist)
+    // Seedless 모드 실제 통계 표시
+    if(window.__seedlessActualStats){
+      const actualStats = window.__seedlessActualStats;
+      const categories = Object.entries(actualStats)
         .sort((a, b) => b[1] - a[1])
         .map(([cat, count]) => `${cat}:${count}`);
       
-      pills.push(`<span class="pill">🔍 카테고리별: ${categories.join(' ')}</span>`);
+      const totalCategories = 16; // 전체 카테고리 수
+      const successCount = Object.keys(actualStats).length;
       
-      // Seedless 모드인 경우 추가 정보
-      const seedlessCategories = ['음악', '게임', '유머', '동물', '스포츠', '댄스', '연예', '영화', '드라마', 'AI', '예능', '시니어', '국뽕', '오피셜', '리뷰', '정치'];
-      const isSeedless = Object.keys(categoryDist).some(cat => seedlessCategories.includes(cat));
+      pills.push(`<span class="pill">📂 수집 카테고리: ${categories.join(' ')}</span>`);
+      pills.push(`<span class="pill">✨ Seedless: ${successCount}/${totalCategories}개 카테고리</span>`);
       
-      if(isSeedless){
-        const collectedCategories = Object.keys(categoryDist).filter(cat => seedlessCategories.includes(cat));
-        const totalAttempted = seedlessCategories.length;
-        const totalCollected = collectedCategories.length;
-        pills.push(`<span class="pill">✨ Seedless: ${totalCollected}/${totalAttempted}개 카테고리 성공</span>`);
+      // 원본 vs 실제 비교
+      if(window.__seedlessRawStats){
+        const rawTotal = Object.values(window.__seedlessRawStats).reduce((a,b) => a+b, 0);
+        const actualTotal = Object.values(actualStats).reduce((a,b) => a+b, 0);
+        const filterRate = Math.round(actualTotal/rawTotal*100);
+        pills.push(`<span class="pill">📊 Shorts 필터: ${actualTotal}/${rawTotal} (${filterRate}%)</span>`);
+        
+        // 누락된 카테고리 표시
+        const allCategories = ['음악','게임','유머','동물','스포츠','댄스','연예','영화','드라마','AI','예능','시니어','국뽕','오피셜','리뷰','정치'];
+        const missedCategories = allCategories.filter(cat => !actualStats[cat] || actualStats[cat] === 0);
+        if(missedCategories.length > 0){
+          pills.push(`<span class="pill" style="background:#4b1c16;border-color:#6b2c24;">⚠️ 미수집: ${missedCategories.join(', ')}</span>`);
+        }
+      }
+    } else {
+      // 일반 모드 카테고리 분포
+      const categoryDist = {};
+      all.forEach(v => {
+        const cat = v._category || '기타';
+        categoryDist[cat] = (categoryDist[cat] || 0) + 1;
+      });
+      
+      if(Object.keys(categoryDist).length > 0){
+        const categories = Object.entries(categoryDist)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10) // 상위 10개만
+          .map(([cat, count]) => `${cat}:${count}`);
+        
+        pills.push(`<span class="pill">📂 카테고리: ${categories.join(' ')}</span>`);
       }
     }
     
@@ -1123,7 +1143,7 @@
     $('#bestTimes').innerHTML = out || '<span class="hint">데이터가 부족합니다.</span>';
   }
 
-  // ---------- 실행 파이프라인 ----------
+  // ---------- 실행 파이프라인 (PATCHED) ----------
   async function run(){
     if(!ROT.keys.length) return alert('API 키가 필요합니다. 상단에 여러 키를 붙여넣고 [키 저장]을 눌러주세요.');
     const days = +$('#days').value||7;
@@ -1187,13 +1207,22 @@
         const videoIds = [...new Set(searchItems.map(x => x.id?.videoId).filter(Boolean))];
         console.log(`🎬 ${videoIds.length}개 고유 영상 ID 확보`);
         
+        // 카테고리 분포 확인 (디버깅)
+        const rawCategoryDist = {};
+        searchItems.forEach(item => {
+          if(item._category) {
+            rawCategoryDist[item._category] = (rawCategoryDist[item._category] || 0) + 1;
+          }
+        });
+        console.log('📊 원본 카테고리 분포:', rawCategoryDist);
+        
         // 상세 정보 가져오기
         const videos = [];
         for(let i = 0; i < videoIds.length; i += 50){
           const batch = videoIds.slice(i, i + 50);
           const res = await ytVideos(batch);
           (res.items || []).forEach(v => {
-            // 카테고리 정보 복원 - 중요!
+            // 카테고리 정보 복원
             const searchItem = searchItems.find(s => s.id?.videoId === v.id);
             if(searchItem && searchItem._category){
               v._category = searchItem._category;
@@ -1203,18 +1232,43 @@
           });
         }
         
-        // Shorts 필터링
-        const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
-        
-        // 카테고리 정보 확인 로그
-        const categoryCheck = {};
-        shorts.forEach(v => {
+        // 카테고리 분포 확인 (필터링 전)
+        const beforeFilterDist = {};
+        videos.forEach(v => {
           if(v._category) {
-            categoryCheck[v._category] = (categoryCheck[v._category] || 0) + 1;
+            beforeFilterDist[v._category] = (beforeFilterDist[v._category] || 0) + 1;
           }
         });
-        console.log('📊 최종 카테고리 분포:', JSON.stringify(categoryCheck));
+        console.log('📊 필터링 전 카테고리 분포:', beforeFilterDist);
+        
+        // Shorts 필터링
+        const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
         console.log(`🎯 ${shorts.length}개 Shorts 필터링 완료`);
+        
+        // 실제 카테고리 분포 계산 (필터링 후)
+        const actualCategoryDist = {};
+        const missedCategories = [];
+        
+        shorts.forEach(v => {
+          if(v._category){
+            actualCategoryDist[v._category] = (actualCategoryDist[v._category] || 0) + 1;
+          }
+        });
+        
+        console.log('📊 최종 카테고리 분포:', actualCategoryDist);
+        console.log('🔍 카테고리가 있는 영상 수:', shorts.filter(v => v._category).length);
+        
+        // 누락된 카테고리 확인
+        const allCategories = ['음악','게임','유머','동물','스포츠','댄스','연예','영화','드라마','AI','예능','시니어','국뽕','오피셜','리뷰','정치'];
+        allCategories.forEach(cat => {
+          if(!actualCategoryDist[cat] || actualCategoryDist[cat] === 0){
+            missedCategories.push(cat);
+          }
+        });
+        
+        // 실제 통계 저장
+        window.__seedlessActualStats = actualCategoryDist;
+        window.__seedlessMissedCategories = missedCategories;
         
         // 지표 계산
         computeDerived(shorts);
@@ -1228,30 +1282,44 @@
         
         const finalResults = sorted.slice(0, maxResults);
         
-        // 최종 카테고리 확인
-        const finalCategoryDist = {};
-        finalResults.forEach(v => {
-          if(v._category) {
-            finalCategoryDist[v._category] = (finalCategoryDist[v._category] || 0) + 1;
-          }
-        });
-        console.log('🎯 최종 결과 카테고리 분포:', JSON.stringify(finalCategoryDist));
-        console.log('🔍 카테고리가 있는 영상 수:', finalResults.filter(v => v._category).length);
+        console.log('🎯 최종 결과 카테고리 분포:', (() => {
+          const dist = {};
+          finalResults.forEach(v => {
+            if(v._category) dist[v._category] = (dist[v._category] || 0) + 1;
+          });
+          return dist;
+        })());
         
         STATE.videos = finalResults;
         renderTable(STATE.videos);
         
-        // 성공 알림
+        // 성공 알림 (상세 정보 포함)
         const notice = document.createElement('div');
         notice.className = 'seedless-notice';
         
-        // 카테고리 수 계산
-        const categoryCount = [...new Set(finalResults.map(v => v._category).filter(Boolean))].length;
+        const successCount = Object.keys(actualCategoryDist).length;
+        const totalAttempted = 16;
+        
+        // 상세 정보 표시
+        let detailText = '';
+        if(missedCategories.length > 0){
+          detailText = `<br><small style="color:#ffb84d">⚠️ Shorts 조건 미충족으로 제외: ${missedCategories.join(', ')}</small>`;
+        }
+        
+        // 부분 수집 카테고리
+        const partialCategories = Object.entries(actualCategoryDist)
+          .filter(([cat, count]) => count > 0 && count < 3)
+          .map(([cat, count]) => `${cat}(${count})`);
+        if(partialCategories.length > 0){
+          detailText += `<br><small style="color:#6aa7ff">📊 부분 수집: ${partialCategories.join(', ')}</small>`;
+        }
         
         notice.innerHTML = `
-          <b>✨ Seedless 모드</b> - ${categoryCount}개 카테고리에서 인기 영상 자동 수집<br>
-          <small>수집: ${shorts.length}개 → 선별: ${finalResults.length}개 (조회수 순)</small>
+          <b>✨ Seedless 모드</b> - ${successCount}/${totalAttempted}개 카테고리 표시<br>
+          <small>원본 수집: ${searchItems.length}개 → Shorts 필터: ${shorts.length}개 → 최종: ${finalResults.length}개</small>
+          ${detailText}
         `;
+        
         const wrap = $('.wrap');
         if(wrap){
           wrap.insertBefore(notice, wrap.children[3]);
@@ -1259,68 +1327,35 @@
             notice.style.transition = 'opacity 0.5s';
             notice.style.opacity = '0';
             setTimeout(() => notice.remove(), 500);
-          }, 5000);
+          }, 7000); // 7초 후 사라짐
         }
         
       } catch(e){
         console.error('❌ Seedless 모드 실패:', e);
-        // 실패해도 수집된 데이터가 있으면 표시
-        if(allVideos && allVideos.length > 0){
-          // 중복 제거
-          const videoIds = [...new Set(allVideos.map(x => x.id?.videoId).filter(Boolean))];
-          console.log(`🎬 실패했지만 ${videoIds.length}개 영상 확보, 처리 진행`);
-          
-          // 상세 정보 가져오기
-          const videos = [];
-          for(let i = 0; i < videoIds.length; i += 50){
-            const batch = videoIds.slice(i, i + 50);
-            const res = await ytVideos(batch);
-            (res.items || []).forEach(v => {
-              const searchItem = allVideos.find(s => s.id?.videoId === v.id);
-              if(searchItem){
-                v._category = searchItem._category;
-              }
-              videos.push(v);
-            });
-          }
-          
-          const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
-          computeDerived(shorts);
-          
-          const sorted = shorts.sort((a, b) => {
-            const aViews = parseInt(a.statistics?.viewCount || 0);
-            const bViews = parseInt(b.statistics?.viewCount || 0);
-            return bViews - aViews;
-          });
-          
-          const finalResults = sorted.slice(0, maxResults);
-          STATE.videos = finalResults;
-          renderTable(STATE.videos);
-          
-          // 부분 성공 알림
-          const notice = document.createElement('div');
-          notice.className = 'seedless-notice';
-          const categoryCount = [...new Set(finalResults.map(v => v._category).filter(Boolean))].length;
-          notice.innerHTML = `
-            <b>⚠️ Seedless 부분 수집</b> - ${categoryCount}개 카테고리에서 영상 수집 (일부 실패)<br>
-            <small>수집: ${shorts.length}개 → 선별: ${finalResults.length}개</small>
-          `;
-          const wrap = $('.wrap');
-          if(wrap){
-            wrap.insertBefore(notice, wrap.children[3]);
-            setTimeout(() => {
-              notice.style.transition = 'opacity 0.5s';
-              notice.style.opacity = '0';
-              setTimeout(() => notice.remove(), 500);
-            }, 5000);
-          }
-          return;
-        }
         
         // 완전 실패 시 기본 검색으로 폴백
         const defaultQuery = 'shorts';
         $('#keywords').value = defaultQuery;
         alert('카테고리별 수집 실패. "shorts"로 기본 검색합니다.');
+        
+        let items = [];
+        let next = null;
+        do{
+          const res = await ytSearch({q: defaultQuery, publishedAfter, regionCode: region, maxResults, pageToken: next, lang, durBucket});
+          (res.items||[]).forEach(it => items.push(it));
+          next = res.nextPageToken;
+        } while(items.length < maxResults && next);
+        
+        const ids = uniq(items.map(x => x.id?.videoId).filter(Boolean)).slice(0, maxResults);
+        const videos = [];
+        for(let i = 0; i < ids.length; i += 50){
+          const res = await ytVideos(ids.slice(i, i + 50));
+          (res.items||[]).forEach(v => videos.push(v));
+        }
+        const shorts = videos.filter(v => isShort(v.snippet, v.contentDetails, minSec, maxSec));
+        computeDerived(shorts);
+        STATE.videos = shorts;
+        renderTable(STATE.videos);
       }
       
       return;
@@ -1354,6 +1389,12 @@
     const shorts = videos.filter(v=> isShort(v.snippet, v.contentDetails, minSec, maxSec));
     computeDerived(shorts);
     STATE.videos = shorts;
+    
+    // Seedless 통계 초기화 (일반 모드일 때)
+    window.__seedlessActualStats = null;
+    window.__seedlessRawStats = null;
+    window.__seedlessMissedCategories = null;
+    
     renderTable(STATE.videos);
   }
 
@@ -1845,259 +1886,4 @@
       console.log('[SR] Snapshot saved:', STATE.videos.length, 'videos');
       return true;
     } catch(e) {
-      console.error('[SR] Snapshot save failed:', e);
-      return false;
-    }
-  }
-  
-  function loadSnapshot(){
-    try {
-      const raw = localStorage.getItem('sr_snapshot_v74');
-      if(!raw) {
-        console.log('[SR] No snapshot found');
-        return false;
-      }
-      
-      const snapshot = JSON.parse(raw);
-      if(!snapshot || !snapshot.data || !snapshot.data.videos || !snapshot.data.videos.length) {
-        console.log('[SR] Invalid snapshot');
-        return false;
-      }
-      
-      // 24시간 이내 체크
-      const age = Date.now() - snapshot.timestamp;
-      if(age > 24 * 3600 * 1000) {
-        console.log('[SR] Snapshot too old:', Math.round(age/3600000), 'hours');
-        localStorage.removeItem('sr_snapshot_v74');
-        return false;
-      }
-      
-      // STATE 복원
-      STATE.videos = snapshot.data.videos;
-      STATE.filters = snapshot.data.filters || {};
-      STATE.sortKey = snapshot.data.sortKey || 'uploadedAt';
-      STATE.sortDir = snapshot.data.sortDir || 'desc';
-      STATE.colVis = snapshot.data.colVis || STATE.colVis || {};
-      
-      // UI 복원
-      if($('#fMinER')) $('#fMinER').value = STATE.filters.minER || 0;
-      if($('#fMinVX')) $('#fMinVX').value = STATE.filters.minVX || 0;
-      if($('#fMinGrade')) $('#fMinGrade').value = STATE.filters.minGrade || 'ALL';
-      if($('#sortKey')) $('#sortKey').value = STATE.sortKey;
-      if($('#sortDir')) $('#sortDir').value = STATE.sortDir;
-      
-      // 테이블 렌더링
-      renderTable(STATE.videos);
-      
-      // 복원 알림 표시
-      const wrap = $('.wrap');
-      if(wrap) {
-        const notice = document.createElement('div');
-        notice.className = 'card snapshot-notice';
-        const ageMin = Math.round(age / 60000);
-        const ageHour = Math.round(age / 3600000);
-        const ageText = ageHour > 0 ? ageHour + '시간' : ageMin + '분';
-        notice.innerHTML = `✅ <b>${ageText} 전</b> 검색 결과를 복원했습니다. (${STATE.videos.length}개 영상)`;
-        wrap.insertBefore(notice, wrap.children[2]);
-        
-        setTimeout(function(){
-          notice.style.transition = 'all 0.5s';
-          notice.style.opacity = '0';
-          setTimeout(function(){ notice.remove(); }, 500);
-        }, 5000);
-      }
-      
-      console.log('[SR] Snapshot loaded:', STATE.videos.length, 'videos from', new Date(snapshot.timestamp));
-      return true;
-    } catch(e) {
-      console.error('[SR] Snapshot load failed:', e);
-      return false;
-    }
-  }
-
-  // ---------- 이벤트 바인딩 ----------
-  $('#runBtn').addEventListener('click', run);
-  $('#exportXlsx').addEventListener('click', exportXlsx);
-  $('#saveKey').addEventListener('click', ()=>{
-    const raw = ($('#apiKey').value || '').trim();
-    const tokens = raw.split(/[\s,;|\/\\]+/).map(s=>s.trim()).filter(Boolean);
-    const keys = Array.from(new Set(tokens));
-    if(!keys.length) return alert('1개 이상 키를 입력하세요.');
-    localStorage.removeItem('yt_api_key');
-    const old = JSON.parse(localStorage.getItem('yt_api_keys')||'[]');
-    const merged = Array.from(new Set([...(Array.isArray(old)?old:[]), ...keys]));
-    localStorage.setItem('yt_api_keys', JSON.stringify(merged));
-    $('#apiKey').value='';
-    ROT.load();
-    alert(`${keys.length}개 추가됨 · 총 ${merged.length}개 저장됨`);
-  });
-  $('#resetBtn').addEventListener('click', ()=>{ if(confirm('모든 설정을 초기화할까요?')){ localStorage.clear(); location.reload(); } });
-  $('#quotaApply').addEventListener('click', ()=> setQuotaLimit($('#quotaLimit').value) );
-  $('#quotaReset').addEventListener('click', resetQuota);
-  $('#btnReprobe').addEventListener('click', ()=>{
-    STATE.videos.forEach(v => STATE.watch.has(v.id) && pushSnapshot(v.id, v));
-    alert('워치리스트 영상들의 현재 조회수를 저장했습니다.');
-  });
-
-  // 필터
-  $('#fMinER').addEventListener('change', ()=>{ STATE.filters.minER = +$('#fMinER').value||0; renderTable(STATE.videos); });
-  $('#fMinVX').addEventListener('change', ()=>{ STATE.filters.minVX = +$('#fMinVX').value||0; renderTable(STATE.videos); });
-  $('#fMinGrade').addEventListener('change', ()=>{ STATE.filters.minGrade = $('#fMinGrade').value; renderTable(STATE.videos); });
-  $('#viewPreset').addEventListener('change', ()=>{ 
-    const p=$('#viewPreset').value;
-    const keys=Object.keys(defaultColVis());
-    const on={}; keys.forEach(k=>on[k]=false);
-    if(p==='all'){ keys.forEach(k=>on[k]=true); }
-    else if(p==='simple'){ ['thumb','title','channel','uploadedAt','pick'].forEach(k=>on[k]=true); on.bookmark=true; }
-    else if(p==='speedeng'){ ['thumb','title','vel','er','pick'].forEach(k=>on[k]=true); on.bookmark=true; }
-    else if(p==='metrics'){ ['vel','er','fresh','viewMult','velMult','impact','pick'].forEach(k=>on[k]=true); on.bookmark=true; on.title=true; on.thumb=true; }
-    else if(p==='packaging'){ ['thumb','title','uploadedAt','likes','comments','impact','delta','pick'].forEach(k=>on[k]=true); on.bookmark=true; }
-    STATE.colVis=on; save('sr_cols', on); buildColToggles(); applyColumnVisibility();
-  });
-
-  // 초기화
-  (function init(){
-    ROT.load();
-    const savedCols = load('sr_cols', null); if(savedCols) STATE.colVis=savedCols;
-    const savedSortKey = load('sr_sortKey', null); if(savedSortKey) STATE.sortKey=savedSortKey;
-    const savedSortDir = load('sr_sortDir', null); if(savedSortDir) STATE.sortDir=savedSortDir;
-    loadWatch();
-    renderQuota(); 
-    renderQuotaStateFlag();
-    buildSortKeys();
-    buildColToggles();
-    applyColumnVisibility();
-    
-    // 스냅샷 복원 시도
-    setTimeout(function(){
-      if(!STATE.videos || STATE.videos.length === 0){
-        loadSnapshot();
-      }
-    }, 100);
-  })();
-  
-  // 페이지 떠날 때 저장
-  window.addEventListener('beforeunload', saveSnapshot);
-  window.addEventListener('pagehide', saveSnapshot);
-})();
-</script>
-
-<!-- Light Rules v2.2 (원본 복구) -->
-<script>
-/* Light Rules v2.2 (Unified)
- * - 리뷰: "제품 리뷰만" 유지, 음식/요리/맛집 & 영화·드라마 리뷰는 제외/재분류
- * - 영화·드라마 리뷰는 메인 카테고리를 '연예'로 재분류
- * - 연예: 우선순위 없이 멀티 태깅(팬 / 예능 / 영화·드라마 하이라이트 / 소식·찌)
- * - 네트워크 호출 0 / 쿼터 0 / UI 미변경
- */
-(function(){
-  if (window.__LIGHT_RULES_V22) return; window.__LIGHT_RULES_V22 = true;
-
-  /* ============ 0) 설정 ============ */
-  const CFG = {
-    // true: '리뷰'인데 제품 리뷰가 아니면 '기타'로 재분류(목록에서 자연히 빠짐)
-    // false: 재분류 대신 v.flags에만 표시(외부 필터에서 숨길 때 사용)
-    strictReviewOnly: true,
-
-    // true: '영화·드라마 리뷰'를 '연예'로 자동 재분류
-    reclassMovieDramaReviewsToEntertainment: true,
-
-    // 콘솔 샘플 로그 (디버깅용)
-    debugLogSample: false
-  };
-
-  /* ============ 1) 공통 유틸 ============ */
-  function norm(s=''){
-    s = (s||'').toString().toLowerCase();
-    s = s.replace(/[\u200B-\u200D\uFEFF]/g,'');  // zero-width 제거
-    s = s.replace(/\s+/g,' ').trim();
-    return s;
-  }
-  function bagOf(v){
-    const tags = Array.isArray(v?.tags) ? v.tags.join(' ')
-               : (typeof v?.tags === 'string' ? v.tags : '');
-    return norm([v?.title, v?.description, tags, v?.channelTitle, v?.channelDesc].join(' '));
-  }
-
-  /* ============ 2) 리뷰 정제 ============ */
-  // 포함(+): 리뷰/사용기 맥락 신호
-  const RV_POS = /(리뷰|사용기|언박싱|언팩|개봉기|후기|비교|추천|체험단|하울|불량|테스트|벤치|스펙|사양|가격|쿠폰|구매|가성비|설치기|업데이트|성능|배터리|충전)/i;
-
-  // 제품 힌트(가점)
-  const RV_PRODUCT_HINT = /(스마트폰|휴대폰|아이폰|갤럭시|노트북|맥북|태블릿|아이패드|이어폰|헤드폰|모니터|tv|프로젝터|냉장고|에어컨|청소기|세탁기|건조기|카메라|렌즈|드론|마이크|스피커|자동차|블랙박스|타이어|게이밍|골프채|자전거|시계|가방|의류)/i;
-
-  // 제외(−): 음식/요리/맛집 리뷰
-  const RV_NEG_FOOD = /(먹방|맛집|레시피|식당|카페|요리|쿠킹|디저트|라면|초밥|포차|술집)/i;
-
-  // 제외(−): 영화·드라마 리뷰/감상/해설 등
-  const RV_NEG_CINEMA = new RegExp(
-    '(영화|드라마|시리즈|웹드라마|OTT|넷플릭스|디즈니\\+|티빙|웨이브|쿠팡플레이).*'
-    + '(리뷰|해설|결말|평론|관람기|시사회|감상|후기|스포|줄거리|명장면|해설|분석|평점|쿠키(영상)?)','i'
-  );
-
-  function reviewSubtype(bag){
-    if (RV_NEG_FOOD.test(bag)) return 'food';
-    if (RV_NEG_CINEMA.test(bag)) return 'movie/series';
-    if (RV_POS.test(bag) && (RV_PRODUCT_HINT.test(bag) || /제품|모델|사양|스펙/.test(bag))) return 'product';
-    if (RV_POS.test(bag)) return 'product'; // 느슨한 허용(원하면 보수적으로 'other'로)
-    return 'other';
-  }
-  function isProductReview(bag){ return reviewSubtype(bag) === 'product'; }
-
-  /* ============ 3) 연예 멀티 태깅(우선순위 없음) ============ */
-  const R_FAN = /(팬캠|fancam|직캠|직찍|face\s?cam|focus|member\s?focus|stage\s?mix|교차편집|응원법|fanchant|엔딩요정|ending\s?fairy)/i;
-  const R_VAR_KW = /(하이라이트|레전드|모음|웃긴|빵터진|컷\b|편집본|요약|스페셜|비하인드|ng)/i;
-  const R_VAR_SHOW = /(런닝맨|나혼산|나\s*혼자\s*산다|유퀴즈|라디오스타|무한도전|미우새|놀면뭐하니|1박2일|신서유기|코빅|아는형님|전지\s?적\s?참견\s?시점|복면가왕)/i;
-  const R_FILMDR = /(영화|드라마|시리즈|웹드라마|ott).*(하이라이트|명장면|클립|컷\b|티저|예고|미리보기|명대사|키스신|액션신|ost|스틸)|\b명장면\b|\b명대사\b/i;
-  const R_NEWS = /(찌|소식|열애|열애설|결별|결별설|논란|단독|속보|입장|해명|정리|해설|사실무근|사과|복귀|하차|합류|소속사|전속계약|분쟁|소송|병역|입대|결혼|출산)/i;
-
-  function entSubs(bag){
-    const out = [];
-    if (R_FAN.test(bag)) out.push('팬');
-    if (R_VAR_KW.test(bag) || R_VAR_SHOW.test(bag)) out.push('예능');
-    if (R_FILMDR.test(bag) || /영화\s*리뷰|드라마\s*리뷰/.test(bag)) out.push('영화/드라마 하이라이트'); // 리뷰도 포함
-    if (R_NEWS.test(bag)) out.push('소식/찌');
-    return Array.from(new Set(out.length ? out : ['기타']));
-  }
-
-  /* ============ 4) 렌더 파이프라인에 얇게 주입 ============ */
-  const _renderTable = window.renderTable || function(l){ return l; };
-  window.renderTable = function(list){
-    try{
-      (list||[]).forEach(v=>{
-        const bag = bagOf(v);
-
-        // A) 리뷰 처리
-        if (v.mainCat === '리뷰') {
-          const subtype = reviewSubtype(bag);
-          v.flags = v.flags || {}; v.flags.reviewType = subtype;
-
-          // 영화·드라마 리뷰 → 연예로 재분류
-          if (CFG.reclassMovieDramaReviewsToEntertainment && subtype === 'movie/series') {
-            v._wasReview = true;
-            v.mainCat = '연예';
-          } else if (CFG.strictReviewOnly && subtype !== 'product') {
-            // 제품 리뷰가 아니면 기타로 재분류(엄격 모드)
-            v.mainCat = '기타';
-          }
-        }
-
-        // B) 연예 멀티 태깅(재분류된 케이스 포함)
-        if (v.mainCat === '연예') {
-          const subs = entSubs(bag);
-          v.entSubs = subs;             // 배열(필터/집계에 유용)
-          v.entSub  = subs.join(' · '); // 문자열(표시용; 현재 UI는 그대로)
-        }
-
-        if (CFG.debugLogSample && Math.random()<0.003) {
-          console.log('[LR v2.2 sample]', {id:v.id||v.videoId, main:v.mainCat, review:v.flags?.reviewType, entSubs:v.entSubs, title:v.title});
-        }
-      });
-    } catch(e){ console.warn('[LightRules v2.2] patch error', e); }
-    return _renderTable.apply(this, arguments);
-  };
-})();
-</script>
-  
-</body>
-</html>
+      console.
