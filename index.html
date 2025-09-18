@@ -1103,6 +1103,30 @@
         const totalAttempted = 16; // 고정값
         const totalCollected = collectedCategories.length;
         pills.push(`<span class="pill">✨ Seedless: ${totalCollected}/${totalAttempted}개 카테고리 성공</span>`);
+        
+        // 실패한 카테고리 표시 추가
+        if(window.__seedlessStats){
+          const failedCats = [];
+          const partialCats = [];
+          
+          Object.entries(window.__seedlessStats).forEach(([cat, count]) => {
+            if(count === 0) {
+              failedCats.push(cat);
+            } else if(count < 3) {
+              partialCats.push(`${cat}(${count})`);
+            }
+          });
+          
+          // 실패한 카테고리가 있으면 표시
+          if(failedCats.length > 0) {
+            pills.push(`<span class="pill blocked">❌ 실패: ${failedCats.join(', ')}</span>`);
+          }
+          
+          // 부분 수집 카테고리가 있으면 표시
+          if(partialCats.length > 0) {
+            pills.push(`<span class="pill" style="background:#3a2a16;border-color:#5a4226;color:#ffdb99;">⚠️ 부분: ${partialCats.join(', ')}</span>`);
+          }
+        }
       }
     }
     
