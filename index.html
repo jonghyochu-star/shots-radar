@@ -803,13 +803,13 @@
           publishedAfter: publishedAfter,
           regionCode: regionCode,
           lang: lang,
-          maxResults: Math.min(5, targetPerCategory), // 카테고리당 최대 5개
+          maxResults: 10, // 더 많이 가져와서 선별 (기존 5 → 10)
           order: 'viewCount' // 조회수 순
         });
         
         if(res && res.items && res.items.length > 0){
-          // 상위 3개만 선택
-          const topItems = res.items.slice(0, 3);
+          // 상위 3개 선택 (더 확실하게)
+          const topItems = res.items.slice(0, Math.min(3, res.items.length));
           
           topItems.forEach(item => {
             item._category = cat.name;
@@ -1023,14 +1023,25 @@
       `<span class="pill">평균 반응률 <b>${avg(all,x=>x._d.er).toFixed(2)}</b>‰</span>`
     ];
     
-    // 카테고리 분포 추가 (상위 5개만)
+    // 카테고리 분포 상세 표시
     if(Object.keys(categoryDist).length > 0){
-      const topCats = Object.entries(categoryDist)
+      // 모든 카테고리 표시 (수집된 것만)
+      const categories = Object.entries(categoryDist)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([cat, count]) => `${cat}:${count}`)
-        .join(' ');
-      pills.push(`<span class="pill">🔍 ${topCats}</span>`);
+        .map(([cat, count]) => `${cat}:${count}`);
+      
+      pills.push(`<span class="pill">🔍 카테고리별: ${categories.join(' ')}</span>`);
+      
+      // Seedless 모드인 경우 추가 정보
+      const seedlessCategories = ['음악', '게임', '유머', '동물', '스포츠', '댄스', '연예', '영화', '드라마', 'AI', '예능', '시니어', '국뽕', '오피셜', '리뷰', '정치'];
+      const isSeedless = Object.keys(categoryDist).some(cat => seedlessCategories.includes(cat));
+      
+      if(isSeedless){
+        const collectedCategories = Object.keys(categoryDist).filter(cat => seedlessCategories.includes(cat));
+        const totalAttempted = seedlessCategories.length;
+        const totalCollected = collectedCategories.length;
+        pills.push(`<span class="pill">✨ Seedless: ${totalCollected}/${totalAttempted}개 카테고리 성공</span>`);
+      }
     }
     
     $('#summary').innerHTML = pills.join(' ');
