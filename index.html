@@ -1026,6 +1026,15 @@
       saveSnapshot();
     }
     
+    // 카테고리 정보 확인
+    console.log('📋 renderTable 호출, 영상 수:', videos.length);
+    console.log('🏷️ renderTable 카테고리 있는 영상:', videos.filter(v => v._category).length);
+    const catDist = {};
+    videos.forEach(v => {
+      if(v._category) catDist[v._category] = (catDist[v._category] || 0) + 1;
+    });
+    console.log('📊 renderTable 카테고리 분포:', JSON.stringify(catDist));
+    
     const tb = $('#tbody'); tb.innerHTML='';
     const f = STATE.filters;
     const filtered = videos.filter(v=> (v._d.er >= (f.minER||0)) && (v._d.viewMult >= (f.minVX||0)) && (f.minGrade==='ALL' || rankGrade(v._impact.grade) >= rankGrade(f.minGrade)));
@@ -1204,7 +1213,7 @@
             categoryCheck[v._category] = (categoryCheck[v._category] || 0) + 1;
           }
         });
-        console.log('📊 최종 카테고리 분포:', categoryCheck);
+        console.log('📊 최종 카테고리 분포:', JSON.stringify(categoryCheck));
         console.log(`🎯 ${shorts.length}개 Shorts 필터링 완료`);
         
         // 지표 계산
@@ -1218,6 +1227,16 @@
         });
         
         const finalResults = sorted.slice(0, maxResults);
+        
+        // 최종 카테고리 확인
+        const finalCategoryDist = {};
+        finalResults.forEach(v => {
+          if(v._category) {
+            finalCategoryDist[v._category] = (finalCategoryDist[v._category] || 0) + 1;
+          }
+        });
+        console.log('🎯 최종 결과 카테고리 분포:', JSON.stringify(finalCategoryDist));
+        console.log('🔍 카테고리가 있는 영상 수:', finalResults.filter(v => v._category).length);
         
         STATE.videos = finalResults;
         renderTable(STATE.videos);
