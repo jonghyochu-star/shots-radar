@@ -1433,7 +1433,16 @@
     if(q){
       let next=null;
       do{
-        const res = await ytSearch({q, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
+        const res = await ytSearch({
+          q, 
+          publishedAfter, 
+          regionCode:region, 
+          maxResults, 
+          pageToken:next, 
+          lang, 
+          durBucket,
+          order: 'viewCount'  // ✅ 조회수 순으로 수정
+        });
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
@@ -1441,7 +1450,16 @@
     for(const ch of chanIds){
       let next=null;
       do{
-        const res = await ytSearch({channelId:ch, publishedAfter, regionCode:region, maxResults, pageToken:next, lang, durBucket});
+        const res = await ytSearch({
+          channelId:ch, 
+          publishedAfter, 
+          regionCode:region, 
+          maxResults, 
+          pageToken:next, 
+          lang, 
+          durBucket,
+          order: 'viewCount'  // ✅ 채널 검색도 조회수 순으로
+        });
         (res.items||[]).forEach(it=> items.push(it));
         next = res.nextPageToken;
       }while(items.length < maxResults && next);
