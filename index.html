@@ -182,7 +182,7 @@
           💡 <b>키워드 없이 검색</b>하면 카테고리별 인기 영상을 자동 수집합니다<br>
           📋 카테고리(16개): 음악, 게임, 유머, 동물, 스포츠, 댄스<br>
           📺 연예, 영화, 드라마, AI, 예능, 시니어<br>
-          🎯 국뽁, 오피셜, 리뷰, 정치
+          🎯 국뽕, 오피셜, 리뷰, 정치
         </div>
       </div>
     </div>
@@ -799,9 +799,9 @@
         weight: 1 
       },
       { 
-        name: '국뽁', 
+        name: '국뽕', 
         keywords: regionCode === 'KR' ? 
-          ['국뽁 영상', '한국 자랑', '국가 자부심', '대한민국'] : 
+          ['국뽕 영상', '한국 자랑', '국가 자부심', '대한민국'] : 
           ['korean pride', 'korea amazing', 'korean culture', 'korea best'],
         weight: 1 
       },
@@ -1183,7 +1183,7 @@
       
       pills.push(`<span class="pill">🔍 카테고리별: ${categories.join(' ')}</span>`);
       
-      const seedlessCategories = ['음악', '게임', '유머', '동물', '스포츠', '댄스', '연예', '영화', '드라마', 'AI', '예능', '시니어', '국뽁', '오피셜', '리뷰', '정치'];
+      const seedlessCategories = ['음악', '게임', '유머', '동물', '스포츠', '댄스', '연예', '영화', '드라마', 'AI', '예능', '시니어', '국뽕', '오피셜', '리뷰', '정치'];
       const isSeedless = Object.keys(categoryDist).some(cat => seedlessCategories.includes(cat));
       
       if(isSeedless){
