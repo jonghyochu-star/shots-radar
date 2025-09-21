@@ -154,6 +154,25 @@
   ::-webkit-scrollbar{ height:10px; width:10px; }
   ::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:8px; }
   ::-webkit-scrollbar-track{ background:#f1f5f9; }
+
+/* light theme overrides for seedless/snapshot notices */
+.seedless-notice,
+.snapshot-notice{
+  background:#ecfdf5 !important;      /* 연한 민트 배경 */
+  border:1px solid #86efac !important; /* 라이트 톤 보더 */
+  color:#065f46 !important;            /* 텍스트 컬러 */
+  border-radius:10px !important;
+  padding:12px !important;
+  margin:12px 0 !important;
+}
+
+.seedless-notice b,
+.snapshot-notice b{ color:#065f46 !important; }
+
+.seedless-notice small,
+.snapshot-notice small{ color:#047857 !important; }
+
+  
 </style>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
