@@ -1534,41 +1534,56 @@
     let items=[];
     if(q){
       // 롱폼 검색 최적화: 다양한 정렬 방식으로 수집 후 조회수 정렬
-      const isLongform = contentTypeFilter === 'long' || contentTypeFilter === 'ultra';
+      const isLongform = contentTypeFilter === 'long' || contentTypeFilter === 'ultra' || contentTypeFilter === 'mid';
       
       if(isLongform) {
-        // 롱폼은 여러 정렬 방식으로 수집
-        const orders = ['viewCount', 'relevance', 'rating'];
-        const itemsPerOrder = Math.ceil(maxResults / orders.length);
+        console.log('🎬 롱폼 검색 모드 - 확장 수집 시작');
+        // 롱폼은 여러 정렬 방식으로 수집 + 페이지네이션 확대
+        const orders = ['viewCount', 'relevance', 'rating', 'date'];
+        const targetPerOrder = Math.ceil(maxResults / 2); // 각 정렬당 절반씩
         
         for(const orderType of orders) {
+          console.log(`  검색 방식: ${orderType}`);
           let next = null;
           let collected = 0;
+          let attempts = 0;
+          
           do {
             const res = await ytSearch({
               q, 
               publishedAfter, 
               regionCode:region, 
-              maxResults: Math.min(50, itemsPerOrder - collected), 
+              maxResults: 50, 
               pageToken:next, 
               lang, 
               durBucket,
               order: orderType
             });
-            (res.items||[]).forEach(it=> items.push(it));
-            collected += (res.items||[]).length;
+            
+            if(res.items && res.items.length > 0) {
+              res.items.forEach(it=> items.push(it));
+              collected += res.items.length;
+            }
+            
             next = res.nextPageToken;
-          } while(collected < itemsPerOrder && next);
+            attempts++;
+            
+            // 각 정렬당 최대 3페이지까지 수집
+          } while(collected < targetPerOrder && next && attempts < 3);
+          
+          console.log(`    ${orderType}: ${collected}개 수집`);
         }
+        console.log(`🎬 총 ${items.length}개 아이템 수집 완료`);
       } else {
-        // Shorts/Mid는 기존 방식
+        // Shorts/전체는 기존 방식
         let next=null;
+        let attempts = 0;
         do{
           const res = await ytSearch({
             q, 
             publishedAfter, 
             regionCode:region, 
-            maxResults, 
+            maxResults: 50, 
             pageToken:next, 
             lang, 
             durBucket,
@@ -1576,7 +1591,8 @@
           });
           (res.items||[]).forEach(it=> items.push(it));
           next = res.nextPageToken;
-        }while(items.length < maxResults && next);
+          attempts++;
+        }while(items.length < maxResults && next && attempts < 5);
       }
     }
     for(const ch of chanIds){
@@ -1597,12 +1613,16 @@
       }while(items.length < maxResults && next);
     }
 
-    const ids = uniq(items.map(x=>x.id?.videoId).filter(Boolean)).slice(0, maxResults);
+    const ids = uniq(items.map(x=>x.id?.videoId).filter(Boolean));
+    console.log(`📊 중복 제거: ${items.length}개 → ${ids.length}개 고유 ID`);
+    
     const videos = [];
     for(let i=0;i<ids.length;i+=50){
-      const res = await ytVideos(ids.slice(i,i+50));
+      const batch = ids.slice(i,i+50);
+      const res = await ytVideos(batch);
       (res.items||[]).forEach(v=> videos.push(v));
     }
+    console.log(`📹 상세 정보 로드: ${videos.length}개 영상`);
     
     const filtered = videos.filter(v=> isShort(v.snippet, v.contentDetails, contentTypeFilter));
     
