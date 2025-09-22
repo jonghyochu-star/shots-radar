@@ -104,8 +104,8 @@
     .hr{height:1px;background:#1e2a36;margin:8px 0}
     .rev-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .rev-out{font-weight:700}
-    .ch-link{all:unset;cursor:pointer;color:#cfe3ff;text-decoration:underline}
-    .ch-link:hover{opacity:.9}
+    .ch-link{display:inline-block;cursor:pointer;color:#cfe3ff;text-decoration:underline;padding:2px 4px;border-radius:4px;transition:background 0.2s}
+    .ch-link:hover{opacity:.9;background:rgba(111,183,255,0.1)}
     @media (max-width:768px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.best-grid{grid-template-columns:1fr}}
   
     /* v8.0 styles */
@@ -154,25 +154,6 @@
   ::-webkit-scrollbar{ height:10px; width:10px; }
   ::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:8px; }
   ::-webkit-scrollbar-track{ background:#f1f5f9; }
-
-/* light theme overrides for seedless/snapshot notices */
-.seedless-notice,
-.snapshot-notice{
-  background:#ecfdf5 !important;      /* 연한 민트 배경 */
-  border:1px solid #86efac !important; /* 라이트 톤 보더 */
-  color:#065f46 !important;            /* 텍스트 컬러 */
-  border-radius:10px !important;
-  padding:12px !important;
-  margin:12px 0 !important;
-}
-
-.seedless-notice b,
-.snapshot-notice b{ color:#065f46 !important; }
-
-.seedless-notice small,
-.snapshot-notice small{ color:#047857 !important; }
-
-  
 </style>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1313,7 +1294,7 @@
         <td class="c-bookmark"><span class="star ${STATE.watch.has(v.id)?'on':''}" data-id="${v.id}">${STATE.watch.has(v.id)?'★':'☆'}</span></td>
         <td class="c-thumb"><a href="https://www.youtube.com/watch?v=${v.id}" target="_blank"><img class="thumb" src="${v.snippet.thumbnails?.medium?.url||''}"/></a></td>
         <td class="c-title">${escapeHtml(v.snippet.title||'')} ${catBadge}</td>
-        <td class="c-channel"><button class="ch-link" data-cid="${v.snippet.channelId||''}" data-ctitle="${escapeHtml(v.snippet.channelTitle||'')}">${escapeHtml(v.snippet.channelTitle||'')}</button></td>
+        <td class="c-channel"><span class="ch-link" data-cid="${v.snippet.channelId||''}" data-ctitle="${v.snippet.channelTitle||''}">${escapeHtml(v.snippet.channelTitle||'')}</span></td>
         <td class="c-uploadedAt" title="${v.snippet.publishedAt}">${new Date(v.snippet.publishedAt).toLocaleString('ko-KR')}</td>
         <td class="c-length">${hms(sec)}</td>
         <td class="c-type">${typeBadge}</td>
@@ -1336,7 +1317,18 @@
       tb.appendChild(tr);
     }
     tb.querySelectorAll('.star').forEach(s=> s.addEventListener('click', (ev)=>{ const id=ev.target.getAttribute('data-id'); toggleWatch(id);}));
-    tb.querySelectorAll('.ch-link').forEach(btn=> btn.addEventListener('click', ()=> openChannelModal(btn.dataset.cid, btn.dataset.ctitle)));
+    
+    // 채널 링크 이벤트 - 이벤트 위임 방식으로 변경
+    tb.addEventListener('click', (ev) => {
+      if(ev.target.classList.contains('ch-link')) {
+        ev.preventDefault();
+        const cid = ev.target.dataset.cid;
+        const ctitle = ev.target.dataset.ctitle || '';
+        if(cid) {
+          openChannelModal(cid, ctitle);
+        }
+      }
+    });
     applyColumnVisibility();
     setSummary(videos, filtered);
     renderBestTimes(videos);
@@ -1541,21 +1533,51 @@
     // 일반 모드: 키워드/채널 검색
     let items=[];
     if(q){
-      let next=null;
-      do{
-        const res = await ytSearch({
-          q, 
-          publishedAfter, 
-          regionCode:region, 
-          maxResults, 
-          pageToken:next, 
-          lang, 
-          durBucket,
-          order: 'viewCount'
-        });
-        (res.items||[]).forEach(it=> items.push(it));
-        next = res.nextPageToken;
-      }while(items.length < maxResults && next);
+      // 롱폼 검색 최적화: 다양한 정렬 방식으로 수집 후 조회수 정렬
+      const isLongform = contentTypeFilter === 'long' || contentTypeFilter === 'ultra';
+      
+      if(isLongform) {
+        // 롱폼은 여러 정렬 방식으로 수집
+        const orders = ['viewCount', 'relevance', 'rating'];
+        const itemsPerOrder = Math.ceil(maxResults / orders.length);
+        
+        for(const orderType of orders) {
+          let next = null;
+          let collected = 0;
+          do {
+            const res = await ytSearch({
+              q, 
+              publishedAfter, 
+              regionCode:region, 
+              maxResults: Math.min(50, itemsPerOrder - collected), 
+              pageToken:next, 
+              lang, 
+              durBucket,
+              order: orderType
+            });
+            (res.items||[]).forEach(it=> items.push(it));
+            collected += (res.items||[]).length;
+            next = res.nextPageToken;
+          } while(collected < itemsPerOrder && next);
+        }
+      } else {
+        // Shorts/Mid는 기존 방식
+        let next=null;
+        do{
+          const res = await ytSearch({
+            q, 
+            publishedAfter, 
+            regionCode:region, 
+            maxResults, 
+            pageToken:next, 
+            lang, 
+            durBucket,
+            order: 'viewCount'
+          });
+          (res.items||[]).forEach(it=> items.push(it));
+          next = res.nextPageToken;
+        }while(items.length < maxResults && next);
+      }
     }
     for(const ch of chanIds){
       let next=null;
@@ -1583,8 +1605,19 @@
     }
     
     const filtered = videos.filter(v=> isShort(v.snippet, v.contentDetails, contentTypeFilter));
-    computeDerived(filtered);
-    STATE.videos = filtered;
+    
+    // 롱폼인 경우 조회수로 먼저 정렬 후 상위 N개만 선택
+    let finalVideos = filtered;
+    if(contentTypeFilter === 'long' || contentTypeFilter === 'ultra') {
+      finalVideos = filtered.sort((a, b) => {
+        const aViews = parseInt(a.statistics?.viewCount || 0);
+        const bViews = parseInt(b.statistics?.viewCount || 0);
+        return bViews - aViews;
+      }).slice(0, maxResults);
+    }
+    
+    computeDerived(finalVideos);
+    STATE.videos = finalVideos;
     renderTable(STATE.videos);
   }
 
@@ -1613,6 +1646,14 @@
   function fmtWon(n){ n=Number(n||0); return '₩'+n.toLocaleString('ko-KR'); }
 
   async function openChannelModal(cid, ctitle){
+    console.log('[채널 모달] 열기 시도:', {cid, ctitle}); // 디버깅 로그
+    
+    if(!cid) {
+      console.error('[채널 모달] 채널 ID가 없습니다');
+      alert('채널 ID가 없습니다');
+      return;
+    }
+    
     __lastChannel = {cid, title: ctitle};
     
     const m = document.getElementById('channelModal');
@@ -1630,6 +1671,7 @@
 
     const allKeysBlocked = ROT.keys.length > 0 && ROT.stat.every(s => s && s.blocked);
     if(isQuotaLocked() || allKeysBlocked){
+      console.log('[채널 모달] 쿼터 소진 - 캐시 데이터 사용 시도');
       const cachedVideos = STATE.videos.filter(v => v.snippet?.channelId === cid);
       
       if(cachedVideos.length > 0){
@@ -1678,9 +1720,19 @@
     
     try{
       if(!ROT.keys.length) throw new Error('API 키 필요');
+      
+      console.log('[채널 모달] API 호출 시작');
       const meta = await ytChannels([cid]);
       const ch = (meta.items||[])[0];
+      
+      if(!ch) {
+        throw new Error('채널 정보를 찾을 수 없습니다');
+      }
+      
+      console.log('[채널 모달] 채널 정보 로드 완료:', ch.snippet.title);
       const vids = await listChannelRecentVideos(cid, 60);
+      console.log('[채널 모달] 최근 영상 로드 완료:', vids.length + '개');
+      
       const shorts = vids.filter(v=>{
         const m = (v.contentDetails?.duration||'').match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
         const sec = (m? (Number(m[1]||0)*60 + Number(m[2]||0)) : 0);
