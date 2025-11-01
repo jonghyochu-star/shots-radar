@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2025-11-01T20:22:37.249Z",
+  "updatedAt": "2025-11-01T22:20:11.347Z",
   "event": "kw-trend-updated",
   "mode": "rules+prior-v1",
-  "priorChannels": 892,
+  "priorChannels": 895,
   "krFilter": {
     "kept": 755,
     "dropLang": 85,
