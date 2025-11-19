@@ -86,8 +86,9 @@
   },
   "UCcQTRi69dsVYHN3exePtZ1A": {
     "politics": 18,
-    "_total": 18,
-    "_updatedAt": "2025-09-16T22:29:44.968Z"
+    "_total": 19,
+    "_updatedAt": "2025-11-19T12:52:04.521Z",
+    "ai": 1
   },
   "UCu73jk-JW4p1ib01IC89Jyw": {
     "politics": 94,
@@ -105,20 +106,20 @@
     "_updatedAt": "2025-09-18T08:46:08.266Z"
   },
   "UCT3usBwYM36YFlJmsLY7bIA": {
-    "entertainment": 3513,
-    "_total": 3513,
-    "_updatedAt": "2025-11-19T10:27:59.397Z"
+    "entertainment": 3516,
+    "_total": 3516,
+    "_updatedAt": "2025-11-19T12:52:12.489Z"
   },
   "UCkinYTS9IHqOEwR1Sze2JTw": {
     "entertainment": 609,
-    "_total": 736,
-    "_updatedAt": "2025-11-19T10:27:58.058Z",
-    "politics": 127
+    "_total": 737,
+    "_updatedAt": "2025-11-19T12:52:11.112Z",
+    "politics": 128
   },
   "UCF4Wxdo3inmxP-Y59wXDsFw": {
-    "entertainment": 394,
-    "_total": 394,
-    "_updatedAt": "2025-11-19T10:27:59.708Z"
+    "entertainment": 395,
+    "_total": 395,
+    "_updatedAt": "2025-11-19T12:52:12.498Z"
   },
   "UCUGsqdZ-Y-BOVsBW7bbZtLg": {
     "entertainment": 15,
@@ -201,9 +202,9 @@
     "_updatedAt": "2025-11-12T01:55:24.567Z"
   },
   "UCCu7BCdADOLbGAsTNoVgOBA": {
-    "sports": 993,
-    "_total": 993,
-    "_updatedAt": "2025-11-19T10:28:03.863Z"
+    "sports": 994,
+    "_total": 994,
+    "_updatedAt": "2025-11-19T12:52:17.040Z"
   },
   "UCjseqv83urpRnK88hy5kMgg": {
     "sports": 21,
@@ -211,9 +212,9 @@
     "_updatedAt": "2025-09-14T18:58:33.366Z"
   },
   "UC96xuaT-9Ayl2L-CBt_-wgQ": {
-    "sports": 1424,
-    "_total": 1424,
-    "_updatedAt": "2025-11-19T10:28:03.853Z"
+    "sports": 1427,
+    "_total": 1427,
+    "_updatedAt": "2025-11-19T12:52:17.029Z"
   },
   "UC2Zn5hlv7_hPsLlh_xwcH6g": {
     "ai": 6,
@@ -446,9 +447,9 @@
     "_updatedAt": "2025-10-09T22:20:36.967Z"
   },
   "UC9Jm_B8qlXsFD1wd6RhUBWw": {
-    "entertainment": 165,
-    "_total": 165,
-    "_updatedAt": "2025-11-19T10:27:59.401Z"
+    "entertainment": 166,
+    "_total": 166,
+    "_updatedAt": "2025-11-19T12:52:12.269Z"
   },
   "UCfDJ6zy3AZ1afT9FV0mwMOA": {
     "entertainment": 45,
@@ -730,9 +731,9 @@
     "_updatedAt": "2025-09-18T18:50:36.257Z"
   },
   "UC0pquxpJXJOYDP1NRbgZ1jA": {
-    "senior": 82,
-    "_total": 82,
-    "_updatedAt": "2025-11-19T10:28:01.133Z"
+    "senior": 83,
+    "_total": 83,
+    "_updatedAt": "2025-11-19T12:52:14.130Z"
   },
   "UCRyE9lMrcWZgI8NLAqPFtzg": {
     "senior": 11,
@@ -990,9 +991,9 @@
     "_updatedAt": "2025-09-20T22:31:12.307Z"
   },
   "UCnaFQGAbaMPXjU3AX-7GVVA": {
-    "senior": 319,
-    "_total": 319,
-    "_updatedAt": "2025-11-19T10:28:00.835Z"
+    "senior": 321,
+    "_total": 321,
+    "_updatedAt": "2025-11-19T12:52:14.136Z"
   },
   "UCoVz66yWHzVsXAFG8WhJK9g": {
     "sports": 71,
@@ -1232,9 +1233,9 @@
     "_updatedAt": "2025-09-22T20:38:11.827Z"
   },
   "UCLv3v82YNNsa8EsxrcPMjGQ": {
-    "politics": 281,
-    "_total": 281,
-    "_updatedAt": "2025-11-19T10:27:58.348Z"
+    "politics": 283,
+    "_total": 283,
+    "_updatedAt": "2025-11-19T12:52:11.134Z"
   },
   "UCI9yvQxhE22GxGTcrO0yeHg": {
     "senior": 11,
@@ -1754,9 +1755,9 @@
     "_updatedAt": "2025-09-30T10:44:35.840Z"
   },
   "UCPuD5ZRQWa_JCaY5NokNhtg": {
-    "review": 29,
-    "_total": 29,
-    "_updatedAt": "2025-11-09T03:18:21.130Z"
+    "review": 30,
+    "_total": 30,
+    "_updatedAt": "2025-11-19T12:52:06.373Z"
   },
   "UCHq9cI8DUr0iOFmE74bhskQ": {
     "senior": 4,
@@ -2305,9 +2306,9 @@
     "_updatedAt": "2025-10-04T20:31:10.403Z"
   },
   "UCpZQIs7FVsq0yGJsuMeSihA": {
-    "entertainment": 13,
-    "_total": 14,
-    "_updatedAt": "2025-11-19T10:27:56.837Z",
+    "entertainment": 14,
+    "_total": 15,
+    "_updatedAt": "2025-11-19T12:52:09.358Z",
     "review": 1
   },
   "UCC71NueL1n41xTtR4QKwCYg": {
@@ -3114,9 +3115,9 @@
     "_updatedAt": "2025-10-14T08:30:20.464Z"
   },
   "UCp7CObHyuL-dmXPvsfcYwRg": {
-    "senior": 15,
-    "_total": 15,
-    "_updatedAt": "2025-11-19T10:28:00.835Z"
+    "senior": 16,
+    "_total": 16,
+    "_updatedAt": "2025-11-19T12:52:13.833Z"
   },
   "UCbhAS1SHJQYzHYfArz6J-Bw": {
     "senior": 12,
@@ -3474,9 +3475,9 @@
     "_updatedAt": "2025-11-13T08:32:43.995Z"
   },
   "UCqWQsbMC7j7YsRAbxDv2YSQ": {
-    "senior": 100,
-    "_total": 100,
-    "_updatedAt": "2025-11-10T10:28:34.005Z"
+    "senior": 101,
+    "_total": 101,
+    "_updatedAt": "2025-11-19T12:52:13.826Z"
   },
   "UCcZbi_EIKg41AyJcvWeaX8w": {
     "politics": 2,
@@ -3535,9 +3536,9 @@
     "_updatedAt": "2025-10-21T03:08:52.164Z"
   },
   "UC0SeBIntkq39gAhWK6GGjjQ": {
-    "entertainment": 66,
-    "_total": 66,
-    "_updatedAt": "2025-11-19T10:27:59.384Z"
+    "entertainment": 67,
+    "_total": 67,
+    "_updatedAt": "2025-11-19T12:52:12.249Z"
   },
   "UC-yz4VMe6FlpEN-WXjqVRyw": {
     "review": 5,
@@ -4241,9 +4242,9 @@
     "_updatedAt": "2025-10-31T18:34:29.352Z"
   },
   "UCAAF2CBiSunqabK5ZDZGFLg": {
-    "senior": 42,
-    "_total": 42,
-    "_updatedAt": "2025-11-19T10:28:00.853Z"
+    "senior": 43,
+    "_total": 43,
+    "_updatedAt": "2025-11-19T12:52:13.852Z"
   },
   "UCFlKqZsHXSQ45ZOuyUtBd2Q": {
     "senior": 13,
@@ -4599,9 +4600,9 @@
     "_updatedAt": "2025-11-05T22:22:39.960Z"
   },
   "UCESk_yA79a5ewq1Hc15Vq5Q": {
-    "official": 28,
-    "_total": 28,
-    "_updatedAt": "2025-11-19T10:28:02.139Z"
+    "official": 29,
+    "_total": 29,
+    "_updatedAt": "2025-11-19T12:52:15.340Z"
   },
   "UCWlV3Lz_55UaX4JsMj-z__Q": {
     "politics": 24,
@@ -5101,9 +5102,9 @@
     "_updatedAt": "2025-11-13T14:23:18.954Z"
   },
   "UC5rc_bf_ffP2ChN96jglEFw": {
-    "senior": 30,
-    "_total": 30,
-    "_updatedAt": "2025-11-19T10:28:01.132Z"
+    "senior": 31,
+    "_total": 31,
+    "_updatedAt": "2025-11-19T12:52:14.129Z"
   },
   "UCpI7_Jbwdx62ZB8SdD8CC4w": {
     "entertainment": 17,
@@ -5251,9 +5252,9 @@
     "_updatedAt": "2025-11-18T18:36:21.141Z"
   },
   "UCuYLURX75gg6bmkwA7QAreA": {
-    "entertainment": 93,
-    "_total": 93,
-    "_updatedAt": "2025-11-19T10:27:58.342Z"
+    "entertainment": 97,
+    "_total": 97,
+    "_updatedAt": "2025-11-19T12:52:11.127Z"
   },
   "UCnmRYmpwD6gV0ZLymqA91xQ": {
     "senior": 8,
@@ -5326,9 +5327,9 @@
     "_updatedAt": "2025-11-17T22:23:38.542Z"
   },
   "UCqSe8GxEZIypDoGvm_bHzHQ": {
-    "sports": 19,
-    "_total": 19,
-    "_updatedAt": "2025-11-19T10:28:03.860Z"
+    "sports": 20,
+    "_total": 20,
+    "_updatedAt": "2025-11-19T12:52:17.036Z"
   },
   "UCJbuZB0z3paDBIXOonVuZBQ": {
     "sports": 1,
@@ -5351,9 +5352,9 @@
     "_updatedAt": "2025-11-18T18:36:18.602Z"
   },
   "UCqUrD7cZC86zxLq1fFEdMwg": {
-    "official": 14,
-    "_total": 14,
-    "_updatedAt": "2025-11-19T10:28:02.488Z"
+    "official": 15,
+    "_total": 15,
+    "_updatedAt": "2025-11-19T12:52:15.604Z"
   },
   "UCynjR7nrsOhGIJ9QM-SPEIQ": {
     "senior": 3,
@@ -5376,9 +5377,9 @@
     "_updatedAt": "2025-11-19T01:54:55.110Z"
   },
   "UCa34RLvMmFLeWhzZxYEqzeQ": {
-    "entertainment": 6,
-    "_total": 6,
-    "_updatedAt": "2025-11-19T10:27:57.074Z"
+    "entertainment": 7,
+    "_total": 7,
+    "_updatedAt": "2025-11-19T12:52:09.697Z"
   },
   "UC1ihKJ6GH37xoWdtllZqhLw": {
     "politics": 1,
@@ -5396,9 +5397,9 @@
     "_updatedAt": "2025-11-19T06:36:15.511Z"
   },
   "UCuOTdIE2p8f3knVtUQXOUqw": {
-    "senior": 5,
-    "_total": 5,
-    "_updatedAt": "2025-11-19T10:28:00.837Z"
+    "senior": 6,
+    "_total": 6,
+    "_updatedAt": "2025-11-19T12:52:13.835Z"
   },
   "UCtm_QoN2SIxwCE-59shX7Qg": {
     "sports": 1,
