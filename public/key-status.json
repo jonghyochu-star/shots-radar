@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2025-11-21T14:24:14.265Z",
+  "updatedAt": "2025-11-21T16:30:09.957Z",
   "event": "kw-trend-updated",
   "mode": "rules+prior-v1",
-  "priorChannels": 1100,
+  "priorChannels": 1101,
   "krFilter": {
-    "kept": 692,
-    "dropLang": 58,
+    "kept": 709,
+    "dropLang": 134,
     "dropGeo": 0,
     "langStrict": true,
     "langThr": 0.15,
